@@ -23,11 +23,23 @@ const rules = {
     trigger: ['blur', 'input'],
     message: '密码不能为空',
   },
+  api: {
+    required: false,
+    trigger: ['blur', 'input'],
+    message: 'http地址不能为空',
+  },
+  socket: {
+    required: false,
+    trigger: ['blur', 'input'],
+    message: 'socket地址不能为空',
+  },
 }
 
 const model = reactive({
   username: '',
   password: '',
+  api:'127.0.0.1:9503',
+  socket:'127.0.0.1:9504',
   loading: false,
 })
 
@@ -37,6 +49,8 @@ const onLogin = () => {
   const response = ServeLogin({
     mobile: model.username,
     password: model.password,
+    api: model.api,
+    socket: model.socket,
     platform: 'web',
   })
 
@@ -72,9 +86,13 @@ const onClickAccount = type => {
   if (type == 1) {
     model.username = '18798272054'
     model.password = 'admin123'
+    model.api = '127.0.0.1:9503'
+    model.socket = '127.0.0.1:9504'
   } else {
     model.username = '18798272055'
     model.password = 'admin123'
+    model.api = '127.0.0.1:9503'
+    model.socket = '127.0.0.1:9504'
   }
 
   onLogin()
@@ -87,6 +105,23 @@ const onClickAccount = type => {
 
     <main class="el-main" style="padding: 3px">
       <n-form ref="formRef" size="large" :model="model" :rules="rules">
+        
+        <!-- <n-form-item path="api" :show-label="false">
+          <n-input
+            placeholder="请输入http地址，默认127.0.0.1:9503"
+            v-model:value="model.api"
+            @keydown.enter.native="onValidate"
+          />
+        </n-form-item>
+
+        <n-form-item path="socket" :show-label="false">
+          <n-input
+            placeholder="请输入ws地址，默认127.0.0.1:9504"
+            v-model:value="model.socket"
+            @keydown.enter.native="onValidate"
+          />
+        </n-form-item> -->
+
         <n-form-item path="username" :show-label="false">
           <n-input
             placeholder="请输入手机号"

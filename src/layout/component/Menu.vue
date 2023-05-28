@@ -45,13 +45,13 @@ const menus = reactive([
     icon: NotebookAndPen,
     title: '笔记',
   },
-  // {
-  //   link: '/settings/detail',
-  //   icon: SmartOptimization,
-  //   title: 'Ai助手',
-  // },
   {
-    link: 'https://github.com/gzydong/LumenIM',
+    link: '/settings/detail',
+    icon: SmartOptimization,
+    title: 'AI助手',
+  },
+  {
+    link: 'https://github.com/choogoo/chatstudio',
     icon: GithubOne,
     external: true,
     title: '源码',
