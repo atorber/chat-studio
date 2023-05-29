@@ -24,12 +24,12 @@ const rules = {
     message: '密码不能为空',
   },
   api: {
-    required: false,
+    required: true,
     trigger: ['blur', 'input'],
     message: 'http地址不能为空',
   },
   socket: {
-    required: false,
+    required: true,
     trigger: ['blur', 'input'],
     message: 'socket地址不能为空',
   },
@@ -106,7 +106,7 @@ const onClickAccount = type => {
     <main class="el-main" style="padding: 3px">
       <n-form ref="formRef" size="large" :model="model" :rules="rules">
         
-        <!-- <n-form-item path="api" :show-label="false">
+        <n-form-item path="api" :show-label="false">
           <n-input
             placeholder="请输入http地址，默认127.0.0.1:9503"
             v-model:value="model.api"
@@ -120,7 +120,7 @@ const onClickAccount = type => {
             v-model:value="model.socket"
             @keydown.enter.native="onValidate"
           />
-        </n-form-item> -->
+        </n-form-item>
 
         <n-form-item path="username" :show-label="false">
           <n-input
@@ -169,7 +169,7 @@ const onClickAccount = type => {
       </n-divider>
       <div class="preview-account">
         <p @click="onClickAccount(1)">预览账号:18798272054 / 密码: admin123</p>
-        <p @click="onClickAccount(2)">预览账号:18798272055 / 密码: admin123</p>
+        <!-- <p @click="onClickAccount(2)">预览账号:18798272055 / 密码: admin123</p> -->
       </div>
     </footer>
   </section>
