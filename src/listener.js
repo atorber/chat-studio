@@ -25,7 +25,7 @@ function registerOnceExpireNotice() {
     once = true
 
     window['$dialog'].info({
-      title: '友情提示',
+      title: '系统提示',
       content: '当前登录已失效，请重新登录？',
       positiveText: '立即登录?',
       maskClosable: false,
@@ -39,14 +39,14 @@ function registerOnceExpireNotice() {
 
 function registerVisitorNotice() {
   // 3秒后获取用户浏览器权限
-  setTimeout(() => {
-    window['$notification'].create({
-      title: '友情提示',
-      content:
-        '此站点仅供演示、学习所用，请勿进行非法操作、上传或发布违法资讯。',
-      duration: 30000,
-    })
-  }, 3000)
+  // setTimeout(() => {
+  //   window['$notification'].create({
+  //     title: '友情提示',
+  //     content:
+  //       '此项目仅供演示、学习所用，请勿进行任何商业或非法用途。',
+  //     duration: 30000,
+  //   })
+  // }, 3000)
 }
 
 function registerLeaveWebListener() {

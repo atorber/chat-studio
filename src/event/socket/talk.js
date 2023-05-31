@@ -130,7 +130,7 @@ class Talk extends Base {
   showMessageNocice() {
     if (useNotifyStore().isLeaveWeb) {
       if (useNotifyStore().isWebNotify) {
-        WebNotify('LumenIM 在线聊天', {
+        WebNotify('ChatStudio 在线聊天', {
           dir: 'auto',
           lang: 'zh-CN',
           body: '您有新的消息请注意查收！！！',

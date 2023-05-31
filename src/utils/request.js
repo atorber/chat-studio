@@ -26,7 +26,7 @@ const errorHandler = error => {
       if (!once) {
         once = true
         window['$dialog'].info({
-          title: '友情提示',
+          title: '系统提示',
           content: '当前登录已失效，请重新登录？',
           positiveText: '立即登录?',
           maskClosable: false,

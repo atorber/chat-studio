@@ -46,21 +46,21 @@ const menus = reactive([
     title: '笔记',
   },
   {
-    link: '/settings/detail',
+    link: '/app/detail',
     icon: SmartOptimization,
     title: 'AI助手',
-  },
-  {
-    link: 'https://github.com/choogoo/chatstudio',
-    icon: GithubOne,
-    external: true,
-    title: '源码',
   },
   {
     link: '/settings/detail',
     icon: SettingTwo,
     title: '设置',
   },
+  // {
+  //   link: 'https://github.com/choogoo/chatstudio',
+  //   icon: GithubOne,
+  //   external: true,
+  //   title: '源码',
+  // },
 ])
 
 const onLogout = () => {

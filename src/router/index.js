@@ -5,11 +5,13 @@ import {
 } from 'vue-router'
 import { isLoggedIn } from '@/utils/auth'
 import SettingRouter from './modules/setting'
+import AppRouter from './modules/app'
 import ContactRouter from './modules/contact'
 import AuthRouter from './modules/auth'
 import Home from '@/views/index/index.vue'
 
 const routes = [
+  AppRouter,
   SettingRouter,
   ContactRouter,
   AuthRouter,
