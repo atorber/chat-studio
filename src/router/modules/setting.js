@@ -29,5 +29,15 @@ export default {
       meta: { requiresAuth: true },
       component: () => import('@/views/setting/notification.vue'),
     },
+    {
+      path: '/settings/config',
+      meta: { requiresAuth: true },
+      component: () => import('@/views/setting/config.vue'),
+    },
+    {
+      path: '/settings/fn',
+      meta: { requiresAuth: true },
+      component: () => import('@/views/setting/fn.vue'),
+    },
   ],
 }

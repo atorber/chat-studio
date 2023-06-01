@@ -7,6 +7,7 @@ import { NPopover } from 'naive-ui'
 import AccountCard from './AccountCard.vue'
 import { defAvatar } from '@/constant/default'
 import {
+  ApplicationOne,
   Download,
   GithubOne,
   SettingTwo,
@@ -47,8 +48,8 @@ const menus = reactive([
   },
   {
     link: '/app/detail',
-    icon: SmartOptimization,
-    title: 'AI助手',
+    icon: ApplicationOne,
+    title: '应用',
   },
   {
     link: '/settings/detail',

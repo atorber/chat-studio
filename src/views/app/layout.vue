@@ -4,15 +4,15 @@ import SubViewLayout from '@/layout/SubViewLayout.vue'
 import { Tool, Protect, Remind, LinkThree, User } from '@icon-park/vue-next'
 
 const menus = [
+{
+    name: '心灵大师',
+    path: '/app/security',
+    icon: Protect,
+  },
   {
     name: '智能问答',
     path: '/app/detail',
     icon: User,
-  },
-  {
-    name: '情话大师',
-    path: '/app/security',
-    icon: Protect,
   },
   {
     name: '群发助手',
@@ -33,7 +33,7 @@ const menus = [
 </script>
 
 <template>
-  <Layout :index="4">
-    <SubViewLayout title="我的设置" :menus="menus" />
+  <Layout :index="3">
+    <SubViewLayout title="应用中心" :menus="menus" />
   </Layout>
 </template>

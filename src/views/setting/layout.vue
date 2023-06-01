@@ -1,13 +1,22 @@
 <script setup>
 import Layout from '@/layout/index.vue'
 import SubViewLayout from '@/layout/SubViewLayout.vue'
-import { Tool, Protect, Remind, LinkThree, User } from '@icon-park/vue-next'
+import { Tool, Protect, Remind, LinkThree, User, SwitchButton, SettingConfig } from '@icon-park/vue-next'
 
 const menus = [
   {
     name: '个人中心',
     path: '/settings/detail',
     icon: User,
+  },
+  {
+    name: '资源配置',
+    path: '/settings/config',
+    icon: SettingConfig,
+  },  {
+    name: '功能开关',
+    path: '/settings/fn',
+    icon: SwitchButton,
   },
   {
     name: '安全设置',
@@ -26,15 +35,6 @@ const menus = [
   },
   {
     name: '通知设置',
-    path: '/settings/notification',
-    icon: Remind,
-  },
-  {
-    name: '资源配置',
-    path: '/settings/notification',
-    icon: Remind,
-  },  {
-    name: '功能开关',
     path: '/settings/notification',
     icon: Remind,
   },

@@ -1,18 +1,18 @@
 export default {
     path: '/app',
     name: 'app',
-    redirect: '/apps/detail',
+    redirect: '/app/security',
     component: () => import('@/views/app/layout.vue'),
     children: [
-      {
-        path: '/app/detail',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/app/detail.vue'),
-      },
       {
         path: '/app/security',
         meta: { requiresAuth: true },
         component: () => import('@/views/app/security.vue'),
+      },
+      {
+        path: '/app/detail',
+        meta: { requiresAuth: true },
+        component: () => import('@/views/app/detail.vue'),
       },
       {
         path: '/app/binding',
