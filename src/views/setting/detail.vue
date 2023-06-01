@@ -91,7 +91,7 @@ const onUploadAvatar = avatar => {
         class="avatar-box pointer"
       />
 
-      <n-button text @click="cropper = true"> 点击修改头像 </n-button>
+      <!-- <n-button text @click="cropper = true"> 点击修改头像 </n-button> -->
     </aside>
 
     <main class="el-main" style="padding-right: 20px">
@@ -105,52 +105,55 @@ const onUploadAvatar = avatar => {
       >
         <n-form-item label="登录账号：">
           {{ hidePhone(detail.mobile) }}
-          <n-button
+          <!-- <n-button
             class="mt-l15"
             type="info"
             text
             @click="router.push('/settings/security')"
           >
             修改
-          </n-button>
+          </n-button> -->
         </n-form-item>
         <n-form-item label="电子邮箱：">
           {{ detail.email }}
-          <n-button
+          <!-- <n-button
             class="mt-l15"
             type="info"
             text
             @click="router.push('/settings/security')"
           >
             修改
-          </n-button>
+          </n-button> -->
         </n-form-item>
         <n-form-item label="我的昵称：">
-          <n-input
+          {{ detail.nickname }}
+          <!-- <n-input
             placeholder="我的昵称"
             v-model:value="detail.nickname"
             maxlength="20"
             show-count
-          />
+          /> -->
         </n-form-item>
         <n-form-item label="我的性别：">
-          <n-radio-group v-model:value="detail.gender" name="gender">
+          {{ detail.gender === '0'?'未知':(detail.gender === '1'?'男':'女') }}
+          <!-- <n-radio-group v-model:value="detail.gender" name="gender">
             <n-space>
               <n-radio key="0" value="0"> 未设置 </n-radio>
               <n-radio key="1" value="1"> 男 </n-radio>
               <n-radio key="2" value="2"> 女 </n-radio>
             </n-space>
-          </n-radio-group>
+          </n-radio-group> -->
         </n-form-item>
-        <n-form-item label="我的生日：">
+        <!-- <n-form-item label="我的生日：">
           <n-date-picker
             v-model:formatted-value="detail.birthday"
             type="date"
             value-format="yyyy-MM-dd"
           />
-        </n-form-item>
+        </n-form-item> -->
         <n-form-item label="个性签名：">
-          <n-input
+          {{ detail.motto || '--' }}
+          <!-- <n-input aria-disabled
             placeholder="关于我的"
             type="textarea"
             maxlength="500"
@@ -160,10 +163,10 @@ const onUploadAvatar = avatar => {
               minRows: 3,
               maxRows: 5,
             }"
-          />
+          /> -->
         </n-form-item>
 
-        <n-form-item>
+        <!-- <n-form-item>
           <n-button
             type="primary"
             @click="onChangeDetail"
@@ -172,7 +175,7 @@ const onUploadAvatar = avatar => {
           >
             保存信息
           </n-button>
-        </n-form-item>
+        </n-form-item> -->
       </n-form>
     </main>
   </section>

@@ -12,21 +12,59 @@ const isShowChangeMobile = ref(false)
 const isShowChangeEmail = ref(false)
 
 const baseConfig = {
-  admin: {
-    roomid: '', // 管理群ID
-    wxid: '7881302781913704', // 管理员微信ID
+  wechaty: {
+    name:'Wechaty',
+    value:{
+      puppet: {
+        name:'Puppet名称',
+        value:'wechaty-puppet-service', // wechaty-puppet-padlocal、wechaty-puppet-service、wechaty-puppet-wechat、wechaty-puppet-wechat4u、wechaty-puppet-xp（运行npm run wechaty-puppet-xp安装）
+      },
+      token:{
+        name:'PuppetToken',
+        value:'', // wechaty token
+      },
+    },
+  },
+  admin:{
+    name:'管理员信息',
+    value:{
+      roomid: {
+        name:'管理员群ID',
+        value:'', // 管理群ID
+      },
+      wxid: {
+        name:'管理员微信ID',
+        value:'7881302781913704', // 管理员微信ID
+      },
+    },
   },
   baiduvop: {
-    ak: 'QRxKQ9fnrKca3FxpbfhyqBgC', // 百度云语音转文字接口ak
-    sk: '----', // 百度云语音转文字接口sk
+    name: '百度云语音转文字服务',
+    value:{
+      ak: {
+        name:'Access Key',
+        value:'QRxKQ9fnrKca3FxpbfhyqBgC', // 百度云语音转文字接口ak
+      },
+      sk: {
+        name:'Secret Key',
+        value:'', // 百度云语音转文字接口sk
+      },
+    },
+
   },
-  openai: {
-    endpoint: 'https://api.openai-proxy.com', // openai api地址
-    key: 'sk----------', // openai api密钥
-  },
-  wechaty: {
-    puppet: 'wechaty-puppet-service', // wechaty-puppet-padlocal、wechaty-puppet-service、wechaty-puppet-wechat、wechaty-puppet-wechat4u、wechaty-puppet-xp（运行npm run wechaty-puppet-xp安装）
-    token: '----', // wechaty token
+  openai:{
+    name:'ChatGPT配置信息',
+    value:{
+      endpoint: {
+        name:'API地址',
+        value:'https://api.openai-proxy.com', // openai api地址
+      },
+      key: {
+        name:'API密钥',
+        value:'', // openai api密钥
+      },
+    },
+
   },
 }
 
@@ -43,21 +81,21 @@ const onChangeEmailSuccess = value => {
 
 <template>
   <section>
-    <block v-for="(value, key) in baseConfig" :key="key">
+    <block v-for="(item, key) in baseConfig" :key="key">
 
       <div class="title-wrapper">
-        <h3 class="title margin-right">{{ key }}</h3>
+        <h3 class="title margin-right">{{ item.name }} | {{ key }}</h3>
         <n-button type="info" text @click="isShowChangePassword = true">
           修改
         </n-button>
       </div>
 
       <div class="view-box">
-        <block v-for="(subvalue, subkey) in value" :key="subkey">
+        <block v-for="(subvalue, subkey) in item.value" :key="subkey">
           <div class="view-list">
             <div class="content">
-              <div class="name">{{ key }}.{{ subkey }}</div>
-              <div class="desc">{{ subvalue || '未设置' }}</div>
+              <div class="name">{{ subvalue.name }}</div>
+              <div class="desc">{{ subkey }} : {{ subvalue.value || '未设置' }}</div>
             </div>
           </div>
         </block>

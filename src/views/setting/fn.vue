@@ -3,6 +3,39 @@ import { computed } from 'vue'
 import { NSwitch } from 'naive-ui'
 import { useNotifyStore } from '@/store/notify'
 
+const baseConfig = {
+  autoQa: {
+    name:'智能问答',
+    value:{
+      autoReply: {
+        name:'自动问答',
+        value:false, // wechaty-puppet-padlocal、wechaty-puppet-service、wechaty-puppet-wechat、wechaty-puppet-wechat4u、wechaty-puppet-xp（运行npm run wechaty-puppet-xp安装）
+      },
+      atReply:{
+        name:'AT回复',
+        value:true, // wechaty token
+      },
+      customReply:{
+        name:'不同群个性回复',
+        value:true, // wechaty token
+      },
+    },
+  },
+  vika:{
+    name:'维格表',
+    value:{
+      useVika: {
+        name:'启用',
+        value:true, // 管理群ID
+      },
+      uploadMessageToVika: {
+        name:'消息上传',
+        value:true, // 管理员微信ID
+      },
+    },
+  },
+}
+
 const notifyStore = useNotifyStore()
 
 const isPromptTone = computed({
@@ -36,59 +69,21 @@ const isWebNotify = computed({
 
 <template>
   <section>
-    <h3 class="title">智能问答 | autoQa</h3>
+    <block v-for="(item, key) in baseConfig" :key="key">
+      <h3 class="title">{{item.name}} | {{key}}</h3>
     <div class="view-box">
-      <div class="view-list">
+      <div class="view-list" v-for="(subvalue, subkey) in item.value" :key="subkey">
         <div class="content">
-          <div class="name">自动问答</div>
-          <div class="desc">autoReply ：{{ isPromptTone ? '已开启' : '已关闭' }}</div>
+          <div class="name">{{ subvalue.name }}</div>
+          <div class="desc">{{subkey}} : {{ subvalue.value ? '已开启' : '已关闭' }}</div>
         </div>
         <div class="tools">
-          <n-switch size="medium" v-model:value="isPromptTone" />
-        </div>
-      </div>
-
-      <div class="view-list">
-        <div class="content">
-          <div class="name">AT回复</div>
-          <div class="desc">atReply：{{ isKeyboard ? '已开启' : '已关闭' }}</div>
-        </div>
-        <div class="tools">
-          <n-switch size="medium" v-model:value="isKeyboard" />
-        </div>
-      </div>
-      <div class="view-list">
-        <div class="content">
-          <div class="name">不同群个性回复</div>
-          <div class="desc">customReply：{{ isWebNotify ? '已开启' : '已关闭' }}</div>
-        </div>
-        <div class="tools">
-          <n-switch size="medium" v-model:value="isWebNotify" />
+          <n-switch size="medium" v-model:value="subvalue.value" />
         </div>
       </div>
     </div>
-    <h3 class="title">维格表</h3>
-    <div class="view-box">
-      <div class="view-list">
-        <div class="content">
-          <div class="name">启用</div>
-          <div class="desc">useVika ：{{ isPromptTone ? '已开启' : '已关闭' }}</div>
-        </div>
-        <div class="tools">
-          <n-switch size="medium" v-model:value="isPromptTone" />
-        </div>
-      </div>
-
-      <div class="view-list">
-        <div class="content">
-          <div class="name">消息上传</div>
-          <div class="desc">uploadMessageToVika：{{ isKeyboard ? '已开启' : '已关闭' }}</div>
-        </div>
-        <div class="tools">
-          <n-switch size="medium" v-model:value="isKeyboard" />
-        </div>
-      </div>
-    </div>
+        
+      </block>
   </section>
 </template>
 
