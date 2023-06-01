@@ -148,7 +148,7 @@ const onClickMenu = menu => {
             />
           </template>
 
-          <div style="width: 200px; height: 100px; padding-top: 10px">
+          <!-- <div style="width: 200px; height: 100px; padding-top: 10px">
             <h3>下载客户端(预览)</h3>
             <br />
             <a
@@ -163,7 +163,7 @@ const onClickMenu = menu => {
               target="_blank"
               >Windows x64</a
             >
-          </div>
+          </div> -->
         </n-popover>
       </p>
       <p @click="onLogout">退出</p>

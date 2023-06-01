@@ -18,21 +18,21 @@ const menus = [
     path: '/settings/fn',
     icon: SwitchButton,
   },
-  {
-    name: '安全设置',
-    path: '/settings/security',
-    icon: Protect,
-  },
-  {
-    name: '个性设置',
-    path: '/settings/personalize',
-    icon: Tool,
-  },
-  {
-    name: '绑定设置',
-    path: '/settings/binding',
-    icon: LinkThree,
-  },
+  // {
+  //   name: '安全设置',
+  //   path: '/settings/security',
+  //   icon: Protect,
+  // },
+  // {
+  //   name: '个性设置',
+  //   path: '/settings/personalize',
+  //   icon: Tool,
+  // },
+  // {
+  //   name: '绑定设置',
+  //   path: '/settings/binding',
+  //   icon: LinkThree,
+  // },
   {
     name: '通知设置',
     path: '/settings/notification',

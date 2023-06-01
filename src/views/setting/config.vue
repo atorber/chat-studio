@@ -11,6 +11,25 @@ const isShowChangePassword = ref(false)
 const isShowChangeMobile = ref(false)
 const isShowChangeEmail = ref(false)
 
+const baseConfig = {
+  admin: {
+    roomid: '', // 管理群ID
+    wxid: '7881302781913704', // 管理员微信ID
+  },
+  baiduvop: {
+    ak: 'QRxKQ9fnrKca3FxpbfhyqBgC', // 百度云语音转文字接口ak
+    sk: '----', // 百度云语音转文字接口sk
+  },
+  openai: {
+    endpoint: 'https://api.openai-proxy.com', // openai api地址
+    key: 'sk----------', // openai api密钥
+  },
+  wechaty: {
+    puppet: 'wechaty-puppet-service', // wechaty-puppet-padlocal、wechaty-puppet-service、wechaty-puppet-wechat、wechaty-puppet-wechat4u、wechaty-puppet-xp（运行npm run wechaty-puppet-xp安装）
+    token: '----', // wechaty token
+  },
+}
+
 const onChangeMobileSuccess = value => {
   isShowChangeMobile.value = false
   userStore.mobile = value
@@ -24,45 +43,27 @@ const onChangeEmailSuccess = value => {
 
 <template>
   <section>
-    <h3 class="title">安全设置</h3>
+    <block v-for="(value, key) in baseConfig" :key="key">
 
-    <div class="view-box">
-      <div class="view-list">
-        <div class="content">
-          <div class="name">账户密码</div>
-          <div class="desc">当前密码强度 ：中</div>
-        </div>
-        <div class="tools">
-          <n-button type="info" text @click="isShowChangePassword = true">
-            修改
-          </n-button>
-        </div>
+      <div class="title-wrapper">
+        <h3 class="title margin-right">{{ key }}</h3>
+        <n-button type="info" text @click="isShowChangePassword = true">
+          修改
+        </n-button>
       </div>
 
-      <div class="view-list">
-        <div class="content">
-          <div class="name">绑定手机</div>
-          <div class="desc">已绑定手机 ：{{ hidePhone(userStore.mobile) }}</div>
-        </div>
-        <div class="tools">
-          <n-button type="info" text @click="isShowChangeMobile = true">
-            修改
-          </n-button>
-        </div>
+      <div class="view-box">
+        <block v-for="(subvalue, subkey) in value" :key="subkey">
+          <div class="view-list">
+            <div class="content">
+              <div class="name">{{ key }}.{{ subkey }}</div>
+              <div class="desc">{{ subvalue || '未设置' }}</div>
+            </div>
+          </div>
+        </block>
       </div>
 
-      <div class="view-list">
-        <div class="content">
-          <div class="name">绑定邮箱</div>
-          <div class="desc">已绑定邮箱 ：{{ userStore.email || '未设置' }}</div>
-        </div>
-        <div class="tools">
-          <n-button type="info" text @click="isShowChangeEmail = true">
-            修改
-          </n-button>
-        </div>
-      </div>
-    </div>
+    </block>
   </section>
 
   <EditPassword v-model="isShowChangePassword" />
@@ -71,4 +72,14 @@ const onChangeEmailSuccess = value => {
 </template>
 <style lang="less" scoped>
 @import '@/assets/css/settting.less';
+
+/* 方式一：使用 flex 布局 */
+.title-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.margin-right {
+  margin-right: 30px;
+}
 </style>
