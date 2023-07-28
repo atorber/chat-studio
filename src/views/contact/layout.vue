@@ -27,7 +27,7 @@ const menus = reactive([
     size: 20,
   },
   {
-    name: '公开群组',
+    name: '好友分组',
     path: '/contact/group/open',
     icon: markRaw(ShareThree),
     size: 18,
