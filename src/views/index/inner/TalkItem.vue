@@ -70,7 +70,8 @@ defineProps({
               "
               >[在线]</span
             >
-            <span v-html="data.msg_text" />
+            <!-- <span v-html="data.msg_text" /> -->
+            <span>{{ data.msg_text.replace(/\r?\n|<br\/?>/gi, ' ') }}</span>
           </template>
         </div>
         <div class="unread" v-show="data.unread_num">

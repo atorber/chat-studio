@@ -335,7 +335,7 @@ onMounted(onReload)
             <div class="talk-title">
               <span
                 class="nickname"
-                v-show="talk_type == 2 && item.float == 'left'"
+                v-show="talk_type == 2"
               >
                 {{ item.nickname }}
               </span>
