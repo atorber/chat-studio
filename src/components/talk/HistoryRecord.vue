@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, inject } from 'vue'
+import { NImageGroup } from 'naive-ui'
 import Loading from '@/components/base/Loading.vue'
 import { ServeFindTalkRecords } from '@/api/chat'
 import { Down, Calendar } from '@icon-park/vue-next'
@@ -16,7 +17,7 @@ const props = defineProps({
     default: 0,
   },
 })
-const showUserModal = inject('showUserModal')
+const showUserModal = inject('$user')
 const model = reactive({
   recordId: 0,
   limit: 30,
@@ -95,10 +96,8 @@ loadChatRecord()
     v-model:show="isShow"
     preset="card"
     title="消息管理"
-    size="huge"
-    :bordered="false"
-    style="max-width: 750px; border-radius: 10px"
-    class="o-hidden"
+    style="max-width: 750px"
+    class="modal-radius"
     :on-after-leave="onMaskClick"
     :segmented="{
       content: true,
@@ -109,7 +108,6 @@ loadChatRecord()
     :content-style="{
       padding: 0,
     }"
-    :hoverable="true"
   >
     <section class="main-box el-container is-vertical o-hidden">
       <header class="el-header bdr-b search" style="height: 50px">
@@ -157,32 +155,34 @@ loadChatRecord()
         </n-empty>
       </main>
 
-      <main v-else class="el-main me-scrollbar">
-        <div v-for="item in records" :key="item.id" class="message-item">
-          <div class="left-box">
-            <n-avatar
-              @click="showUserModal(item.user_id)"
-              :size="30"
-              :src="item.avatar"
-              class="pointer"
-            />
-          </div>
-
-          <div class="right-box">
-            <div class="msg-header">
-              <span class="name">{{ item.nickname }}</span>
-              <span class="time"> {{ item.created_at }}</span>
+      <main v-else class="el-main me-scrollbar me-scrollbar-thumb">
+        <n-image-group>
+          <div v-for="item in records" :key="item.id" class="message-item">
+            <div class="left-box">
+              <im-avatar
+                :src="item.avatar"
+                :size="30"
+                :username="item.nickname"
+                @click="showUserModal(item.user_id)"
+              />
             </div>
 
-            <component
-              :is="
-                message.MessageComponents[item.msg_type] || 'unknown-message'
-              "
-              :extra="item.extra"
-              :data="item"
-            />
+            <div class="right-box me-scrollbar">
+              <div class="msg-header">
+                <span class="name">{{ item.nickname }}</span>
+                <span class="time"> {{ item.created_at }}</span>
+              </div>
+
+              <component
+                :is="
+                  message.MessageComponents[item.msg_type] || 'unknown-message'
+                "
+                :extra="item.extra"
+                :data="item"
+              />
+            </div>
           </div>
-        </div>
+        </n-image-group>
 
         <div
           class="more pointer flex-center"
@@ -262,24 +262,21 @@ loadChatRecord()
   }
 
   .right-box {
-    flex: auto;
+    width: 100%;
     overflow-x: auto;
     padding: 0px 5px 15px 5px;
+    box-sizing: border-box;
+    height: fit-content;
 
     .msg-header {
       height: 30px;
       line-height: 30px;
       font-size: 12px;
-      color: #a09a9a;
       position: relative;
       user-select: none;
       display: flex;
       align-items: center;
       justify-content: space-between;
-
-      .name {
-        color: #333;
-      }
     }
   }
 }

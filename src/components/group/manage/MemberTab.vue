@@ -1,12 +1,9 @@
-<script setup>
-import { ref, computed, reactive, nextTick } from 'vue'
+<script setup lang="ts">
+import { ref, computed, reactive, nextTick, inject } from 'vue'
 import { NSpace, NDropdown, NCheckbox } from 'naive-ui'
 import { Search, Plus } from '@icon-park/vue-next'
-import { defAvatar } from '@/constant/default'
 import GroupLaunch from '../GroupLaunch.vue'
-import UserCardModal from '@/components/user/UserCardModal.vue'
 import { useUserStore } from '@/store/user'
-import { modal } from '@/utils/common'
 
 import {
   ServeGetGroupMembers,
@@ -23,6 +20,7 @@ const props = defineProps({
   },
 })
 
+const user: any = inject('$user')
 const userStore = useUserStore()
 const isGroupLaunch = ref(false)
 const keywords = ref('')
@@ -30,7 +28,7 @@ const batchDelete = ref(false)
 const items = ref([])
 
 const filterCheck = computed(() => {
-  return items.value.filter(item => item.is_delete)
+  return items.value.filter((item: any) => item.is_delete)
 })
 
 const filterSearch = computed(() => {
@@ -38,16 +36,16 @@ const filterSearch = computed(() => {
     return items.value
   }
 
-  return items.value.filter(item => {
+  return items.value.filter((item: any) => {
     return (
       item.nickname.match(keywords.value) != null ||
-      item.user_card.match(keywords.value) != null
+      item.remark.match(keywords.value) != null
     )
   })
 })
 
 const isAdmin = computed(() => {
-  return items.value.some(item => {
+  return items.value.some((item: any) => {
     return item.user_id == userStore.uid && item.leader == 2
   })
 })
@@ -65,7 +63,7 @@ const onLoadData = () => {
     group_id: props.id,
   }).then(res => {
     if (res.code == 200) {
-      let data = res.data || []
+      let data = res.data.items || []
 
       data.forEach(item => {
         item.is_delete = false
@@ -77,14 +75,24 @@ const onLoadData = () => {
 }
 
 const onDelete = item => {
-  ServeRemoveMembersGroup({
-    group_id: props.id,
-    members_ids: `${item.user_id}`,
-  }).then(res => {
-    if (res.code == 200) {
-      onLoadData()
-      window['$message'].success('删除成功！')
-    }
+  let title = `删除 [${item.nickname}] 群成员？`
+
+  window['$dialog'].create({
+    title: '温馨提示',
+    content: title,
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      ServeRemoveMembersGroup({
+        group_id: props.id,
+        members_ids: `${item.user_id}`,
+      }).then(res => {
+        if (res.code == 200) {
+          onLoadData()
+          window['$message'].success('删除成功')
+        }
+      })
+    },
   })
 }
 
@@ -93,51 +101,57 @@ const onBatchDelete = () => {
     return
   }
 
-  ServeRemoveMembersGroup({
-    group_id: props.id,
-    members_ids: filterCheck.value.map(item => item.user_id).join(','),
-  }).then(res => {
-    if (res.code == 200) {
-      batchDelete.value = false
-      onLoadData()
-      window['$message'].success('删除成功！')
-    }
+  window['$dialog'].create({
+    title: '温馨提示',
+    content: `批量删除群成员？`,
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      ServeRemoveMembersGroup({
+        group_id: props.id,
+        members_ids: filterCheck.value
+          .map((item: any) => item.user_id)
+          .join(','),
+      }).then(res => {
+        if (res.code == 200) {
+          batchDelete.value = false
+          onLoadData()
+          window['$message'].success('删除成功')
+        }
+      })
+    },
   })
 }
 
-const onRowClick = item => {
+const onRowClick = (item: any) => {
   if (batchDelete.value == true) {
     if (item.leader < 2) {
       item.is_delete = !item.is_delete
     }
   } else {
-    modal(UserCardModal, {
-      uid: item.user_id,
-    })
+    user(item.user_id)
   }
 }
 
 const onCancelDelete = () => {
-  items.value.forEach(item => {
+  items.value.forEach((item: any) => {
     item.is_delete = false
   })
 
   batchDelete.value = false
 }
 
-const onUserInfo = item => {
-  modal(UserCardModal, {
-    uid: item.user_id,
-  })
+const onUserInfo = (item: any) => {
+  user(item.user_id)
 }
 
-const onAssignAdmin = item => {
+const onAssignAdmin = (item: any) => {
   let title =
     item.leader == 0
       ? `确定要给 [${item.nickname}] 分配管理员权限吗？`
       : `确定解除 [${item.nickname}] 管理员权限吗？`
 
-  window.$dialog.create({
+  window['$dialog'].create({
     title: '温馨提示',
     content: title,
     positiveText: '确定',
@@ -149,7 +163,7 @@ const onAssignAdmin = item => {
         user_id: parseInt(item.user_id),
       }).then(res => {
         if (res.code == 200) {
-          window['$message'].success('操作成功！')
+          window['$message'].success('操作成功')
           onLoadData()
         } else {
           window['$message'].error(res.message)
@@ -160,7 +174,7 @@ const onAssignAdmin = item => {
 }
 
 const onTransfer = item => {
-  window.$dialog.create({
+  window['$dialog'].create({
     title: '温馨提示',
     content: `确定把群主权限转交给 [${item.nickname}] ？`,
     positiveText: '确定',
@@ -171,7 +185,7 @@ const onTransfer = item => {
         user_id: parseInt(item.user_id),
       }).then(res => {
         if (res.code == 200) {
-          window['$message'].success('操作成功！')
+          window['$message'].success('操作成功')
           onLoadData()
         } else {
           window['$message'].error(res.message)
@@ -181,14 +195,14 @@ const onTransfer = item => {
   })
 }
 
-const onForbidden = item => {
+const onForbidden = (item: any) => {
   let content = `确定要禁言 [${item.nickname}] 此用户吗？`
 
   if (item.is_mute === 1) {
     content = `确定要解除 [${item.nickname}] 此用户的禁言吗？`
   }
 
-  window.$dialog.create({
+  window['$dialog'].create({
     title: '温馨提示',
     content: content,
     positiveText: '确定',
@@ -200,7 +214,7 @@ const onForbidden = item => {
         user_id: parseInt(item.user_id),
       }).then(res => {
         if (res.code == 200) {
-          window['$message'].success('操作成功！')
+          window['$message'].success('操作成功')
           onLoadData()
         } else {
           window['$message'].error(res.message)
@@ -211,7 +225,7 @@ const onForbidden = item => {
 }
 
 // 会话列表右键显示菜单
-const onContextMenu = (e, item) => {
+const onContextMenu = (e: any, item: any) => {
   if (batchDelete.value == true || item.leader == 2) {
     return
   }
@@ -256,7 +270,7 @@ const onContextMenu = (e, item) => {
   e.preventDefault()
 }
 
-const onContextMenuHandle = key => {
+const onContextMenuHandle = (key: string) => {
   // 注册回调事件
   const evnets = {
     info: onUserInfo,
@@ -264,7 +278,7 @@ const onContextMenuHandle = key => {
     transfer: onTransfer,
     forbidden: onForbidden,
     delete: onDelete,
-    batch_delete: data => {
+    batch_delete: (data: any) => {
       batchDelete.value = true
     },
   }
@@ -276,7 +290,7 @@ const onContextMenuHandle = key => {
 onLoadData()
 </script>
 <template>
-  <section class="section el-container is-vertical height100">
+  <section class="el-container is-vertical height100">
     <header class="el-header header bdr-b">
       <p>成员管理({{ filterSearch.length }})</p>
       <div>
@@ -295,7 +309,7 @@ onLoadData()
 
           <n-button circle @click="isGroupLaunch = true">
             <template #icon>
-              <plus theme="outline" size="21" fill="#333" :strokeWidth="2" />
+              <n-icon :component="Plus" />
             </template>
           </n-button>
         </n-space>
@@ -310,7 +324,7 @@ onLoadData()
       </n-empty>
     </main>
 
-    <main v-else class="el-main main me-scrollbar">
+    <main v-else class="el-main main me-scrollbar me-scrollbar-thumb">
       <div
         class="member-item"
         v-for="member in filterSearch"
@@ -318,13 +332,17 @@ onLoadData()
       >
         <div class="tool flex-center" v-show="batchDelete">
           <n-checkbox
-            v-show="member.leader < 2"
+            :disabled="member.leader === 2"
             size="small"
             :checked="member.is_delete"
           />
         </div>
         <div class="avatar pointer" @click="onUserInfo(member)">
-          <n-avatar :size="30" :src="member.avatar" :fallback-src="defAvatar" />
+          <im-avatar
+            :size="40"
+            :src="member.avatar"
+            :username="member.nickname"
+          />
         </div>
         <div
           class="content pointer o-hidden"
@@ -341,7 +359,9 @@ onLoadData()
               <span class="badge leader" v-show="member.leader == 1"
                 >管理员</span
               >
-              <span class="badge" v-show="member.is_mute == 1">已禁言</span>
+              <span class="badge muted" v-show="member.is_mute == 1"
+                >已禁言</span
+              >
               <!-- <span class="badge qiye">企业</span> -->
             </p>
           </div>
@@ -359,7 +379,7 @@ onLoadData()
           <n-button type="primary" ghost size="small" @click="onCancelDelete">
             取消
           </n-button>
-          <n-button type="error" size="small" @click="onBatchDelete">
+          <n-button color="red" size="small" @click="onBatchDelete">
             批量删除
           </n-button>
         </n-space>
@@ -372,6 +392,7 @@ onLoadData()
     :show="dropdown.show"
     :x="dropdown.dropdownX"
     :y="dropdown.dropdownY"
+    placement="right"
     :options="dropdown.options"
     @select="onContextMenuHandle"
     @clickoutside="
@@ -403,43 +424,38 @@ onLoadData()
 }
 
 .member-item {
-  width: 100%;
-  height: 50px;
+  height: 56px;
   display: flex;
   align-items: center;
-  margin: 10px 0;
+  margin: 8px;
   user-select: none;
   border-radius: 3px;
-  border: 1px dashed transparent;
-  padding: 3px;
-  border-bottom: 1px solid #f5f5f5;
-  box-sizing: border-box;
+  border-bottom: 1px solid var(--border-color);
+  box-sizing: content-box;
 
-  &:hover {
-    border: 1px dashed rgb(80 138 254);
+  > div {
+    height: inherit;
   }
 
   .avatar {
-    width: 30px;
-    height: inherit;
-    border-radius: 5px;
+    width: 40px;
     flex-shrink: 0;
     user-select: none;
-    padding-top: 10px;
+    display: flex;
+    padding-top: 8px;
   }
 
   .content {
     width: 100%;
-    height: inherit;
     margin-left: 10px;
 
     .item-title {
-      height: 30px;
+      height: 28px;
       width: inherit;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-weight: 500;
+      font-weight: 400;
 
       .nickname {
         margin-right: 5px;
@@ -449,14 +465,19 @@ onLoadData()
     .item-text {
       width: inherit;
       height: 20px;
-      color: rgba(0, 0, 0, 0.45);
-      font-size: 13px;
+      color: rgb(255 255 255 / 52%);
+      font-size: 12px;
+    }
+  }
+
+  &:hover {
+    .item-title {
+      color: #2196f3;
     }
   }
 
   .tool {
-    width: 30px;
-    height: inherit;
+    width: 25px;
     flex-shrink: 0;
     margin-right: 10px;
   }
@@ -468,7 +489,6 @@ onLoadData()
   justify-content: space-between;
   align-items: center;
   padding: 0 15px;
-  background-color: #fdf9f9;
   border-bottom-right-radius: 15px;
 
   .tips {
@@ -479,8 +499,8 @@ onLoadData()
 .badge {
   margin-left: 3px;
   &.master {
-    background-color: #ffe699;
-    color: red;
+    color: #dc9b04 !important;
+    background-color: #faf1d1 !important;
   }
 
   &.leader {
@@ -491,6 +511,20 @@ onLoadData()
   &.qiye {
     background-color: #2196f3;
     color: #ffffff;
+  }
+
+  &.muted {
+    background-color: #a9a9ae;
+    color: #ffffff;
+  }
+}
+
+html[data-theme='dark'] {
+  .badge {
+    &.muted {
+      background-color: #777782;
+      color: #ffffff;
+    }
   }
 }
 </style>

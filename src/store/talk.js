@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ServeGetTalkList } from '@/api/chat'
 import { formatTalkItem } from '@/utils/talk'
+import { useEditorDraftStore } from './index'
 
 const ttime = datetime => {
   if (datetime == undefined || datetime == '') {
@@ -41,7 +42,7 @@ export const useTalkStore = defineStore('talk', {
     },
   },
   actions: {
-    findItem(index_name){
+    findItem(index_name) {
       return this.items.find(item => item.index_name === index_name)
     },
 
@@ -56,7 +57,7 @@ export const useTalkStore = defineStore('talk', {
 
     // 新增对话节点
     addItem(params) {
-      this.items.push(params)
+      this.items = [params, ...this.items]
     },
 
     // 移除对话节点
@@ -66,6 +67,8 @@ export const useTalkStore = defineStore('talk', {
       if (i >= 0) {
         this.items.splice(i, 1)
       }
+
+      this.items = [...this.items]
     },
 
     // 更新对话消息
@@ -87,9 +90,24 @@ export const useTalkStore = defineStore('talk', {
 
       const response = ServeGetTalkList()
 
+      const editorDraftStore = useEditorDraftStore()
+
       response.then(({ code, data }) => {
         if (code == 200) {
-          this.items = data.items.map(item => formatTalkItem(item))
+          this.items = data.items.map(item => {
+            let value = formatTalkItem(item)
+
+            let draft = editorDraftStore.items[value.index_name]
+            if (draft) {
+              value.draft_text = JSON.parse(draft).text || ''
+            }
+
+            if (value.is_robot == 1) {
+              value.is_online = 1
+            }
+
+            return value
+          })
 
           this.loadStatus = 3
         } else {

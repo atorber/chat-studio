@@ -22,6 +22,8 @@ const modelDetail = reactive({
 const onUploadAvatar = avatar => {
   cropper.value = false
   modelDetail.avatar = avatar
+
+  onSubmitBaseInfo()
 }
 
 const onLoadData = () => {
@@ -36,7 +38,7 @@ const onLoadData = () => {
 
 function onSubmitBaseInfo() {
   if (modelDetail.name.trim() == '') {
-    return window['$message'].info('群名称不能为空！')
+    return window['$message'].info('群名称不能为空')
   }
 
   ServeEditGroup({
@@ -46,7 +48,7 @@ function onSubmitBaseInfo() {
     profile: modelDetail.profile,
   }).then(res => {
     if (res.code == 200) {
-      window['$message'].success('群信息更新成功！')
+      window['$message'].success('群信息更新成功')
     } else {
       window['$message'].error(res.message)
     }
@@ -88,7 +90,7 @@ onMounted(() => {
             >{{ modelDetail.name.substring(0, 1) }}</n-avatar
           >
           <n-button
-            type="info"
+            type="primary"
             size="tiny"
             style="margin-left: 20px"
             dashed

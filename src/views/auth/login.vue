@@ -56,7 +56,7 @@ const onLogin = () => {
 
   response.then(async res => {
     if (res.code == 200) {
-      window['$message'].success('登录成功！')
+      window['$message'].success('登录成功')
       setAccessToken(res.data.access_token, res.data.expires_in)
       socket.connect()
       userStore.loadSetting()
@@ -101,7 +101,9 @@ const onClickAccount = type => {
 
 <template>
   <section class="el-container is-vertical login-box login">
-    <header class="el-header box-header">快捷登录</header>
+    <header class="el-header box-header">
+       快捷登录
+      </header>
 
     <main class="el-main" style="padding: 3px">
       <n-form ref="formRef" size="large" :model="model" :rules="rules">

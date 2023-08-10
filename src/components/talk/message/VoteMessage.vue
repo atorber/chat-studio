@@ -88,6 +88,7 @@ const onSubmit = () => {
     if (res.code == 200) {
       updateStatistics(res.data)
       props.extra.vote_users.push(userStore.uid)
+      props.extra.detail.answered_num++
     }
   })
 }
@@ -99,7 +100,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="vote-message">
+  <section class="im-message-vote">
     <div class="vote-from">
       <div class="vheader">
         <p style="font-weight: bold">
@@ -117,9 +118,11 @@ onMounted(() => {
             </p>
             <p class="vote-progress">
               <n-progress
+                type="line"
                 :height="5"
                 :show-indicator="false"
                 :percentage="parseInt(option.progress)"
+                color="#1890ff"
               />
             </p>
           </div>
@@ -159,10 +162,10 @@ onMounted(() => {
 </template>
 
 <style lang="less" scoped>
-.vote-message {
+.im-message-vote {
   width: 300px;
   min-height: 150px;
-  border: 1px solid #eceff1;
+  border: 1px solid var(--border-color);
   box-sizing: border-box;
   border-radius: 10px;
   overflow: hidden;

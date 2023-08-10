@@ -4,6 +4,7 @@ import {
   ServeRevokeRecords,
   ServeForwardRecords,
 } from '@/api/chat'
+import { ServeGetGroupMembers } from '@/api/group'
 
 // 键盘消息事件定时器
 let keyboardTimeout = null
@@ -38,6 +39,12 @@ export const useDialogueStore = defineStore('dialogue', {
 
       // 是否显示编辑器
       isShowEditor: false,
+
+      // 是否显示会话列表
+      isShowSessionList: true,
+
+      // 群成员列表
+      members: [],
 
       // 对话记录
       items: [
@@ -75,6 +82,35 @@ export const useDialogueStore = defineStore('dialogue', {
       this.records = []
       this.unreadBubble = 0
       this.isShowEditor = data.is_robot === 0
+
+      if (data.talk_type == 2) {
+        this.updateGroupMembers()
+      } else {
+        this.members = []
+      }
+    },
+
+    // 更新提及列表
+    async updateGroupMembers() {
+      let { code, data } = await ServeGetGroupMembers({
+        group_id: this.talk.receiver_id,
+      })
+
+      if (code != 200) return
+
+      this.members = []
+      for (const o of data.items) {
+        this.members.push({
+          id: o.user_id,
+          nickname: o.nickname,
+          avatar: o.avatar,
+          gender: o.gender,
+          leader: o.leader,
+          remark: o.remark,
+          online: false,
+          value: o.nickname,
+        })
+      }
     },
 
     // 清空对话记录

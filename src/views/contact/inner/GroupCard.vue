@@ -1,6 +1,5 @@
 <script setup>
-import { defAvatar } from '@/constant/default'
-import { ShareThree, AddOne } from '@icon-park/vue-next'
+import { SendOne, AddOne, PeoplePlusOne } from '@icon-park/vue-next'
 
 const emit = defineEmits(['talk', 'join'])
 defineProps({
@@ -38,12 +37,7 @@ defineProps({
 <template>
   <div class="items-box">
     <div class="left-item">
-      <div v-if="avatar" class="avatar flex-center">
-        <n-avatar :src="avatar" :size="40" round :fallback-src="defAvatar" />
-      </div>
-      <div v-else class="avatar flex-center">
-        {{ username.substring(0, 1) }}
-      </div>
+      <im-avatar :src="avatar" :size="40" :username="username" />
     </div>
 
     <div class="right-item">
@@ -51,7 +45,6 @@ defineProps({
         <span class="text-ellipsis">
           {{ username || '-' }}
         </span>
-
         <span v-show="isQiye" class="badge">企业</span>
       </div>
 
@@ -61,7 +54,7 @@ defineProps({
         <div class="status">{{ flag }}</div>
         <div class="tool">
           <n-icon
-            :component="isMember ? ShareThree : AddOne"
+            :component="isMember ? SendOne : PeoplePlusOne"
             @click.stop="emit(isMember ? 'talk' : 'join')"
           />
         </div>
@@ -74,7 +67,7 @@ defineProps({
   display: flex;
   min-width: 220px;
   min-height: 50px;
-  border: 1px solid #efefef;
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 10px;
   box-sizing: border-box;
@@ -112,6 +105,7 @@ defineProps({
       height: 20px;
       font-size: 12px;
       color: #8f959e;
+      margin-top: 3px;
     }
 
     .helper {

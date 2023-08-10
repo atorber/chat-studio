@@ -1,12 +1,13 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { NSpace } from 'naive-ui'
+import { ref, computed, h } from 'vue'
+import { NSpace, NPopconfirm, NInput } from 'naive-ui'
 import { Search, RefreshOne, CheckSmall, Close } from '@icon-park/vue-next'
 import {
   ServeGetGroupApplyList,
   ServeDeleteGroupApply,
   ServeAgreeGroupApply,
 } from '@/api/group'
+import { throttle } from '@/utils/common'
 
 const props = defineProps({
   id: {
@@ -34,7 +35,7 @@ const onLoadData = () => {
     group_id: props.id,
   }).then(res => {
     if (res.code == 200) {
-      let data = res.data || []
+      let data = res.data.items || []
       items.value = data
     }
   })
@@ -42,31 +43,63 @@ const onLoadData = () => {
 
 const onRowClick = item => {
   if (batchDelete.value == true) {
-  } else {
   }
 }
 
-const onAgree = item => {
+const onAgree = throttle(item => {
+  let loading = window['$message'].loading('请稍等，正在处理')
+
   ServeAgreeGroupApply({
     apply_id: item.id,
   }).then(res => {
+    loading.destroy()
     if (res.code == 200) {
-      onLoadData()
+      window['$message'].success('已同意')
     } else {
       window['$message'].info(res.message)
     }
+
+    onLoadData()
   })
-}
+}, 1000)
 
 const onDelete = item => {
-  ServeDeleteGroupApply({
-    apply_id: item.id,
-  }).then(res => {
-    if (res.code == 200) {
-      onLoadData()
-    } else {
-      window['$message'].info(res.message)
-    }
+  let remark = ''
+  let dialog = window['$dialog'].create({
+    title: '拒绝加入群聊',
+    content: () => {
+      return h(NInput, {
+        defaultValue: '',
+        placeholder: '请填写拒绝原因',
+        style: { marginTop: '20px' },
+        onInput: value => (remark = value),
+        autofocus: true,
+      })
+    },
+    negativeText: '取消',
+    positiveText: '提交',
+    onPositiveClick: () => {
+      if (!remark.length) return false
+
+      dialog.loading = true
+
+      ServeDeleteGroupApply({
+        apply_id: item.id,
+        remark: remark,
+      }).then(res => {
+        dialog.destroy()
+
+        if (res.code == 200) {
+          window['$message'].success('已拒绝')
+        } else {
+          window['$message'].info(res.message)
+        }
+
+        onLoadData()
+      })
+
+      return false
+    },
   })
 }
 
@@ -105,12 +138,15 @@ onLoadData()
       </n-empty>
     </main>
 
-    <main v-else class="el-main main">
+    <main v-else class="el-main main me-scrollbar me-scrollbar-thumb">
       <div
         class="member-item"
         v-for="item in filterSearch"
         @click="onRowClick(item)"
       >
+        <div class="avatar pointer" @click="onUserInfo(member)">
+          <im-avatar :size="40" :src="item.avatar" :username="item.nickname" />
+        </div>
         <div class="content pointer o-hidden">
           <div class="item-title">
             <p class="nickname text-ellipsis">
@@ -128,7 +164,8 @@ onLoadData()
               strong
               secondary
               circle
-              type="info"
+              type="primary"
+              size="small"
             >
               <template #icon>
                 <n-icon :component="CheckSmall" />
@@ -141,6 +178,7 @@ onLoadData()
               secondary
               circle
               type="tertiary"
+              size="small"
             >
               <template #icon>
                 <n-icon :component="Close" />
@@ -162,41 +200,54 @@ onLoadData()
 }
 
 .main {
-  padding: 0 15px;
+  padding: 0 5px;
   box-sizing: border-box;
 }
 
 .member-item {
-  width: 100%;
-  height: 50px;
+  height: 58px;
   display: flex;
   align-items: center;
-  margin: 15px 0;
+  margin: 8px;
   user-select: none;
-  padding: 5px 0;
+  border-radius: 3px;
+  border-bottom: 1px solid var(--border-color);
+  box-sizing: content-box;
+
+  > div {
+    height: inherit;
+  }
+
+  .avatar {
+    width: 40px;
+    flex-shrink: 0;
+    user-select: none;
+    display: flex;
+    padding-top: 8px;
+  }
 
   .content {
     width: 100%;
-    height: inherit;
+    margin-left: 10px;
 
     .item-title {
-      height: 30px;
+      height: 28px;
       width: inherit;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      font-weight: 400;
 
-      .date {
-        color: #989898;
-        font-size: 12px;
+      .nickname {
+        margin-right: 5px;
       }
     }
 
     .item-text {
       width: inherit;
       height: 20px;
-      color: rgba(0, 0, 0, 0.45);
-      font-size: 14px;
+      color: rgb(255 255 255 / 52%);
+      font-size: 12px;
     }
   }
 

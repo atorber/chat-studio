@@ -1,8 +1,15 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
-import { NModal, NInput, NScrollbar, NDivider, NCheckbox } from 'naive-ui'
-import { Search, DeleteMode } from '@icon-park/vue-next'
-import { defAvatar } from '@/constant/default.js'
+import {
+  NModal,
+  NInput,
+  NScrollbar,
+  NDivider,
+  NCheckbox,
+  NForm,
+  NFormItem,
+} from 'naive-ui'
+import { Search, Delete } from '@icon-park/vue-next'
 import {
   ServeCreateGroup,
   ServeInviteGroup,
@@ -23,6 +30,7 @@ const model = reactive({
   name: '',
 })
 
+const loading = ref(true)
 const isShowBox = ref(true)
 
 const searchFilter = computed(() => {
@@ -57,18 +65,22 @@ const onReset = () => {
 const onLoad = () => {
   ServeGetInviteFriends({
     group_id: props.gid,
-  }).then(res => {
-    if (res.code == 200 && res.data) {
-      let list = res.data || []
-
-      items.value = list.map(item => {
-        return Object.assign(item, {
-          nickname: item.friend_remark ? item.friend_remark : item.nickname,
-          checked: false,
-        })
-      })
-    }
   })
+    .then(res => {
+      if (res.code == 200 && res.data) {
+        let list = res.data || []
+
+        items.value = list.map(item => {
+          return Object.assign(item, {
+            nickname: item.friend_remark ? item.friend_remark : item.nickname,
+            checked: false,
+          })
+        })
+      }
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 
 const onMaskClick = () => {
@@ -93,7 +105,7 @@ const onCreateSubmit = ids => {
     if (res.code == 200) {
       onReset()
       emit('on-submit', res.data)
-      window['$message'].success('创建成功！')
+      window['$message'].success('创建成功')
       isShowBox.value = false
     }
   })
@@ -106,7 +118,7 @@ const onInviteSubmit = ids => {
   }).then(res => {
     if (res.code == 200) {
       emit('on-invite')
-      window['$message'].success('邀请成功！')
+      window['$message'].success('邀请成功')
       isShowBox.value = false
     }
   })
@@ -129,8 +141,9 @@ onLoad()
   <n-modal
     v-model:show="isShowBox"
     preset="card"
-    :title="gid == 0 ? '创建群组' : '请选择需要邀请的好友'"
-    style="max-width: 650px; height: 550px; border-radius: 10px"
+    :title="gid == 0 ? '创建群聊' : '邀请新的联系人'"
+    class="modal-radius"
+    style="max-width: 650px; height: 550px"
     :on-after-leave="onMaskClick"
     :segmented="{
       content: true,
@@ -139,14 +152,13 @@ onLoad()
     :content-style="{
       padding: 0,
     }"
-    transform-origin="center"
   >
     <section class="el-container launch-box">
-      <aside class="el-aside bdr-r" style="width: 280px">
+      <aside class="el-aside bdr-r" style="width: 280px" v-loading="loading">
         <section class="el-container is-vertical height100">
-          <header class="el-header" style="height: 50px; padding: 10px">
+          <header class="el-header" style="height: 50px; padding: 16px">
             <n-input
-              placeholder="搜索好友"
+              placeholder="搜索"
               v-model:value="model.keywords"
               clearable
             >
@@ -164,10 +176,11 @@ onLoad()
                   @click="onTriggerContact(item)"
                 >
                   <div class="avatar">
-                    <n-avatar
-                      :size="25"
+                    <im-avatar
+                      class="pointer"
                       :src="item.avatar"
-                      :fallback-src="defAvatar"
+                      :size="25"
+                      :username="item.nickname"
                     />
                   </div>
 
@@ -194,15 +207,18 @@ onLoad()
           <header
             v-if="props.gid === 0"
             class="el-header"
-            style="height: 90px; padding: 10px"
+            style="height: 90px; padding: 10px 15px"
           >
-            <p style="margin: 8px 0px 10px; font-weight: 500">群名称(必填)：</p>
-            <n-input
-              v-model:value="model.name"
-              placeholder="请填写群名称"
-              maxlength="20"
-              show-count
-            />
+            <n-form>
+              <n-form-item label="群聊名称" :required="true">
+                <n-input
+                  v-model:value="model.name"
+                  placeholder="必填"
+                  maxlength="20"
+                  show-count
+                />
+              </n-form-item>
+            </n-form>
           </header>
 
           <header class="el-header" style="height: 50px">
@@ -223,18 +239,20 @@ onLoad()
                   @click="onTriggerContact(item)"
                 >
                   <div class="avatar">
-                    <n-avatar
-                      :size="25"
+                    <im-avatar
+                      class="pointer"
                       :src="item.avatar"
-                      :fallback-src="defAvatar"
+                      :size="25"
+                      :username="item.nickname"
                     />
                   </div>
 
                   <div class="content">
                     <span class="text-ellipsis">{{ item.nickname }}</span>
                   </div>
+
                   <div class="checkbox">
-                    <n-icon :size="16" color="red" :component="DeleteMode" />
+                    <n-icon :size="16" :component="Delete" />
                   </div>
                 </div>
               </div>
@@ -273,14 +291,14 @@ onLoad()
   .friend-items {
     height: 100%;
     overflow-y: auto;
-    padding: 0 10px;
+    padding: 0 6px;
 
     .friend-item {
       height: 40px;
       box-sizing: border-box;
       display: flex;
       flex-direction: row;
-      margin: 5px 0;
+      margin: 5px 10px;
 
       > div {
         display: flex;

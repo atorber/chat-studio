@@ -2,6 +2,8 @@
 const { app, BrowserWindow, ipcMain, Menu, MenuItem } = require('electron')
 const path = require('path')
 
+const { shell } = require('electron')
+
 const NODE_ENV = process.env.NODE_ENV
 
 function loadHtmlUrl() {
@@ -13,10 +15,10 @@ function loadHtmlUrl() {
 function createWindow() {
   // 创建浏览器窗口
   const win = new BrowserWindow({
-    width: 900,
-    height: 700,
+    width: 1200,
+    height: 800,
     minWidth: 900,
-    minHeight: 700,
+    minHeight: 600,
     frame: false,
     titleBarStyle: 'hidden',
     webPreferences: {
@@ -82,4 +84,9 @@ ipcMain.on('ipc:set-badge', async (event, num) => {
   if (process.platform === 'darwin') {
     app.dock.setBadge(num > 99 ? '99+' : num)
   }
+})
+
+ipcMain.on('ipc:open-link', async (event, link) => {
+  // Open a link in the default browser
+  shell.openExternal(link)
 })

@@ -1,6 +1,6 @@
 <script setup>
-import { Male, Female, ShareThree } from '@icon-park/vue-next'
-import { defAvatar } from '@/constant/default'
+import { Male, Female, SendOne } from '@icon-park/vue-next'
+
 const emit = defineEmits(['to-talk'])
 
 defineProps({
@@ -30,12 +30,7 @@ defineProps({
 <template>
   <div class="items-box pointer">
     <div class="left-item">
-      <div v-if="avatar" class="avatar flex-center">
-        <n-avatar :src="avatar" :size="40" round :fallback-src="defAvatar" />
-      </div>
-      <div v-else class="avatar flex-center">
-        {{ username.substring(0, 1) }}
-      </div>
+      <im-avatar :src="avatar" :size="40" :username="username" />
     </div>
 
     <div class="right-item">
@@ -45,8 +40,8 @@ defineProps({
         </span>
 
         <div v-if="gender > 0">
+          <n-icon v-if="gender == 1" :component="Male" color="#508afe" />
           <n-icon v-if="gender == 2" :component="Female" color="#ff5722" />
-          <n-icon v-else :component="Male" color="#508afe" />
         </div>
       </div>
 
@@ -55,7 +50,7 @@ defineProps({
       <div class="helper">
         <div class="status">{{ flag }}</div>
         <div class="tool">
-          <n-icon :component="ShareThree" @click.stop="emit('to-talk')" />
+          <n-icon :component="SendOne" @click.stop="emit('to-talk')" />
         </div>
       </div>
     </div>
@@ -66,7 +61,7 @@ defineProps({
   display: flex;
   width: 100%;
   min-height: 50px;
-  border: 1px solid #efefef;
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 10px;
   box-sizing: border-box;
@@ -104,6 +99,7 @@ defineProps({
       height: 20px;
       font-size: 12px;
       color: #8f959e;
+      margin-top: 3px;
     }
 
     .helper {

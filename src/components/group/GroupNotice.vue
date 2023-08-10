@@ -53,10 +53,9 @@ onLoadData()
     v-model:show="isShow"
     preset="card"
     :title="title"
-    size="huge"
     :bordered="false"
-    style="max-width: 550px; border-radius: 10px"
-    class="o-hidden"
+    style="max-width: 500px"
+    class="modal-radius o-hidden"
     :on-after-leave="onMaskClick"
     :segmented="{
       content: true,
@@ -80,7 +79,7 @@ onLoadData()
       </n-empty>
     </div>
 
-    <div v-else class="main-box me-scrollbar">
+    <div v-else class="main-box me-scrollbar me-scrollbar-thumb">
       <div v-for="item in state.items" :key="item.id" class="items">
         <div class="title text-ellipsis">
           {{ item.title }}
@@ -97,7 +96,7 @@ onLoadData()
         </div>
 
         <div class="detail" v-show="item.isShow">
-          <span>#详情#</span> {{ item.content }}
+          {{ item.content }}
         </div>
       </div>
     </div>
@@ -110,12 +109,13 @@ onLoadData()
   width: 100%;
   padding: 15px;
   box-sizing: border-box;
+  overflow-y: auto;
 
   .items {
     min-height: 80px;
     width: 100%;
     margin-bottom: 15px;
-    border-bottom: 1px solid #f5eded;
+    border-bottom: 1px solid var(--border-color);
 
     .title {
       height: 30px;
@@ -130,15 +130,6 @@ onLoadData()
       display: flex;
       align-items: center;
       position: relative;
-
-      .nickname {
-        margin-left: 8px;
-        color: #2196f3;
-        font-weight: 400;
-        font-size: 13px;
-        max-width: 100px;
-        cursor: pointer;
-      }
 
       .datetime {
         margin-left: 10px;
@@ -163,6 +154,7 @@ onLoadData()
       min-height: 30px;
       width: 100%;
       margin: 15px 0;
+      font-size: 13px;
       span {
         color: #887f7f;
       }

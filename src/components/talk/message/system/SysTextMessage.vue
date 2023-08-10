@@ -4,15 +4,17 @@ defineProps({
   data: Object,
 })
 </script>
+
 <template>
-  <div class="system-text-message">
+  <div class="im-message-system-text">
     <div class="content">
       {{ data.content }}
     </div>
   </div>
 </template>
+
 <style lang="less" scoped>
-.system-text-message {
+.im-message-system-text {
   display: flex;
   justify-content: center;
 
@@ -29,6 +31,15 @@ defineProps({
     font-weight: 300;
     display: inline-block;
     border-radius: 3px;
+  }
+}
+
+html[data-theme='dark'] {
+  .im-message-system-text {
+    .content {
+      background: unset;
+      color: unset;
+    }
   }
 }
 </style>

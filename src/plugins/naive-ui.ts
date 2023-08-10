@@ -11,10 +11,11 @@ import {
   NAvatar,
   NIcon,
   NInput,
-  NConfigProvider,
   NSpin,
   NEmpty,
-  NModal
+  NModal,
+  NTag,
+  NSpace
 } from 'naive-ui'
 
 // 按需全局安装组件
@@ -29,10 +30,11 @@ const naive = create({
     NAvatar,
     NIcon,
     NInput,
-    NConfigProvider,
     NSpin,
     NEmpty,
-    NModal
+    NModal,
+    NTag,
+    NSpace
   ],
 })
 

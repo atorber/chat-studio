@@ -36,8 +36,8 @@ const onMaskClick = () => {
     v-model:show="isShowBox"
     preset="card"
     title="群管理"
-    class="o-hidden"
-    style="max-width: 800px; border-radius: 10px"
+    class="modal-radius"
+    style="max-width: 800px"
     :on-after-leave="onMaskClick"
     :segmented="{
       content: true,
@@ -59,9 +59,11 @@ const onMaskClick = () => {
       </aside>
 
       <main class="el-main">
-        <KeepAlive>
-          <component :is="menus[tabIndex].component" :id="gid" />
-        </KeepAlive>
+        <component
+          :is="menus[tabIndex].component"
+          :id="gid"
+          @close="onMaskClick"
+        />
       </main>
     </section>
   </n-modal>
@@ -80,7 +82,7 @@ const onMaskClick = () => {
   margin: 16px 0px;
   font-weight: 400;
   font-size: 14px;
-  border-right: 3px solid white;
+  border-right: 3px solid transparent;
   text-align: center;
 
   &.selectd {

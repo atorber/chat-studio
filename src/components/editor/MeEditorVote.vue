@@ -9,7 +9,7 @@ import {
   NSpace,
   NRadio,
 } from 'naive-ui'
-import { DeleteMode } from '@icon-park/vue-next'
+import { Delete } from '@icon-park/vue-next'
 const emit = defineEmits(['close', 'submit'])
 
 const isShow = ref(true)
@@ -17,17 +17,7 @@ const model = reactive({
   mode: 0,
   anonymous: 0,
   title: '',
-  options: [
-    {
-      value: '',
-    },
-    {
-      value: '',
-    },
-    {
-      value: '',
-    },
-  ],
+  options: [{ value: '' }, { value: '' }, { value: '' }],
 })
 
 const onMaskClick = () => {
@@ -67,9 +57,8 @@ const isCanSubmit = computed(() => {
     v-model:show="isShow"
     preset="card"
     title="发起投票"
-    size="huge"
-    :bordered="false"
-    style="max-width: 450px; border-radius: 10px"
+    class="modal-radius"
+    :style="{ maxWidth: '450px' }"
     :on-after-leave="onMaskClick"
   >
     <n-form>
@@ -106,14 +95,14 @@ const isCanSubmit = computed(() => {
               v-model:value="option.value"
             >
               <template #prefix>
-                <span style="color: #ccc"
-                  >{{ String.fromCharCode(65 + i) }}.</span
-                >
+                <span style="color: #ccc">
+                  {{ String.fromCharCode(65 + i) }}.
+                </span>
               </template>
             </n-input>
 
             <div class="btn flex-center pointer" @click="delOption(i)">
-              <n-icon size="20" :component="DeleteMode" />
+              <n-icon size="16" :component="Delete" />
             </div>
           </div>
 
@@ -123,7 +112,7 @@ const isCanSubmit = computed(() => {
             @click="addOption"
             v-if="model.options.length < 6"
           >
-            +添加选项
+            添加选项
           </n-button>
         </div>
       </n-form-item>

@@ -25,7 +25,7 @@ defineProps({
 })
 </script>
 <template>
-  <div class="revoke-message">
+  <div class="im-message-revoke">
     <div class="content">
       <span v-if="login_uid == user_id">
         你撤回了一条消息 | {{ formatTime(datetime) }}
@@ -41,7 +41,7 @@ defineProps({
   </div>
 </template>
 <style lang="less" scoped>
-.revoke-message {
+.im-message-revoke {
   display: flex;
   justify-content: center;
 
@@ -62,16 +62,13 @@ defineProps({
     span {
       margin: 0 5px;
     }
+  }
+}
 
-    a {
-      color: #939596;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 400;
-
-      &:hover {
-        color: black;
-      }
+html[data-theme='dark'] {
+  .im-message-revoke {
+    .content {
+      background: unset;
     }
   }
 }
