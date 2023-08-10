@@ -1,26 +1,12 @@
-import { reactive } from 'vue'
+import { reactive, nextTick } from 'vue'
 
 interface IDropdown {
-  options: any[]
+  options: DropdownOption[]
   show: boolean
   x: number
   y: number
   item: any
 }
-
-
-const isRevoke = (uid: any, item: any): boolean => {
-  if (uid != item.user_id) {
-    return false
-  }
-
-  let datetime = item.created_at.replace(/-/g, '/')
-
-  let time = new Date().getTime() - Date.parse(datetime)
-
-  return Math.floor(time / 1000 / 60) <= 2
-}
-
 
 export function useMenu() {
 
@@ -33,28 +19,46 @@ export function useMenu() {
   })
 
   const showDropdownMenu = (e: any, uid: number, item: any) => {
+    dropdown.show = false
     dropdown.item = Object.assign({}, item)
+    dropdown.options = [
+      {
+        label: '复制',
+        key: 'copy',
+        disabled: !item.content,
+      },
+      {
+        label: `撤回`,
+        key: 'revoke',
+        disabled: (() => {
+          if (uid != item.user_id) {
+            return true
+          }
 
-    dropdown.options = []
-    if ([1, 3].includes(item.msg_type)) {
-      dropdown.options.push({ label: '复制', key: 'copy' })
-    }
+          let datetime = item.created_at.replace(/-/g, '/')
 
-    if (isRevoke(uid, item)) {
-      dropdown.options.push({ label: `撤回`, key: 'revoke' })
-    }
+          let time = new Date().getTime() - Date.parse(datetime)
 
-    dropdown.options.push({ label: '回复', key: 'quote' })
-    dropdown.options.push({ label: '删除', key: 'delete' })
-    dropdown.options.push({ label: '多选', key: 'multiSelect' })
+          return Math.floor(time / 1000 / 60) > 2
+        })(),
+      },
+      {
+        label: '删除',
+        key: 'delete',
+        disabled: false,
+      },
+      {
+        label: '多选',
+        key: 'multiSelect',
+        disabled: false,
+      },
+    ]
 
-    if ([3, 4, 5].includes(item.msg_type)) {
-      dropdown.options.push({ label: '下载', key: 'download' })
-    }
-
-    dropdown.x = e.clientX
-    dropdown.y = e.clientY
-    dropdown.show = true
+    nextTick(() => {
+      dropdown.show = true
+      dropdown.x = e.clientX
+      dropdown.y = e.clientY
+    })
   }
 
   const closeDropdownMenu = () => {

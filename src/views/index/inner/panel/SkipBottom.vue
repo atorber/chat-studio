@@ -1,51 +1,38 @@
-<script setup lang="ts">
-import { useDialogueStore } from '@/store'
-import { DoubleDown } from '@icon-park/vue-next'
+<script setup>
+import { ExpandDownOne } from '@icon-park/vue-next'
 defineProps(['modelValue'])
-
-const dialogueStore = useDialogueStore()
 </script>
 
 <template>
   <!-- 置底按钮 -->
   <div class="skip-bottom pointer" :class="{ show: modelValue }">
-    <span v-if="dialogueStore.unreadBubble"
-      >{{ dialogueStore.unreadBubble }} 条未读消息</span
-    >
-    <span v-else>回到底部</span>
-    <n-icon size="14" color="#fff" :component="DoubleDown" />
+    <n-icon size="14" color="#fff" :component="ExpandDownOne" />
+    <span>回</span>
+    <span>到</span>
+    <span>底</span>
+    <span>部</span>
   </div>
 </template>
 
 <style lang="less" scoped>
 .skip-bottom {
   position: absolute;
-  right: 58px;
-  bottom: -40px;
-  min-width: 100px;
-  height: 28px;
+  right: -35px;
+  top: 15%;
+  width: 30px;
+  height: 100px;
   font-size: 12px;
   background-color: #1ebafc;
-  color: #ffffff;
+  color: white;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   border-radius: 2px;
-  transition: bottom 1s ease-in-out;
-  border-radius: 10px 10px 0 0;
-
-  span {
-    margin-right: 5px;
-  }
+  transition: right 1s ease-in-out;
 
   &.show {
-    bottom: 0px;
-  }
-}
-
-html[data-theme='dark'] {
-  .skip-bottom {
-    background-color: #2c2c32;
+    right: 0px;
   }
 }
 </style>

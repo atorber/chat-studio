@@ -1,21 +1,17 @@
-<script setup lang="ts">
-import { ref, inject } from 'vue'
+<script setup>
+import { ref } from 'vue'
 import Loading from '@/components/base/Loading.vue'
 import { ServeGetForwardRecords } from '@/api/chat'
 import { MessageComponents } from '@/constant/message'
+import { defAvatar } from '@/constant/default'
 
 const emit = defineEmits(['close'])
 const props = defineProps({
-  pid: {
-    type: String,
-    default: '',
-  },
   recordId: {
     type: Number,
     default: 0,
   },
 })
-const user = inject('$user')
 const isShow = ref(true)
 const records = ref([])
 const title = ref('会话记录')
@@ -25,10 +21,7 @@ const onMaskClick = () => {
 }
 
 const onLoadData = () => {
-  console.log(props.pid)
-
   ServeGetForwardRecords({
-    pid: props.pid,
     record_id: props.recordId,
   }).then(res => {
     if (res.code == 200) {
@@ -47,8 +40,10 @@ onLoadData()
     v-model:show="isShow"
     preset="card"
     :title="title"
-    style="max-width: 500px"
-    class="modal-radius"
+    size="huge"
+    :bordered="false"
+    style="max-width: 550px; border-radius: 10px"
+    class="o-hidden"
     :on-after-leave="onMaskClick"
     :segmented="{
       content: true,
@@ -60,12 +55,12 @@ onLoadData()
       padding: 0,
     }"
   >
-    <div class="main-box me-scrollbar me-scrollbar-thumb">
+    <div class="main-box me-scrollbar">
       <Loading v-if="records.length === 0" />
 
       <div v-for="item in records" :key="item.msg_id" class="message-item">
-        <div class="left-box pointer" @click="user(item.user_id)">
-          <im-avatar :src="item.avatar" :size="30" :username="item.nickname" />
+        <div class="left-box">
+          <n-avatar :size="30" :src="item.avatar || defAvatar" />
         </div>
 
         <div class="right-box">
@@ -78,7 +73,6 @@ onLoadData()
             :is="MessageComponents[item.msg_type] || 'unknown-message'"
             :extra="item.extra"
             :data="item"
-            :pid="pid"
           />
         </div>
       </div>
@@ -107,20 +101,24 @@ onLoadData()
   }
 
   .right-box {
-    width: 100%;
+    flex: auto;
     overflow-x: auto;
-    padding: 0px 5px 15px 5px;
-    box-sizing: border-box;
     height: fit-content;
+    margin-left: 10px;
 
     .msg-header {
       height: 30px;
       line-height: 30px;
       font-size: 12px;
+      color: #a09a9a;
       position: relative;
       user-select: none;
       display: flex;
       justify-content: space-between;
+
+      .name {
+        color: #333;
+      }
     }
   }
 }

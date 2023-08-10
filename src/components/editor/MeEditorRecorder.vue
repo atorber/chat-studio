@@ -71,8 +71,9 @@ onUnmounted(() => {
     v-model:show="isShow"
     preset="card"
     title="语音录制"
-    class="modal-radius"
-    style="max-width: 450px"
+    size="huge"
+    :bordered="false"
+    style="max-width: 450px; border-radius: 10px"
     :on-after-leave="onMaskClick"
     :mask-closable="false"
   >

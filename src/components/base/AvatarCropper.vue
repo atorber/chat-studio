@@ -19,7 +19,7 @@ const option = reactive({
   size: 1,
   full: false,
   outputType: 'png',
-  canMove: true,
+  canMove: false,
   fixedBox: true,
   original: false,
   canMoveBox: true,
@@ -50,8 +50,6 @@ const onUpload = e => {
     if (typeof e.target.result === 'object') {
       // 把Array Buffer转化为blob 如果是base64不需要
       data = window.URL.createObjectURL(new Blob([e.target.result]))
-
-      console.log(data, e.target.result)
     } else {
       data = e.target.result
     }
@@ -104,15 +102,17 @@ const onSubmit = () => {
   <input
     id="upload-avatar"
     type="file"
-    accept="image/png, image/jpeg, image/jpg, image/webp"
+    accept="image/png, image/jpeg, image/jpg,image/webp"
     @change="onUpload"
   />
   <n-modal v-model:show="state.show" :on-after-leave="onMaskClick">
     <n-card
-      style="width: 800px"
+      style="width: 800px; border-radius: 10px"
       title="选择头像"
       :bordered="false"
-      class="modal-radius"
+      size="huge"
+      role="dialog"
+      aria-modal="true"
     >
       <template #header-extra>
         <n-icon
@@ -162,7 +162,7 @@ const onSubmit = () => {
               padding: 0 5px;
             "
           >
-            <n-button @click="onTriggerUpload" type="primary" ghost>
+            <n-button @click="onTriggerUpload" type="info" ghost>
               上传图片
               <template #icon>
                 <n-icon :component="UploadOne" />
@@ -170,7 +170,7 @@ const onSubmit = () => {
             </n-button>
 
             <n-button @click="refreshCrop">
-              重置
+              刷新
               <template #icon>
                 <n-icon :component="RefreshOne" />
               </template>
@@ -191,7 +191,7 @@ const onSubmit = () => {
             </n-button>
           </aside>
           <main class="el-main" style="text-align: center">
-            <n-button type="primary" @click="onSubmit">保存头像</n-button>
+            <n-button type="info" @click="onSubmit">保存图片</n-button>
           </main>
         </section>
       </template>
@@ -225,7 +225,7 @@ const onSubmit = () => {
       height: 180px;
       border-radius: 20px;
       overflow: hidden;
-      border: 1px solid var(--border-color);
+      border: 1px solid #f1eaea;
 
       img {
         width: 100%;

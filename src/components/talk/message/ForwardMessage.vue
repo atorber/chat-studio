@@ -6,7 +6,6 @@ import { ForwardExtra } from './types'
 const props = defineProps<{
   extra: ForwardExtra
   data: any
-  pid: string
   maxWidth: Boolean
 }>()
 
@@ -19,16 +18,9 @@ const title = computed(() => {
 const onClick = () => {
   isShowRecord.value = true
 }
-
-let pids = props.pid
-if (pids == '' || pids == undefined) {
-  pids = props.data.id
-} else {
-  pids = `${pids},${props.data.id}`
-}
 </script>
 <template>
-  <section class="im-message-forward pointer" @click="onClick">
+  <section class="forward-message pointer" @click="onClick">
     <div class="title">{{ title }} 的会话记录</div>
     <div class="list" v-for="(record, index) in extra.records" :key="index">
       <p>
@@ -44,26 +36,27 @@ if (pids == '' || pids == undefined) {
     <ForwardRecord
       v-if="isShowRecord"
       :record-id="data.id"
-      :pid="pids"
       @close="isShowRecord = false"
     />
   </section>
 </template>
 
 <style lang="less" scoped>
-.im-message-forward {
+.forward-message {
   width: 250px;
   min-height: 95px;
   max-height: 150px;
   border-radius: 10px;
   padding: 8px 10px;
-  border: 1px solid var(--im-message-border-color);
+  border: 1px solid rgb(239 239 245);
   user-select: none;
+  background-color: #ffffff;
 
   .title {
     height: 30px;
     line-height: 30px;
     font-size: 15px;
+    color: #0d1a26;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -86,7 +79,7 @@ if (pids == '' || pids == undefined) {
     height: 32px;
     line-height: 35px;
     color: #8a8888;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid #f5f5f5;
     font-size: 12px;
     margin-top: 12px;
     overflow: hidden;

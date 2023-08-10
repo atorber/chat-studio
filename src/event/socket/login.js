@@ -1,5 +1,5 @@
 import Base from './base'
-import { useTalkStore } from '@/store'
+import { useTalkStore } from '@/store/talk'
 import { useDialogueStore } from '@/store/dialogue'
 
 /**

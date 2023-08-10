@@ -32,7 +32,7 @@ const rules = {
       if (!value) {
         return new Error('确认密码不能为空！')
       } else if (model.newPassword != model.newPassword2) {
-        return new Error('两次密码填写不一致！')
+        return new Error('两次密码输入不一致！')
       }
 
       return true
@@ -52,8 +52,7 @@ const onSubmit = () => {
 
   response.then(res => {
     if (res.code == 200) {
-      window['$message'].success('密码修改成功')
-      emit('update:modelValue', false)
+      window['$message'].success('密码修改成功...')
     } else {
       window['$message'].warning(res.message)
     }
@@ -78,8 +77,8 @@ const onValidate = e => {
     :show="modelValue"
     preset="card"
     title="修改密码？"
-    class="modal-radius"
-    style="max-width: 400px;"
+    size="huge"
+    style="max-width: 400px; border-radius: 10px"
     :on-update:show="
       value => {
         $emit('update:modelValue', value)
@@ -105,7 +104,7 @@ const onValidate = e => {
 
       <n-form-item label="确认新密码" path="newPassword2">
         <n-input
-          placeholder="请再次填写新密码"
+          placeholder="请重复输入新密码"
           type="password"
           v-model:value="model.newPassword2"
         />
@@ -123,7 +122,7 @@ const onValidate = e => {
           :loading="loading"
           @click="onValidate"
         >
-          保存修改
+          立即修改
         </n-button>
       </div>
     </template>

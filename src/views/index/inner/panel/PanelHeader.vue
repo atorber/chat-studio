@@ -1,11 +1,6 @@
 <script setup>
-import {
-  Peoples,
-  Announcement,
-  MenuUnfoldOne,
-  MenuFoldOne,
-} from '@icon-park/vue-next'
-import { useDialogueStore } from '@/store/dialogue'
+import { NDropdown } from 'naive-ui'
+import { More } from '@icon-park/vue-next'
 
 defineProps({
   type: {
@@ -30,28 +25,18 @@ defineProps({
   },
 })
 
-const dialogueStore = useDialogueStore()
 const emit = defineEmits(['evnet'])
 
-const onSetMenu = () => {
-  dialogueStore.isShowSessionList = !dialogueStore.isShowSessionList
+const onEvent = key => {
+  emit('evnet', key)
 }
 </script>
 
 <template>
   <header class="el-header box-header bdr-b">
-    <div class="menu bdr-r pointer" @click="onSetMenu">
-      <n-icon
-        size="22"
-        :component="
-          dialogueStore.isShowSessionList ? MenuUnfoldOne : MenuFoldOne
-        "
-      />
-    </div>
-
     <div class="module left-module">
       <span class="tag" :class="{ red: type == 1 }">
-        {{ type == 1 ? '好友' : '群聊' }}
+        {{ type == 1 ? '好友' : '群组' }}
       </span>
       <span class="nickname">{{ username }}</span>
       <span class="num" v-show="type == 2 && num">({{ num }})</span>
@@ -66,20 +51,26 @@ const onSetMenu = () => {
     </div>
 
     <div class="module right-module">
-      <n-icon
-        v-show="type == 2"
-        :size="18"
-        class="icon"
-        @click="emit('evnet', 'notice')"
-        :component="Announcement"
-      />
-      <n-icon
-        v-show="type == 2"
-        :size="18"
-        class="icon"
-        @click="emit('evnet', 'group')"
-        :component="Peoples"
-      />
+      <n-dropdown
+        trigger="hover"
+        :show-arrow="true"
+        :options="[
+          {
+            label: '群信息',
+            key: 'group',
+            disabled: type == 1,
+          },
+          {
+            label: '群公告',
+            key: 'notice',
+            disabled: type == 1,
+          },
+        ]"
+        placement="bottom-end"
+        @select="onEvent"
+      >
+        <n-icon :size="30" class="icon" :component="More" />
+      </n-dropdown>
     </div>
   </header>
 </template>
@@ -93,17 +84,6 @@ const onSetMenu = () => {
   justify-content: space-between;
   box-sizing: border-box;
   -webkit-app-region: drag;
-  position: relative;
-
-  .menu {
-    width: 50px;
-    position: absolute;
-    // height: inherit;
-    display: flex;
-    align-items: center;
-    left: 0;
-    justify-content: center;
-  }
 
   .module {
     height: 100%;
@@ -113,7 +93,7 @@ const onSetMenu = () => {
 
   .left-module {
     padding-right: 5px;
-    padding-left: 50px;
+    width: 200px;
 
     .tag {
       background: rgb(81 139 254);
@@ -141,8 +121,6 @@ const onSetMenu = () => {
   .center-module {
     flex-direction: column;
     justify-content: center;
-
-    width: 100px;
 
     .online {
       color: #cccccc;

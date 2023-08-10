@@ -9,7 +9,6 @@ export const ChatMsgTypeCard = 8 // 名片消息
 export const ChatMsgTypeForward = 9 // 转发消息
 export const ChatMsgTypeLogin = 10 // 登录消息
 export const ChatMsgTypeVote = 11 // 投票消息
-export const ChatMsgTypeMixed = 12 // 混合消息
 
 export const ChatMsgSysText = 1000 // 系统文本消息
 export const ChatMsgSysGroupCreate = 1101 // 创建群聊消息
@@ -22,7 +21,8 @@ export const ChatMsgSysGroupMuted = 1107 // 群禁言
 export const ChatMsgSysGroupCancelMuted = 1108 // 群解除禁言
 export const ChatMsgSysGroupMemberMuted = 1109 // 群成员禁言
 export const ChatMsgSysGroupMemberCancelMuted = 1110 // 群成员解除禁言
-export const ChatMsgSysGroupNotice = 1111 // 编辑群公告
+export const ChatMsgSysGroupNoticeCreate = 1111 // 创建群公告
+export const ChatMsgSysGroupNoticeUpdate = 1112 // 更新群公告
 export const ChatMsgSysGroupTransfer = 1113 // 变更群主
 
 export const ChatMsgTypeMapping = {
@@ -37,7 +37,6 @@ export const ChatMsgTypeMapping = {
   [ChatMsgTypeLogin]: '[登录消息]',
   [ChatMsgTypeVote]: '[投票消息]',
   [ChatMsgTypeCode]: '[代码消息]',
-  [ChatMsgTypeMixed]: '[图文消息]',
   [ChatMsgSysText]: '[系统消息]',
   [ChatMsgSysGroupCreate]: '[创建群消息]',
   [ChatMsgSysGroupMemberJoin]: '[加入群消息]',
@@ -49,7 +48,6 @@ export const ChatMsgTypeMapping = {
   [ChatMsgSysGroupCancelMuted]: '[群解除禁言消息]',
   [ChatMsgSysGroupMemberMuted]: '[群成员禁言消息]',
   [ChatMsgSysGroupMemberCancelMuted]: '[群成员解除禁言消息]',
-  [ChatMsgSysGroupNotice]: '[群公告]',
 }
 
 // 消息类型 - 消息组件 映射关系
@@ -65,7 +63,6 @@ export const MessageComponents = {
   [ChatMsgTypeLogin]: 'login-message',
   [ChatMsgTypeVote]: 'vote-message',
   [ChatMsgTypeCode]: 'code-message',
-  [ChatMsgTypeMixed]: 'mixed-message',
   [ChatMsgSysText]: 'sys-text-message',
   [ChatMsgSysGroupCreate]: 'sys-group-create-message',
   [ChatMsgSysGroupMemberJoin]: 'sys-group-join-message',
@@ -73,12 +70,11 @@ export const MessageComponents = {
   [ChatMsgSysGroupMemberKicked]: 'sys-group-member-kicked-message',
   // [ChatMsgSysGroupMessageRevoke]: '[撤回消息]',
   // [ChatMsgSysGroupDismissed]: '[群解散消息]',
-  [ChatMsgSysGroupMuted]: 'sys-group-muted-message',
-  [ChatMsgSysGroupCancelMuted]: 'sys-group-cancel-muted-message',
+  // [ChatMsgSysGroupMuted]: '[群禁言消息]',
+  // [ChatMsgSysGroupCancelMuted]: '[群解除禁言消息]',
   [ChatMsgSysGroupMemberMuted]: 'sys-group-member-muted-message',
   [ChatMsgSysGroupMemberCancelMuted]: 'sys-group-member-cancel-muted-message',
   [ChatMsgSysGroupTransfer]: 'sys-group-transfer-message',
-  [ChatMsgSysGroupNotice]: 'Group-notice-message',
 }
 
 // 可转发的消息类型
@@ -91,5 +87,4 @@ export const ForwardableMessageType = [
   ChatMsgTypeFile,
   ChatMsgTypeLocation,
   ChatMsgTypeCard,
-  // ChatMsgTypeForward
 ]

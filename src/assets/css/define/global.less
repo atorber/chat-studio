@@ -139,7 +139,6 @@ textarea {
 .me-scrollbar {
   &::-webkit-scrollbar {
     width: 3px;
-    height: 3px;
     background-color: transparent;
   }
 
@@ -150,36 +149,30 @@ textarea {
 
   &:hover {
     &::-webkit-scrollbar {
-      background-color: var(--im-scrollbar);
+      background-color: #e4e4e5;
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: var(--im-scrollbar-thumb);
-    }
-  }
-
-  &.me-scrollbar-thumb {
-    &::-webkit-scrollbar {
-      background-color: unset;
+      background-color: #c0bebc;
     }
   }
 }
 
 // 全局边框
 .bdr-t {
-  border-top: 1px solid var(--line-border-color);
+  border-top: 1px solid var(--border-color);
 }
 
 .bdr-r {
-  border-right: 1px solid var(--line-border-color);
+  border-right: 1px solid var(--border-color);
 }
 
 .bdr-b {
-  border-bottom: 1px solid var(--line-border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .bdr-l {
-  border-left: 1px solid var(--line-border-color);
+  border-left: 1px solid var(--border-color);
 }
 
 .badge {
@@ -193,7 +186,7 @@ textarea {
   cursor: default;
   user-select: none;
   background-color: #dee0e3;
-  transform: scale(0.84);
+  transform: scale(0.83);
   transform-origin: left;
   flex-shrink: 0;
 }
@@ -244,16 +237,4 @@ textarea {
   color: #2196f3;
   padding: 0 2px;
   cursor: pointer;
-}
-
-.modal-radius {
-  // border-radius: 10px;
-}
-
-.n-drawer-container {
-  overflow: hidden;
-}
-
-.xg-options-list {
-  overflow: hidden !important;
 }

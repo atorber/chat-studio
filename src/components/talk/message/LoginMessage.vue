@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 defineProps({
   extra: Object,
   data: Object,
@@ -40,7 +40,7 @@ function getExploreOs(userAgent = '') {
 }
 </script>
 <template>
-  <section class="im-message-login">
+  <section class="login-message">
     <h4>登录操作通知</h4>
     <p>登录时间：{{ extra.datetime }} (CST)</p>
     <p>IP 地址：{{ extra.ip }}</p>
@@ -53,18 +53,16 @@ function getExploreOs(userAgent = '') {
   </section>
 </template>
 <style lang="less" scoped>
-.im-message-login {
+.login-message {
   width: 300px;
   min-height: 50px;
-  background: var(--im-message-bg-color);
+  background: #f7f7f7;
   border-radius: 5px;
   padding: 15px;
-  color: var(--im-text-color);
 
   p {
     font-size: 13px;
     margin: 10px 0;
-
     &:last-child {
       margin-bottom: 0;
     }

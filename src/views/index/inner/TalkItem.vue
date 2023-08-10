@@ -1,6 +1,7 @@
 <script setup>
 import { ArrowUp, ArrowDown, CloseRemind } from '@icon-park/vue-next'
 import Xtime from '@/components/base/Xtime.vue'
+import { defAvatar } from '@/constant/default'
 
 const emit = defineEmits(['tab-talk', 'top-talk'])
 
@@ -26,12 +27,16 @@ defineProps({
 
 <template>
   <div
-    class="talk pointer"
+    class="talk pointer" 
     :class="{ actived: active }"
     @click="emit('tab-talk', data)"
   >
     <div class="avatar-box">
-      <im-avatar :src="avatar" :size="34" :username="data.name" />
+      <n-avatar v-if="avatar" :src="avatar" :fallback-src="defAvatar" />
+      <n-avatar v-else :style="{ color: 'white', backgroundColor: '#508afe' }">
+        {{ username && username.substring(0, 1) }}
+      </n-avatar>
+
       <div class="top-mask" @click.stop="emit('top-talk', data)">
         <n-icon :component="data.is_top == 1 ? ArrowDown : ArrowUp" />
       </div>
@@ -41,9 +46,12 @@ defineProps({
       <div class="header">
         <div class="title">
           <span class="nickname">{{ username }}</span>
-          <span class="badge top" v-show="data.is_top">顶</span>
-          <span class="badge roboot" v-show="data.is_robot">助</span>
-          <span class="badge group" v-show="data.talk_type == 2">群</span>
+          <span class="badge top" v-show="data.is_top">TOP</span>
+          <span class="badge roboot" v-show="data.is_robot">BOT</span>
+          <span class="badge group" v-show="data.talk_type == 2">群组</span>
+          <span class="disturb" v-show="data.is_disturb">
+            <n-icon :component="CloseRemind" />
+          </span>
         </div>
         <div class="datetime"><Xtime :time="data.updated_at" /></div>
       </div>
@@ -52,29 +60,24 @@ defineProps({
         <div class="text">
           <template v-if="!active && data.draft_text">
             <span class="draft">[草稿]</span>
-            <span class="detail" v-html="data.draft_text" />
+            <span v-html="data.draft_text" />
           </template>
           <template v-else>
             <span
               class="online"
-              v-show="data.talk_type == 1 && data.is_online == 1"
+              v-show="
+                data.is_robot == 0 && data.talk_type == 1 && data.is_online == 1
+              "
+              >[在线]</span
             >
-              [在线]
-            </span>
-            <span class="detail" v-html="data.msg_text" />
+            <!-- <span v-html="data.msg_text" /> -->
+            <span>{{ data.msg_text.replace(/\r?\n|<br\/?>/gi, ' ') }}</span>
           </template>
         </div>
-
-        <div class="tip">
-          <div v-if="data.is_disturb" class="disturb">
-            <n-icon :component="CloseRemind" />
-          </div>
-
-          <div v-else class="unread" v-show="data.unread_num">
-            <span class="badge">
-              {{ data.unread_num > 99 ? '99+' : data.unread_num }}
-            </span>
-          </div>
+        <div class="unread" v-show="data.unread_num">
+          <span class="badge">
+            {{ data.unread_num > 99 ? '99+' : data.unread_num }}
+          </span>
         </div>
       </div>
     </div>
@@ -94,11 +97,13 @@ defineProps({
   .avatar-box {
     height: 34px;
     width: 34px;
+    background-color: #508afe;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 14px;
+    color: white;
     user-select: none;
     transition: ease 1s;
     position: relative;
@@ -111,7 +116,7 @@ defineProps({
       position: absolute;
       top: 0;
       left: 0;
-      color: #ffffff;
+      color: white;
       display: none;
       align-items: center;
       justify-content: center;
@@ -148,7 +153,7 @@ defineProps({
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          margin-right: 5px;
+          margin-right: 3px;
         }
       }
 
@@ -165,67 +170,50 @@ defineProps({
       height: 20px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
 
       .text {
-        overflow: hidden;
         font-weight: 300;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         font-size: 12px;
         color: #8f959e;
-        display: flex;
+        flex: 1 auto;
 
         .draft {
           color: red;
           padding-right: 3px;
-          flex-shrink: 0;
         }
-
         .online {
           color: #8bc34a;
           padding-right: 3px;
-          flex-shrink: 0;
-        }
-
-        .detail {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
         }
       }
 
-      .tip {
-        height: inherit;
-        display: flex;
-        padding-left: 5px;
-        align-items: center;
+      .unread {
+        color: #8f959e;
+        font-size: 12px;
+        user-select: none;
 
-        .unread {
-          color: #8f959e;
-          font-size: 12px;
-          user-select: none;
-
-          .badge {
-            background-color: #f44336;
-            color: #ffffff;
-            border-radius: 3px;
-            transform-origin: right;
-          }
-        }
-
-        .disturb {
-          color: #8f959e;
-          font-size: 12px;
-          user-select: none;
+        .badge {
+          background-color: #f44336;
+          color: #ffffff;
+          border-radius: 3px;
+          transform-origin: right;
         }
       }
     }
   }
 
-  --actived-bg: #ececec;
-
   &:hover,
   &.actived {
-    background-color: var(--actived-bg);
+    background-color: #ececec;
+  }
+
+  &.actived {
+    .avatar-box {
+      border-radius: 5px;
+    }
   }
 }
 
@@ -246,17 +234,10 @@ defineProps({
   }
 }
 
-html[data-theme='dark'] {
-  .talk {
-    --actived-bg: rgb(44, 44, 50);
-
-    .nickname {
-      color: #ffffff;
-    }
-  }
-
-  .disturb {
-    color: #ffffff;
-  }
+.disturb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
 }
 </style>

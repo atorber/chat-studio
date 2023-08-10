@@ -41,7 +41,7 @@ defineProps({
         </router-link>
       </aside>
       <main class="el-main router-view">
-        <router-view />
+        <router-view> </router-view>
       </main>
     </section>
   </section>
@@ -66,8 +66,7 @@ defineProps({
 
     a {
       text-decoration: none;
-      // color: rgba(0, 0, 0, 0.65);
-      color: var(--im-text-color);
+      color: rgba(0, 0, 0, 0.65);
     }
 
     .menu {
@@ -78,7 +77,7 @@ defineProps({
       margin: 8px 2px;
       display: flex;
       align-items: center;
-      color: var(--im-text-color);
+      color: rgb(38, 38, 38);
 
       > div {
         height: 100%;
@@ -106,10 +105,11 @@ defineProps({
         }
       }
 
+      &:hover,
       &.selectd {
-        background-color: var(--im-hover-bg-color);
+        color: #2196f3;
+        background-color: #e8f4ff;
         font-weight: 400;
-        color: var(--im-primary-color);
       }
     }
   }

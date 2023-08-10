@@ -1,28 +1,24 @@
 <script setup>
 import '@icon-park/vue-next/styles/index.css'
-import { provide, ref, computed } from 'vue'
-import { IconProvider, DEFAULT_ICON_CONFIGS } from '@icon-park/vue-next'
+import { watchEffect, provide } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore, useNotifyStore, useTalkStore } from '@/store'
+import socket from '@/socket'
+import { listener } from './listener'
+import hljs from 'highlight.js/lib/core'
+import { overrides } from '@/constant/theme'
 import {
   NNotificationProvider,
   NMessageProvider,
   NDialogProvider,
-  NConfigProvider,
   zhCN,
   dateZhCN,
-  darkTheme,
-  NLayout,
-  NLayoutHeader,
-  NLayoutContent,
-  NLayoutFooter,
 } from 'naive-ui'
-import hljs from 'highlight.js/lib/core'
-import { useUserStore, useNotifyStore } from '@/store'
-import socket from '@/socket'
-import { listener } from '@/listener'
-import { overrides } from '@/constant/theme'
-import { isLoggedIn } from '@/utils/auth'
 import { NotificationApi, MessageApi, DialogApi } from '@/components/common'
+import { isLoggedIn } from '@/utils/auth'
+import { modal, isElectronMode } from '@/utils/common'
 import UserCardModal from '@/components/user/UserCardModal.vue'
+import { IconProvider, DEFAULT_ICON_CONFIGS } from '@icon-park/vue-next'
 
 IconProvider({
   ...DEFAULT_ICON_CONFIGS,
@@ -32,34 +28,14 @@ IconProvider({
   strokeLinejoin: 'bevel',
 })
 
-const isShowUser = ref(false)
-const showUserId = ref(0)
-
-provide('$user', uid => {
-  showUserId.value = uid
-  isShowUser.value = true
+provide('showUserModal', uid => {
+  modal(UserCardModal, { uid })
 })
 
-const userStore = useUserStore()
 const notifyStore = useNotifyStore()
-
-const getDarkTheme = computed(() => {
-  let theme = notifyStore.darkTheme ? 'dark' : 'light'
-
-  document.querySelector('html').dataset.theme = theme
-  document.querySelector('html').style = ''
-
-  return notifyStore.darkTheme ? darkTheme : undefined
-})
-
-const getThemeOverride = computed(() => {
-  if (notifyStore.darkTheme) {
-    overrides.common.bodyColor = '#202124'
-    overrides.common.baseColor = '#ffffff'
-  }
-
-  return overrides
-})
+const userStore = useUserStore()
+const useTalk = useTalkStore()
+const router = useRouter()
 
 if (isLoggedIn()) {
   socket.connect()
@@ -67,6 +43,23 @@ if (isLoggedIn()) {
 }
 
 listener()
+
+watchEffect(() => {
+  if (notifyStore.isLeaveWeb) {
+    return
+  }
+
+  const pathname = router.currentRoute.value.path
+
+  let paths = ['/auth/login', '/auth/register', '/auth/forget']
+  if (!paths.includes(pathname) && isLoggedIn()) {
+    !socket.isConnect() && socket.connect()
+  }
+})
+
+if (isElectronMode()) {
+  watchEffect(() => electron.setBadge(useTalk.talkUnreadNum))
+}
 </script>
 
 <template>
@@ -77,10 +70,10 @@ listener()
 
   <!-- 调整 naive-ui 的字重配置 -->
   <n-config-provider
-    :theme="getDarkTheme"
-    :theme-overrides="getThemeOverride"
+    :theme-overrides="overrides"
     :locale="zhCN"
     :date-locale="dateZhCN"
+    inline-theme-disabled
     :hljs="hljs"
   >
     <n-message-provider>
@@ -95,10 +88,6 @@ listener()
       <dialog-api />
     </n-dialog-provider>
 
-    <n-layout-content>
-      <router-view />
-
-      <UserCardModal v-model:show="isShowUser" v-model:uid="showUserId" />
-    </n-layout-content>
+    <router-view />
   </n-config-provider>
 </template>

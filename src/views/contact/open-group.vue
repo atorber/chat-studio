@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, reactive } from 'vue'
 import { NAlert } from 'naive-ui'
 import { ServeGroupOvertList } from '@/api/group'
@@ -6,6 +6,7 @@ import GroupApply from '@/components/group/GroupApply.vue'
 import GroupCard from './inner/GroupCard.vue'
 import { Search, AddOne } from '@icon-park/vue-next'
 import { debounce } from '@/utils/common'
+import { toTalk } from '@/utils/talk'
 
 const apply = reactive({
   isShow: false,
@@ -60,9 +61,13 @@ const onSearchInput = debounce(value => {
   onLoadData()
 }, 300)
 
-const onJoin = (item: any) => {
-  apply.isShow = true
+const onToTalk = item => {
+  toTalk(2, item.id)
+}
+
+const onJoin = item => {
   apply.groupId = item.id
+  apply.isShow = true
 }
 
 onLoadData()
@@ -73,7 +78,7 @@ onLoadData()
     <main class="el-main">
       <section class="el-container is-vertical height100">
         <header class="el-header from-header bdr-b">
-          <div>公开群聊({{ items.length }})</div>
+          <div>公开群列表({{ items.length }})</div>
           <div>
             <n-input
               placeholder="搜索"
@@ -97,9 +102,9 @@ onLoadData()
           </n-empty>
         </main>
 
-        <main class="el-main me-scrollbar me-scrollbar-thumb pd-10" v-else>
+        <main class="el-main me-scrollbar pd-10" v-else>
           <n-alert type="info" :bordered="false" closable class="mt-b10">
-            公开群聊可自行添加入群申请，待群主（管理员）同意后方可入群！
+            公开群组可自行添加入群申请，待群主（管理员）同意后方可入群！
           </n-alert>
 
           <div class="cards">
@@ -110,6 +115,9 @@ onLoadData()
               :gender="item.gender"
               :motto="item.profile"
               :flag="item.count + '/' + item.max_num"
+              :is-member="false"
+              @click="onInfo(item)"
+              @talk="onToTalk(item)"
               @join="onJoin(item)"
             />
 
@@ -118,7 +126,7 @@ onLoadData()
               class="flex-center more"
               @click="onLoadMore"
             >
-              <n-icon :component="AddOne" />
+              <n-icon :component="AddOne" @click.stop="emit('join')" />
 
               &nbsp;加载更多
             </div>
@@ -151,7 +159,7 @@ onLoadData()
   gap: 12px;
 
   .more {
-    border: 1px solid var(--border-color);
+    border: 1px solid #cccccc;
     border-radius: 10px;
     cursor: pointer;
     min-height: 97px;

@@ -1,26 +1,27 @@
-<script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
-import { NIcon, NModal, NButton, NInput, NDropdown, NPopover } from 'naive-ui'
-import { CloseOne, Male, Female, SendOne } from '@icon-park/vue-next'
-import { ServeSearchUser } from '@/api/contact'
+<script setup>
+import { ref, reactive, computed } from 'vue'
+import { NIcon, NModal, NButton, NInput, NAvatar, NDropdown } from 'naive-ui'
+import { AddOne, CloseOne, Send } from '@icon-park/vue-next'
+import { ServeSearchUser } from '@/api/contacts'
 import { toTalk } from '@/utils/talk'
-import { ServeCreateContact } from '@/api/contact'
-import {
-  ServeContactGroupList,
-  ServeContactMoveGroup,
-  ServeEditContactRemark,
-} from '@/api/contact'
-
-const emit = defineEmits(['update:show', 'update:uid'])
+import { ServeCreateContact } from '@/api/contacts'
+import { defAvatar } from '@/constant/default'
+import { ServeContactGroupList, ServeContactMoveGroup } from '@/api/contacts'
 
 const props = defineProps({
-  show: Boolean,
-  uid: Number,
+  uid: {
+    type: Number,
+    default: 0,
+  },
+  remove: {
+    type: Function,
+    default: () => {},
+  },
 })
 
-const loading = ref(true)
 const isOpenFrom = ref(false)
-const state: any = reactive({
+const showModal = ref(false)
+const state = reactive({
   id: 0,
   avatar: '',
   gender: 0,
@@ -33,12 +34,9 @@ const state: any = reactive({
   text: '',
 })
 
-const editCardPopover: any = ref(false)
-const modelRemark = ref('')
-
-const options = ref<any>([])
+const options = reactive([])
 const groupName = computed(() => {
-  const item = options.value.find((item: any) => {
+  const item = options.find(item => {
     return item.key == state.group_id
   })
 
@@ -55,21 +53,17 @@ const onLoadData = () => {
   }).then(({ code, data }) => {
     if (code == 200) {
       Object.assign(state, data)
-
-      modelRemark.value = state.remark
-
-      loading.value = false
+      showModal.value = true
     } else {
-      window['$message'].info('用户信息不存在', { showIcon: false })
+      window['$message'].info('用户信息不存在！', { showIcon: false })
     }
   })
 
   ServeContactGroupList().then(res => {
     if (res.code == 200) {
       let items = res.data.items || []
-      options.value = []
       for (const iter of items) {
-        options.value.push({ label: iter.name, key: iter.id })
+        options.push({ label: iter.name, key: iter.id })
       }
     }
   })
@@ -77,12 +71,12 @@ const onLoadData = () => {
 
 const onToTalk = () => {
   toTalk(1, props.uid)
-  emit('update:show', false)
+  props.remove()
 }
 
 const onJoinContact = () => {
   if (!state.text.length) {
-    return window['$message'].info('备注信息不能为空')
+    return window['$message'].info('备注信息不能为空！')
   }
 
   ServeCreateContact({
@@ -91,24 +85,9 @@ const onJoinContact = () => {
   }).then(res => {
     if (res.code == 200) {
       isOpenFrom.value = false
-      window['$message'].success('申请发送成功')
+      window['$message'].success('申请发送成功！')
     } else {
       window['$message'].error(res.message)
-    }
-  })
-}
-
-const onChangeRemark = () => {
-  ServeEditContactRemark({
-    friend_id: props.uid,
-    remark: modelRemark.value,
-  }).then(({ code, message }) => {
-    if (code == 200) {
-      editCardPopover.value.setShow(false)
-      window['$message'].success('备注成功')
-      state.remark = modelRemark.value
-    } else {
-      window['$message'].error(message)
     }
   })
 }
@@ -120,85 +99,54 @@ const handleSelectGroup = value => {
   }).then(({ code, message }) => {
     if (code == 200) {
       state.group_id = value
-      window['$message'].success('分组修改成功')
+      window['$message'].success('分组修改成功！')
     } else {
       window['$message'].error(message)
     }
   })
 }
 
-const reset = () => {
-  loading.value = true
-
-  Object.assign(state, {
-    id: 0,
-    avatar: '',
-    gender: 0,
-    mobile: '',
-    motto: '',
-    nickname: '',
-    remark: '',
-    email: '',
-    status: 1,
-    text: '',
-  })
-
-  isOpenFrom.value = false
-}
-
-const onUpdate = value => {
-  if (!value) {
-    setTimeout(reset, 100)
-  }
-
-  emit('update:show', value)
-}
-
-const onAfterEnter = () => {
-  onLoadData()
-}
+onLoadData()
 </script>
 
 <template>
   <n-modal
-    :show="show"
-    :on-update:show="onUpdate"
-    :on-after-enter="onAfterEnter"
+    v-model:show="showModal"
+    :on-mask-click="
+      () => {
+        props.remove()
+      }
+    "
+    transform-origin="center"
   >
-    <div class="section" v-loading="loading">
-      <section class="el-container container is-vertical">
+    <div class="section">
+      <section class="el-container container is-vertical height100">
         <header class="el-header header">
-          <im-avatar
+          <n-avatar
+            round
             class="avatar"
             :size="100"
-            :src="state.avatar"
-            :username="state.remark || state.nickname"
-            :font-size="30"
+            :src="state.avatar || defAvatar"
+            :fallback-src="defAvatar"
           />
 
-          <div class="gender" v-show="state.gender > 0">
-            <n-icon
-              v-if="state.gender == 1"
-              :component="Male"
-              color="#508afe"
-            />
-            <n-icon
-              v-if="state.gender == 2"
-              :component="Female"
-              color="#ff5722"
-            />
-          </div>
-
-          <div class="close" @click="onUpdate(false)">
+          <div
+            class="close"
+            @click="
+              () => {
+                remove()
+              }
+            "
+          >
             <close-one theme="outline" size="22" fill="#fff" :strokeWidth="2" />
           </div>
 
           <div class="nickname text-ellipsis">
-            {{ state.remark || state.nickname || '未设置昵称' }}
+            {{ state.nickname || '未设置昵称' }}
           </div>
         </header>
 
-        <main class="el-main main me-scrollbar me-scrollbar-thumb">
+        <main class="el-main main me-scrollbar">
           <div class="motto">
             {{ state.motto || '编辑个签，展示我的独特态度。' }}
           </div>
@@ -222,38 +170,9 @@ const onAfterEnter = () => {
             </div>
             <div class="info-item" v-if="state.friend_status == 2">
               <span class="name">备注 :</span>
-              <n-popover
-                trigger="click"
-                placement="top-start"
-                ref="editCardPopover"
-              >
-                <template #trigger>
-                  <span class="text edit pointer text-ellipsis">
-                    {{ state.remark || '未设置' }}&nbsp;&nbsp;
-                  </span>
-                </template>
-
-                <template #header> 设置备注 </template>
-
-                <div style="display: flex">
-                  <n-input
-                    type="text"
-                    placeholder="请填写备注"
-                    :autofocus="true"
-                    maxlength="10"
-                    v-model:value="modelRemark"
-                    @keydown.enter.native="onChangeRemark"
-                  />
-                  <n-button
-                    type="primary"
-                    text-color="#ffffff"
-                    class="mt-l5"
-                    @click="onChangeRemark"
-                  >
-                    确定
-                  </n-button>
-                </div>
-              </n-popover>
+              <span class="text edit pointer">
+                {{ state.remark || '未设置' }}&nbsp;&nbsp;
+              </span>
             </div>
             <div class="info-item">
               <span class="name">邮箱 :</span>
@@ -263,7 +182,7 @@ const onAfterEnter = () => {
               <span class="name">分组 :</span>
               <n-dropdown
                 trigger="click"
-                placement="top-start"
+                placement="bottom-start"
                 :show-arrow="true"
                 :options="options"
                 @select="handleSelectGroup"
@@ -280,14 +199,13 @@ const onAfterEnter = () => {
         >
           <n-button
             round
-            block
             type="primary"
-            text-color="#ffffff"
+            color="#1890ff"
+            block
             @click="onToTalk"
-            style="width: 91%"
           >
             <template #icon>
-              <n-icon :component="SendOne" />
+              <n-icon :component="Send" />
             </template>
             发送消息
           </n-button>
@@ -300,30 +218,29 @@ const onAfterEnter = () => {
           <template v-if="isOpenFrom">
             <n-input
               type="text"
-              placeholder="请填写申请备注"
+              placeholder="设置添加好友备注 (按 Enter 键提交)"
               v-model:value="state.text"
               @keydown.enter.native="onJoinContact"
             />
 
             <n-button
               type="primary"
-              text-color="#ffffff"
+              color="#1890ff"
               class="mt-l5"
-              @click="onJoinContact"
+              @click="isOpenFrom = false"
             >
-              确定
+              取消
             </n-button>
           </template>
           <template v-else>
             <n-button
               type="primary"
-              text-color="#ffffff"
+              color="#1890ff"
               block
               round
-              style="width: 91%"
               @click="isOpenFrom = true"
             >
-              添加好友
+              + 添加好友
             </n-button>
           </template>
         </footer>
@@ -337,9 +254,9 @@ const onAfterEnter = () => {
   position: relative;
   width: 360px;
   height: 600px;
+  background-color: #ffffff;
   border-radius: 10px;
   overflow: hidden;
-  background-color: var(--im-bg-color);
 
   .header {
     width: 100%;
@@ -359,18 +276,6 @@ const onAfterEnter = () => {
       line-height: 30px;
       text-align: center;
       color: #ffffff;
-    }
-
-    .gender {
-      width: 20px;
-      height: 20px;
-      position: absolute;
-      right: 122px;
-      bottom: 65px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
     }
 
     .close {
@@ -393,19 +298,100 @@ const onAfterEnter = () => {
       padding: 5px 8px;
       line-height: 25px;
       background: #f3f5f7;
-      color: var(--im-text-color);
+      color: #7d7d7d;
       font-size: 12px;
       margin-bottom: 20px;
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 3;
       position: relative;
+
+      &::before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        font-size: 0;
+        border: 5px solid hsla(0, 0%, 96.9%, 0);
+        border-bottom-color: #f3f5f7;
+        left: 15px;
+        top: -9px;
+      }
     }
   }
 
   .footer {
     height: 60px;
     padding: 0 15px;
+  }
+}
+
+.user-header {
+  width: 100%;
+  height: 80px;
+  position: absolute;
+  bottom: -40px;
+  display: flex;
+  background-color: red;
+
+  .avatar {
+    flex-basis: 100px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+
+    .avatar-box {
+      width: 80px;
+      height: 80px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+
+      img {
+        height: 70px;
+        width: 70px;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .nickname {
+    flex: 1 1;
+    padding-top: 50px;
+    font-size: 16px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+
+    span {
+      margin-left: 5px;
+    }
+
+    background-color: rebeccapurple;
+
+    .share {
+      display: inline-flex;
+      width: 50px;
+      height: 22px;
+      background: #ff5722;
+      color: white;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 8px;
+      border-radius: 20px;
+      transform: scale(0.7);
+      cursor: pointer;
+      i {
+        margin-top: 2px;
+      }
+      span {
+        font-size: 14px;
+        margin-left: 4px;
+      }
+    }
   }
 }
 
@@ -418,40 +404,21 @@ const onAfterEnter = () => {
     align-items: center;
 
     .name {
-      width: 45px;
+      width: 50px;
       flex-shrink: 0;
-      color: #625f5f;
+      color: #cbc5c5;
     }
 
     .text {
       flex: 1 auto;
       margin-left: 5px;
+      color: #736f6f;
     }
 
     .edit {
       text-decoration: underline;
-      text-decoration-style: solid;
+      text-decoration-style: dashed;
       text-underline-offset: 3px;
-    }
-  }
-}
-
-html[data-theme='dark'] {
-  .section {
-    .header {
-      background: #2c2c32;
-    }
-
-    .motto {
-      background-color: rgb(44, 44, 50);
-    }
-  }
-
-  .infos {
-    .info-item {
-      .name {
-        color: #afabab;
-      }
     }
   }
 }

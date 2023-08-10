@@ -15,11 +15,6 @@ export default {
       component: () => import('@/views/contact/friends.vue'),
     },
     {
-      path: '/contact/apply',
-      meta: { requiresAuth: true },
-      component: () => import('@/views/contact/apply.vue'),
-    },
-    {
       path: '/contact/group',
       meta: { requiresAuth: true },
       component: () => import('@/views/contact/groups.vue'),

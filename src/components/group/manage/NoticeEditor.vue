@@ -23,8 +23,6 @@ const props = defineProps({
   },
 })
 
-const titleModal = ref(props.id == 0 ? '发布群公告' : '编辑群公告')
-
 const formRef = ref()
 const model = reactive({
   title: props.title,
@@ -65,7 +63,7 @@ const onSubmit = () => {
 
   response.then(res => {
     if (res.code == 200) {
-      window['$message'].success(res.message)
+      window['$message'].success('编辑群公告成功...')
       emit('success')
     } else {
       window['$message'].warning(res.message)
@@ -90,7 +88,7 @@ const onValidate = e => {
   <n-modal
     v-model:show="isShow"
     preset="card"
-    :title="titleModal"
+    title="编辑群公告"
     size="huge"
     style="max-width: 450px; border-radius: 10px"
     :on-after-leave="onMaskClick"

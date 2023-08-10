@@ -10,10 +10,6 @@ defineProps({
 const img = (src, width = 200) => {
   const info = getImageInfo(src)
 
-  if (info.width == 0 || info.height == 0) {
-    return {}
-  }
-
   if (info.width < width) {
     return {
       width: `${info.width}px`,
@@ -29,7 +25,7 @@ const img = (src, width = 200) => {
 </script>
 <template>
   <section
-    class="im-message-image"
+    class="image-message"
     :class="{ left: data.float === 'left' }"
     :style="img(extra.url, 350)"
   >
@@ -37,16 +33,16 @@ const img = (src, width = 200) => {
   </section>
 </template>
 <style lang="less" scoped>
-.im-message-image {
+.image-message {
   overflow: hidden;
   padding: 5px;
   border-radius: 5px;
-  background: var(--im-message-left-bg-color);
+  background-color: #daf3fd;
   min-width: 30px;
   min-height: 30px;
 
   &.left {
-    background: var(--im-message-right-bg-color);
+    background-color: #eff0f1;
   }
 
   :deep(.n-image img) {

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { textReplaceEmoji } from '@/utils/emojis'
-import { textReplaceLink, textReplaceMention } from '@/utils/strings'
 import { Data } from './types.d'
 
 const props = defineProps<{
@@ -13,14 +12,12 @@ const float = props.data.float
 
 let textContent = props.data.content
 
-textContent = textReplaceLink(textContent)
-textContent = textReplaceMention(textContent, '#1890ff')
 textContent = textReplaceEmoji(textContent)
 </script>
 
 <template>
   <div
-    class="im-message-text"
+    class="text-message"
     :class="{
       left: float == 'left',
       right: float == 'right',
@@ -32,25 +29,25 @@ textContent = textReplaceEmoji(textContent)
 </template>
 
 <style lang="less" scoped>
-.im-message-text {
+.text-message {
+  position: relative;
   min-width: 30px;
   min-height: 30px;
   padding: 3px;
-  color: var(--im-message-left-text-color);
-  background: var(--im-message-left-bg-color);
-  border-radius: 0px 10px 10px 10px;
+  color: #333;
+  background: #eff0f1;
+  border-radius: 0px 10px 0px 10px;
 
   &.right {
-    background-color: var(--im-message-right-bg-color);
-    color: var(--im-message-right-text-color);
-    border-radius: 10px 0px 10px 10px;
+    background-color: #daf3fd;
+    border-radius: 10px 0px 10px 0px;
   }
 
   &.maxwidth {
     max-width: 70%;
   }
 
-  pre {
+  > pre {
     white-space: pre-wrap;
     overflow: hidden;
     word-break: break-word;
@@ -63,6 +60,13 @@ textContent = textReplaceEmoji(textContent)
     :deep(.emoji) {
       vertical-align: text-bottom;
       margin: 0 5px;
+    }
+
+    :deep(img[alt='img']) {
+      max-width: 300px;
+      border-radius: 3px !important;
+      display: block;
+      cursor: pointer;
     }
 
     :deep(a) {

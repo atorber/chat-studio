@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import { reactive, computed, watch, ref, inject } from 'vue'
+<script setup>
+import { reactive, computed, watch, ref } from 'vue'
 import { NEmpty, NPopover, NPopconfirm } from 'naive-ui'
 import { useUserStore } from '@/store/user'
 import GroupLaunch from './GroupLaunch.vue'
@@ -11,10 +11,11 @@ import {
   ServeSecedeGroup,
   ServeUpdateGroupCard,
 } from '@/api/group'
+import { defAvatar } from '@/constant/default'
+import UserCardModal from '@/components/user/UserCardModal.vue'
+import { modal } from '@/utils/common'
 
 const userStore = useUserStore()
-
-const user: any = inject('$user')
 
 const emit = defineEmits(['close', 'to-talk'])
 const props = defineProps({
@@ -46,10 +47,10 @@ const state = reactive({
 
 const search = computed(() => {
   if (state.keywords) {
-    return state.members.filter((item: any) => {
+    return state.members.filter(item => {
       return (
         item.nickname.match(state.keywords) != null ||
-        item.remark.match(state.keywords) != null
+        item.user_card.match(state.keywords) != null
       )
     })
   }
@@ -58,21 +59,23 @@ const search = computed(() => {
 })
 
 const isLeader = computed(() => {
-  return state.members.some((item: any) => {
+  return state.members.some(item => {
     return item.user_id == userStore.uid && item.leader >= 1
   })
 })
 
 const isAdmin = computed(() => {
-  return state.members.some((item: any) => {
+  return state.members.some(item => {
     return item.user_id == userStore.uid && item.leader == 2
   })
 })
 
 const onGroupCallBack = () => {}
 
-const onToInfo = (item: any) => {
-  user(item.user_id)
+const onToInfo = item => {
+  modal(UserCardModal, {
+    uid: item.user_id,
+  })
 }
 
 /**
@@ -105,7 +108,7 @@ function loadMembers() {
     group_id: props.gid,
   }).then(res => {
     if (res.code == 200) {
-      state.members = res.data.items || []
+      state.members = res.data
     }
   })
 }
@@ -119,7 +122,7 @@ const onSignOut = () => {
     group_id: props.gid,
   }).then(res => {
     if (res.code == 200) {
-      window['$message'].success('已退出群聊')
+      window['$message'].success('已退出群组！')
       onClose()
     } else {
       window['$message'].error(res.message)
@@ -135,7 +138,7 @@ const onChangeRemark = () => {
     if (code == 200) {
       editCardPopover.value.setShow(false)
       state.detail.visit_card = state.remark
-      window['$message'].success('已更新群名片')
+      window['$message'].success('已更新群名片！')
 
       loadMembers()
     } else {
@@ -157,11 +160,11 @@ loadMembers()
         <span>群信息</span>
       </div>
       <div class="right-icon">
-        <n-icon size="21" :component="Close" @click="onClose" />
+        <n-icon size="24" :component="Close" @click="onClose" />
       </div>
     </header>
 
-    <main class="el-main main me-scrollbar me-scrollbar-thumb">
+    <main class="el-main main me-scrollbar">
       <div class="info-box">
         <div class="b-box">
           <div class="block">
@@ -176,7 +179,7 @@ loadMembers()
             <div class="text">
               <n-popover trigger="click" placement="left" ref="editCardPopover">
                 <template #trigger>
-                  <n-button type="primary" text> 设置 </n-button>
+                  <n-button type="info" text> 设置 </n-button>
                 </template>
 
                 <template #header> 设置我的群名片 </template>
@@ -224,9 +227,7 @@ loadMembers()
         <div class="b-box">
           <div class="block">
             <div class="title">群公告：</div>
-            <div class="text">
-              <n-button type="primary" text> 更多 </n-button>
-            </div>
+            <div class="text"><n-button type="info" text> 更多 </n-button></div>
           </div>
           <div class="describe">暂无群公告</div>
         </div>
@@ -235,7 +236,7 @@ loadMembers()
       <div class="member-box">
         <div class="flex">
           <n-input
-            placeholder="搜索"
+            placeholder="搜索..."
             v-model:value="state.keywords"
             :clearable="true"
             round
@@ -247,7 +248,7 @@ loadMembers()
 
           <n-button @click="isShowGroup = true" circle class="mt-l15">
             <template #icon>
-              <n-icon :component="Plus" color="rgb(165 165 170)" />
+              <plus theme="outline" size="21" fill="#333" :strokeWidth="2" />
             </template>
           </n-button>
         </div>
@@ -266,10 +267,11 @@ loadMembers()
             @click="onToInfo(item)"
           >
             <div class="avatar">
-              <im-avatar
+              <n-avatar
+                round
                 :size="20"
                 :src="item.avatar"
-                :username="item.nickname"
+                :fallback-src="defAvatar"
               />
             </div>
             <div class="nickname text-ellipsis">
@@ -280,7 +282,7 @@ loadMembers()
               >
             </div>
             <div class="card text-ellipsis grey">
-              {{ item.remark || '-' }}
+              {{ item.user_card ? item.user_card : '-' }}
             </div>
           </div>
 
@@ -303,20 +305,19 @@ loadMembers()
           @positive-click="onSignOut"
         >
           <template #trigger>
-            <n-button class="btn" type="error" ghost> 退出群聊 </n-button>
+            <n-button class="btn" type="error" ghost> 退出群组 </n-button>
           </template>
-          确定要退出群吗？ 退出后不再接收此群消息！
+          确定要退出群吗？ 退出后不在接收群消息！
         </n-popconfirm>
       </template>
 
       <n-button
         class="btn"
         type="primary"
-        text-color="#ffffff"
         v-if="isLeader"
         @click="isShowManage = true"
       >
-        群聊管理
+        群组管理
       </n-button>
     </footer>
   </section>
@@ -419,17 +420,16 @@ loadMembers()
       min-height: 180px;
       padding: 20px 15px;
       margin-bottom: 20px;
-      border: 1px solid var(--border-color);
+      border: 1px solid #ecebeb;
       border-radius: 10px;
 
       .table {
         margin-top: 15px;
         .theader {
-          height: 36px;
-          border-bottom: 1px solid var(--border-color);
+          height: 30px;
+          border-bottom: 1px solid #ccc;
           margin-bottom: 15px;
         }
-
         .row {
           height: 30px;
           margin: 3px 0;
@@ -468,7 +468,7 @@ loadMembers()
             justify-content: flex-end;
 
             &.grey {
-              font-size: 13px;
+              color: #908989;
               font-weight: 300;
             }
           }
@@ -492,8 +492,8 @@ loadMembers()
 .badge {
   margin-left: 3px;
   &.master {
-    color: #dc9b04 !important;
-    background-color: #faf1d1 !important;
+    background-color: #ffe699;
+    color: red;
   }
 
   &.leader {

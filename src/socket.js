@@ -1,5 +1,5 @@
 import { h } from 'vue'
-import { useTalkStore } from '@/store'
+import { useTalkStore } from '@/store/talk'
 import { useUserStore } from '@/store/user'
 import { useDialogueStore } from '@/store/dialogue'
 import { getAccessToken, isLoggedIn } from './utils/auth'
@@ -44,6 +44,7 @@ class Socket {
       onOpen: evt => {
         // 更新 WebSocket 连接状态
         useUserStore().updateSocketStatus(true)
+
         useTalkStore().loadTalkList()
       },
       // Websocket 断开连接回调方法
@@ -108,7 +109,7 @@ class Socket {
 
     // 好友申请事件
     this.socket.on('im.contact.apply', data => {
-      window['$notification'].create({
+      window.$notification.create({
         title: '好友申请通知',
         content: data.remark,
         description: `申请人: ${data.friend.nickname}`,
@@ -123,23 +124,6 @@ class Socket {
         duration: 3000,
       })
       useUserStore().isContactApply = true
-    })
-
-    this.socket.on('im.group.apply', data => {
-      window['$notification'].create({
-        title: '入群申请通知',
-        content: '有新的入群申请，请注意查收',
-        avatar: () =>
-          h(NAvatar, {
-            size: 'small',
-            round: true,
-            src: notifyIcon,
-            style: 'background-color:#fff;',
-          }),
-        duration: 30000,
-      })
-
-      useUserStore().isGroupApply = true
     })
 
     this.socket.on('event_error', data => {

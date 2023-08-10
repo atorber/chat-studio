@@ -54,7 +54,7 @@ const onSendEmail = () => {
   response.then(({ code, message }) => {
     if (code == 200) {
       lock.start()
-      window['$message'].success('邮件发送成功')
+      window['$message'].success('邮件发送成功！')
     } else {
       window['$message'].warning(message)
     }
@@ -94,8 +94,8 @@ const onValidate = e => {
     :show="modelValue"
     preset="card"
     title="修改邮箱？"
-    class="modal-radius"
-    style="max-width: 400px"
+    size="huge"
+    style="max-width: 400px; border-radius: 10px"
     :on-update:show="
       value => {
         $emit('update:modelValue', value)
@@ -111,7 +111,7 @@ const onValidate = e => {
         />
       </n-form-item>
 
-      <n-form-item label="新邮箱" path="email">
+      <n-form-item label="设置新邮箱" path="email">
         <n-input
           placeholder="请填写新邮箱"
           type="text"
@@ -147,7 +147,7 @@ const onValidate = e => {
           :loading="loading"
           @click="onValidate"
         >
-          保存修改
+          立即修改
         </n-button>
       </div>
     </template>

@@ -16,17 +16,13 @@ onUnmounted(() => {
 <template>
   <Layout>
     <section class="el-container">
-      <aside
-        v-show="dialogueStore.isShowSessionList"
-        class="el-aside bdr-r session-list"
-      >
+      <aside v-dropsize="{ max: 500, min: 250 }" class="el-aside bdr-r">
         <IndexSider />
       </aside>
 
       <main class="el-main">
-        <component
-          :is="dialogueStore.index_name ? IndexContent : IndexAmicable"
-        />
+        <IndexContent v-if="dialogueStore.index_name" />
+        <IndexAmicable v-else />
       </main>
     </section>
   </Layout>
@@ -43,15 +39,9 @@ onUnmounted(() => {
   user-select: none;
 }
 
-.small-screen {
+@media screen and (max-width: 900px) {
   .el-aside {
-    width: 260px;
-  }
-}
-
-@media screen and (max-width: 1000px) {
-  .el-aside {
-    width: 260px;
+    width: 280px;
   }
 }
 </style>

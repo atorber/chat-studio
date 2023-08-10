@@ -49,7 +49,7 @@ const lock = new SmsLock(
 
 const onSendSms = () => {
   if (!isMobile(model.mobile)) {
-    window['$message'].warning('请正确填写手机号')
+    window['$message'].warning('请正确填写手机号！')
     return
   }
 
@@ -64,9 +64,9 @@ const onSendSms = () => {
 
       if (data.is_debug) {
         model.sms_code = data.sms_code
-        window['$message'].success('已开启验证码自动填充')
+        window['$message'].success('已开启验证码自动填充！')
       } else {
-        window['$message'].success('短信发送成功')
+        window['$message'].success('短信发送成功！')
       }
     } else {
       window['$message'].warning(message)
@@ -107,8 +107,8 @@ const onValidate = e => {
     :show="modelValue"
     preset="card"
     title="换绑手机？"
-    class="modal-radius"
-    style="max-width: 400px;"
+    size="huge"
+    style="max-width: 400px; border-radius: 10px"
     :on-update:show="
       value => {
         $emit('update:modelValue', value)
@@ -124,9 +124,9 @@ const onValidate = e => {
         />
       </n-form-item>
 
-      <n-form-item label="新手机号码" path="mobile">
+      <n-form-item label="设置手机号" path="mobile">
         <n-input
-          placeholder="请填写新手机号码"
+          placeholder="请填写手机号"
           type="text"
           v-model:value="model.mobile"
         />
@@ -160,7 +160,7 @@ const onValidate = e => {
           :loading="loading"
           @click="onValidate"
         >
-          保存修改
+          立即修改
         </n-button>
       </div>
     </template>

@@ -52,61 +52,45 @@ export function throttle(fn, delay, call = function () {}) {
  * @param {Function} callback 复制成功回调方法
  */
 export function clipboard(text, callback) {
-  navigator.clipboard
-    .writeText(text)
-    .then(() => {
-      callback && callback()
-    })
-    .catch(() => {
-      alert('Oops, unable to copy')
-    })
-}
+  if (navigator.clipboard) {
+    return navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        callback && callback()
+      })
+      .catch(() => {
+        alert('Oops, unable to copy')
+      })
+  }
 
-export async function clipboardImage(src, callback) {
-  const { state } = await navigator.permissions.query({
-    name: 'clipboard-write',
-  })
+  let textArea = document.createElement('textarea')
+  textArea.style.background = 'transparent'
+  textArea.value = text
 
-  if (state != 'granted') return
+  document.body.appendChild(textArea)
 
-  let image = new Image()
-  image.src = src
-  image.onload = () => {
-    let canvas = document.createElement('canvas')
-    canvas.width = image.width
-    canvas.height = image.height
-    let context = canvas.getContext('2d')
-    context.drawImage(image, 0, 0, image.width, image.height)
+  textArea.select()
 
-    canvas.toBlob(async blob => {
-      try {
-        let item = new ClipboardItem({
-          [blob.type]: blob,
-        })
+  try {
+    document.execCommand('copy')
+    callback && callback()
+  } catch (err) {
+    alert('Oops, unable to copy')
+  } finally {
+    document.body.removeChild(textArea)
 
-        await navigator.clipboard.write([item])
-
-        callback()
-      } catch (err) {
-        console.error('图片复制失败: ', err)
-      }
-    }, 'image/png')
+    console.log(err)
   }
 }
 
-export function hashStrToHexColor(str) {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  let color = '#'
-  for (let i = 0; i < 3; i++) {
-    const value = (hash >> (i * 8)) & 0xff
-    color += value.toString(16).padStart(2, '0')
-  }
-  return color
-}
-
+/**
+ * 自定义 emit 回调数据
+ *
+ * @param {String} event
+ * @param {Any} data
+ * @param {Function|undefined} fn
+ * @returns
+ */
 export function emitCall(event, data, fn) {
   return { event: event, data: data, callBack: fn || function () {} }
 }
@@ -154,44 +138,5 @@ export function htmlDecode(input) {
   // 使用正则表达式和映射替换输入中的实体
   return input.replace(htmlEntities, function (match) {
     return htmlEntityMap[match] || match
-  })
-}
-
-// 文件转 图片 关键函数  异步
-export function getVideoImage(file) {
-  return new Promise((resolve, reject) => {
-    let video = document.createElement('video')
-
-    video.src = URL.createObjectURL(file)
-
-    video.addEventListener('loadeddata', function () {
-      this.currentTime = 1
-    })
-
-    video.addEventListener('seeked', function () {
-      this.width = this.videoWidth
-      this.height = this.videoHeight
-      var canvas = document.createElement('canvas')
-      var ctx = canvas.getContext('2d')
-      canvas.width = this.width
-      canvas.height = this.height
-      ctx?.drawImage(this, 0, 0, canvas.width, canvas.height)
-
-      let image = {
-        url: canvas.toDataURL('image/jpeg', 1),
-        width: this.width,
-        height: this.height,
-        duration: this.duration,
-      }
-
-      canvas.toBlob(function (blob) {
-        image.file = new File([blob], 'video_image.jpeg', {
-          type: blob.type,
-          lastModified: Date.now(),
-        })
-
-        resolve(image)
-      }, 'image/jpeg')
-    })
   })
 }

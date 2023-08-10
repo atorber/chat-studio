@@ -240,7 +240,7 @@ loadWatchTagsMenu()
   <section class="el-container is-vertical section">
     <header class="el-header menu-header">
       <n-button
-        type="primary"
+        type="info"
         round
         @click="
           () => {
@@ -279,7 +279,7 @@ loadWatchTagsMenu()
       <span>我的笔记</span>
       <span
         ><n-button
-          type="primary"
+          type="info"
           size="tiny"
           ghost
           round
@@ -365,6 +365,16 @@ loadWatchTagsMenu()
 </template>
 
 <style lang="less" scoped>
+.icon-spin {
+  animation: fadenum 1s infinite !important;
+}
+
+@keyframes fadenum {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .section {
   width: 100%;
   height: 100%;
@@ -383,6 +393,7 @@ loadWatchTagsMenu()
   .menu-subheader {
     height: 40px;
     line-height: 40px;
+    color: #353434;
     padding: 0 15px;
     font-size: 16px;
     font-weight: 300;
@@ -400,7 +411,7 @@ loadWatchTagsMenu()
       user-select: none;
 
       &:hover {
-        background: var(--im-hover-bg-color);
+        background: #f6f3f3;
       }
 
       .dot {
@@ -446,7 +457,7 @@ loadWatchTagsMenu()
     }
 
     .actived {
-      background: var(--im-active-bg-color);
+      background: #f4f6f9;
     }
   }
 }

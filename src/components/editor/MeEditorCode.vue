@@ -55,8 +55,7 @@ const onSubmit = () => {
     v-model:show="isShowBox"
     preset="card"
     title="代码消息"
-    class="modal-radius"
-    style="max-width: 800px; height: 600px"
+    style="max-width: 800px; height: 600px; border-radius: 10px"
     :on-after-leave="onMaskClick"
     :segmented="{
       content: true,
@@ -114,7 +113,7 @@ const onSubmit = () => {
 .preview {
   width: 100%;
   padding: 5px;
-  overflow: hidden;
+  overflow: scroll;
   border-radius: 10px;
 }
 

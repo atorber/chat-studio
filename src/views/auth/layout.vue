@@ -3,20 +3,20 @@ import { isElectronMode } from '@/utils/common'
 </script>
 
 <template>
-  <div id="logo-name" v-if="!isElectronMode()">Lumen IM</div>
+  <div id="logo-name" v-if="!isElectronMode()">Chat Studio</div>
 
   <section class="section">
     <router-view />
   </section>
 
   <div class="copyright">
-    <span>©2020 - 2023 Lumen IM 在线聊天</span>
+    <span>©2022 - 2023 ChatStudio</span>
     <span
       ><a href="http://beian.miit.gov.cn" target="_blank"
-        >黔ICP备20006767号-2</a
+        >粤ICP备16007353号</a
       ></span
     >
-    <span>Github源码</span>
+    <!-- <span>Github源码</span> -->
   </div>
 
   <div class="fly-box">
@@ -32,9 +32,4 @@ body {
   -webkit-app-region: drag;
 }
 @import '@/assets/css/login.less';
-
-.section {
-  height: 100vh;
-  width: 100vw;
-}
 </style>

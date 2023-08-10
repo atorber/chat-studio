@@ -1,10 +1,8 @@
-import { watchEffect } from 'vue'
-import { useRouter } from 'vue-router'
-import { useNotifyStore, useTalkStore } from '@/store'
-import { applyNotificationAuth } from '@/utils/notification'
-import { isElectronMode, electron } from '@/utils/common'
 import { isLoggedIn } from '@/utils/auth'
-import socket from '@/socket'
+import { useNotifyStore } from '@/store'
+import { applyNotificationAuth } from '@/utils/notification'
+import { isElectronMode } from '@/utils/common'
+import { useRouter } from 'vue-router'
 
 function registerOnceExpireNotice() {
   let once = false
@@ -68,11 +66,11 @@ function registerClickListener() {
     const href = el.getAttribute('href')
 
     if (href) {
-      if (isElectronMode() && el.getAttribute('alt') === 'link') {
-        return electron().openLink(href)
+      if (isElectronMode() || el.getAttribute('alt') === 'link') {
+        return window.open(href)
       }
-      
-      return window.open(href)
+
+      window.location.href = href
     }
   }
 
@@ -88,58 +86,16 @@ function registerClickListener() {
         window.event.returnValue = false
       }
 
-      console.log('====')
       // 处理完 a 标签的内容，重新触发跳转，根据原来 a 标签页 target 来判断是否需要新窗口打开
       push(target)
     }
   })
 }
 
-function registerUnreadListener() {
-  const useTalk = useTalkStore()
-  const el = document.getElementsByTagName('title')[0]
-  const title = el.innerText
-
-  watchEffect(() => {
-    if (isElectronMode()) {
-      electron().setBadge(useTalk.talkUnreadNum)
-    } else {
-      setInterval(() => {
-        if (useTalk.talkUnreadNum > 0) {
-          el.innerText = el.innerText == title ? '您有新的消息未读' : title
-        } else {
-          el.innerText = title
-        }
-      }, 1000)
-    }
-  })
-}
-
-function registerConnectListener() {
-  const notifyStore = useNotifyStore()
-  const router = useRouter()
-
-  watchEffect(() => {
-    if (notifyStore.isLeaveWeb) {
-      return
-    }
-
-    const pathname = router.currentRoute.value.path
-
-    const paths = ['/auth/login', '/auth/register', '/auth/forget']
-
-    if (!paths.includes(pathname) && isLoggedIn()) {
-      !socket.isConnect() && socket.connect()
-    }
-  })
-}
-
 export function listener() {
   registerNotificationAuth()
-  // registerVisitorNotice()
+  registerVisitorNotice()
   registerOnceExpireNotice()
   registerLeaveWebListener()
   registerClickListener()
-  registerUnreadListener()
-  registerConnectListener()
 }

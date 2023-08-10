@@ -1,17 +1,13 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, reactive, onMounted } from 'vue'
-import { NSpace, NDrawer, NTabs, NTab } from 'naive-ui'
+import { NSpace, NDivider, NDrawer } from 'naive-ui'
 import { ServeGetGroups } from '@/api/group'
-import { Search, Plus } from '@icon-park/vue-next'
-import { useUserStore } from '@/store'
-import { useTalkStore } from '@/store/talk'
+import { Search, AddOne, Plus } from '@icon-park/vue-next'
 import GroupPanel from '@/components/group/GroupPanel.vue'
 import GroupLaunch from '@/components/group/GroupLaunch.vue'
 import GroupCard from './inner/GroupCard.vue'
 import { toTalk } from '@/utils/talk'
 
-const userStore = useUserStore()
-const talkStore = useTalkStore()
 const isShowCreateGroupBox = ref(false)
 const keywords = ref('')
 const items = ref([])
@@ -21,24 +17,8 @@ const params = reactive({
   id: 0,
 })
 
-const tabIndex = ref('all')
-
-const uid = userStore.uid
-
-const filterCreator = computed(() => {
-  return items.value.filter((item: any) => item.creator_id == uid)
-})
-
 const filter = computed(() => {
-  return items.value.filter((item: any) => {
-    if (tabIndex.value == 'create' && item.creator_id != uid) {
-      return false
-    }
-
-    if (tabIndex.value == 'join' && item.creator_id == uid) {
-      return false
-    }
-
+  return items.value.filter(item => {
     return (
       item.group_name.toLowerCase().indexOf(keywords.value.toLowerCase()) != -1
     )
@@ -65,7 +45,6 @@ const onToTalk = item => {
 const onGroupCallBack = data => {
   isShowCreateGroupBox.value = false
   onLoadData()
-  talkStore.loadTalkList()
 }
 
 onMounted(() => {
@@ -77,34 +56,34 @@ onMounted(() => {
   <section id="drawer-target" class="el-container is-vertical height100">
     <header class="el-header from-header bdr-b">
       <div>
-        <n-tabs v-model:value="tabIndex">
-          <n-tab name="all"> 全部群聊({{ items.length }}) </n-tab>
-          <n-tab name="create"> 我创建的({{ filterCreator.length }}) </n-tab>
-          <n-tab name="join">
-            我加入的({{ items.length - filterCreator.length }})
-          </n-tab>
-        </n-tabs>
+        <n-space>
+          <n-button text se> 全部群组({{ items.length }}) </n-button>
+          <n-divider vertical />
+          <n-button text> 我创建的 </n-button>
+          <n-divider vertical />
+          <n-button text> 我加入的 </n-button>
+        </n-space>
       </div>
 
-      <n-space>
-        <n-input
-          v-model:value.trim="keywords"
-          placeholder="搜索"
-          clearable
-          style="max-width: 200px"
-          round
-        >
-          <template #prefix>
-            <n-icon :component="Search" />
-          </template>
-        </n-input>
+      <div>
+        <n-space>
+          <n-input
+            v-model:value.trim="keywords"
+            placeholder="搜索"
+            clearable
+            style="width: 200px"
+            round
+          >
+            <template #prefix>
+              <n-icon :component="Search" />
+            </template>
+          </n-input>
 
-        <n-button circle @click="isShowCreateGroupBox = true">
-          <template #icon>
-            <n-icon :component="Plus" />
-          </template>
-        </n-button>
-      </n-space>
+          <n-button circle @click="isShowCreateGroupBox = true">
+            <plus theme="outline" size="21" fill="#333" :strokeWidth="2" />
+          </n-button>
+        </n-space>
+      </div>
     </header>
 
     <main v-if="filter.length == 0" class="el-main flex-center">
@@ -115,7 +94,7 @@ onMounted(() => {
       </n-empty>
     </main>
 
-    <main v-else class="el-main me-scrollbar me-scrollbar-thumb pd-10">
+    <main v-else class="el-main me-scrollbar pd-10">
       <div class="cards">
         <GroupCard
           v-for="item in filter"
@@ -133,7 +112,7 @@ onMounted(() => {
   </section>
 
   <GroupLaunch
-    v-if="isShowCreateGroupBox"
+    v-model:show="isShowCreateGroupBox"
     @close="isShowCreateGroupBox = false"
     @on-submit="onGroupCallBack"
   />
@@ -145,12 +124,15 @@ onMounted(() => {
     :trap-focus="false"
     :block-scroll="false"
     to="#drawer-target"
-    show-mask="transparent"
   >
     <GroupPanel
       :gid="params.id"
       @close="params.isShow = false"
-      @to-talk="toTalk(2, params.id)"
+      @to-talk="
+        () => {
+          toTalk(2, params.id)
+        }
+      "
     />
   </n-drawer>
 </template>
@@ -160,8 +142,8 @@ onMounted(() => {
   height: 60px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0 15px;
+  justify-content: space-between;
 }
 
 .cards {

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, onMounted, h, inject } from 'vue'
 import { onBeforeRouteUpdate } from 'vue-router'
-import { useDialogueStore, useTalkStore } from '@/store'
-import { NDropdown, NSkeleton, NIcon, NInput, NPopover } from 'naive-ui'
+import { useDialogueStore } from '@/store/dialogue'
+import { useEditorStore } from '@/store/editor'
+import { useTalkStore } from '@/store/talk'
+import { NDropdown, NSkeleton, NEmpty, NIcon, NTooltip, NInput } from 'naive-ui'
 import {
   Search,
   ArrowUp,
@@ -16,8 +18,6 @@ import {
   IdCard,
   Plus,
 } from '@icon-park/vue-next'
-import { RecycleScroller } from 'vue-virtual-scroller'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import TalkItem from './TalkItem.vue'
 import {
   ServeTopTalkList,
@@ -25,16 +25,24 @@ import {
   ServeDeleteTalkList,
   ServeSetNotDisturb,
 } from '@/api/chat'
-import { ServeSecedeGroup } from '@/api/group'
-import { ServeDeleteContact, ServeEditContactRemark } from '@/api/contact'
+import { ServeSecedeGroup, ServeGetGroupMembers } from '@/api/group'
+import { ServeDeleteContact, ServeEditContactRemark } from '@/api/contacts'
 import GroupLaunch from '@/components/group/GroupLaunch.vue'
-import { findTalk, findTalkIndex, getCacheIndexName } from '@/utils/talk'
+import {
+  findTalk,
+  findTalkIndex,
+  getCacheIndexName,
+  setCacheIndexName,
+} from '@/utils/talk'
+import { defAvatar } from '@/constant/default'
 
-const user: any = inject('$user')
+const user = inject('showUserModal')
+
 const dialogueStore = useDialogueStore()
 const talkStore = useTalkStore()
+const editorStore = useEditorStore()
 const isShowGroup = ref(false)
-const searchKeyword = ref('')
+const items = computed(() => talkStore.talkItems)
 const topItems = computed(() => talkStore.topItems)
 const unreadNum = computed(() => talkStore.talkUnreadNum)
 
@@ -46,20 +54,6 @@ const state = reactive({
     dropdownY: 0,
     item: {},
   },
-})
-
-const items = computed(() => {
-  if (searchKeyword.value.length === 0) {
-    return talkStore.talkItems
-  }
-
-  return talkStore.talkItems.filter((item: any) => {
-    let keyword = item.remark_name || item.name
-
-    return (
-      keyword.toLowerCase().indexOf(searchKeyword.value.toLowerCase()) != -1
-    )
-  })
 })
 
 // 列表加载状态
@@ -88,8 +82,6 @@ const onTabTalk = (data: any, follow = false) => {
     return
   }
 
-  searchKeyword.value = ''
-
   // 更新编辑信息
   dialogueStore.setDialogue(data)
 
@@ -106,18 +98,28 @@ const onTabTalk = (data: any, follow = false) => {
     })
   }
 
+  if (data.talk_type == 2) {
+    ServeGetGroupMembers({
+      group_id: data.receiver_id,
+    }).then(({ code, data }) => {
+      if (code == 200) {
+        editorStore.updateMentionItems(data || [])
+      }
+    })
+  } else {
+    editorStore.updateMentionItems([])
+  }
+
   // 设置滚动条跟随
   if (follow) {
-    setTimeout(() => {
-      let el = document.getElementById('talk-session-list')
-      if (el) {
-        let index = findTalkIndex(data.index_name)
-        el.scrollTo({
-          top: index * 66 + index * 5,
-          behavior: 'smooth',
-        })
-      }
-    }, 100)
+    let el = document.getElementById('talk-session-list')
+    if (el) {
+      let index = findTalkIndex(data.index_name)
+      el.scrollTo({
+        top: index * 66 + index * 5,
+        behavior: 'smooth',
+      })
+    }
   }
 }
 
@@ -157,10 +159,6 @@ const onSetDisturb = (data: any) => {
 
 // 置顶会话
 const onToTopTalk = (data: any) => {
-  if (data.is_top == 0 && topItems.value.length >= 18) {
-    return window['$message'].info('置顶最多不能超过18个会话')
-  }
-
   ServeTopTalkList({
     list_id: data.id,
     type: data.is_top == 0 ? 1 : 2,
@@ -178,12 +176,10 @@ const onToTopTalk = (data: any) => {
 
 // 移除联系人
 const onDeleteContact = (data: any) => {
-  let name = data.remark || data.name
-
   window['$dialog'].create({
     showIcon: false,
-    title: `删除 [${name}] 联系人？`,
-    content: '删除后不再接收对方任何消息。',
+    title: `删除 [${data.name}] 联系人？`,
+    content: '删除后不在接收对方任何消息。',
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: () => {
@@ -191,7 +187,7 @@ const onDeleteContact = (data: any) => {
         friend_id: data.receiver_id,
       }).then(({ code, message }) => {
         if (code == 200) {
-          window['$message'].success('删除联系人成功')
+          window['$message'].success('删除联系人成功！')
           onDeleteTalk(data.index_name)
         } else {
           window['$message'].error(message)
@@ -206,7 +202,7 @@ const onSignOutGroup = (data: any) => {
   window['$dialog'].create({
     showIcon: false,
     title: `退出 [${data.name}] 群聊？`,
-    content: '退出后不再接收此群的任何消息。',
+    content: '退出后不在接收任何群消息。',
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: () => {
@@ -214,7 +210,7 @@ const onSignOutGroup = (data: any) => {
         group_id: data.receiver_id,
       }).then(({ code, message }) => {
         if (code == 200) {
-          window['$message'].success('已退出群聊')
+          window['$message'].success('已退出群组！')
           onDeleteTalk(data.index_name)
         } else {
           window['$message'].error(message)
@@ -246,7 +242,7 @@ const onChangeRemark = (data: any) => {
         remark: remark,
       }).then(({ code, message }) => {
         if (code == 200) {
-          window['$message'].success('备注成功')
+          window['$message'].success('备注成功！')
           talkStore.updateItem({
             index_name: data.index_name,
             remark_name: remark,
@@ -340,7 +336,7 @@ const onReload = () => {
   talkStore.loadTalkList()
 }
 
-// 创建群聊回调事件
+// 创建群组回调事件
 const onGroupCallBack = (data: any) => {
   onReload()
 }
@@ -354,10 +350,7 @@ const onInitialize = () => {
 
 // 路由更新事件
 onBeforeRouteUpdate(onInitialize)
-
-onMounted(() => {
-  onInitialize()
-})
+onMounted(onInitialize)
 </script>
 
 <template>
@@ -380,13 +373,7 @@ onMounted(() => {
   <section class="el-container is-vertical height100">
     <!-- 工具栏目 -->
     <header class="el-header tools-header">
-      <n-input
-        placeholder="搜索好友 / 群聊"
-        v-model:value.trim="searchKeyword"
-        round
-        clearable
-        style="width: 78%"
-      >
+      <n-input placeholder="搜索聊天 / 好友 / 群组" round style="width: 78%">
         <template #prefix>
           <n-icon :component="Search" />
         </template>
@@ -394,7 +381,7 @@ onMounted(() => {
 
       <n-button circle @click="isShowGroup = true">
         <template #icon>
-          <n-icon :component="Plus" />
+          <plus theme="outline" size="21" fill="#333" :strokeWidth="2" />
         </template>
       </n-button>
     </header>
@@ -404,7 +391,7 @@ onMounted(() => {
       class="el-header tops-header"
       v-show="loadStatus == 3 && topItems.length > 0"
     >
-      <n-popover
+      <n-tooltip
         v-for="item in topItems"
         :key="item.index_name"
         placement="bottom"
@@ -418,58 +405,56 @@ onMounted(() => {
               active: item.index_name == indexName,
             }"
           >
-            <im-avatar :src="item.avatar" :size="34" :username="item.name" />
-
-            <span class="icon-mark robot" v-show="item.is_robot == 1">
-              助
-            </span>
-
-            <span
-              class="icon-mark group"
-              v-show="item.talk_type == 2 && item.is_robot == 0"
+            <n-avatar
+              v-if="item.avatar"
+              round
+              :src="item.avatar"
+              :fallback-src="defAvatar"
+            />
+            <n-avatar
+              v-else
+              round
+              :style="{
+                color: '#ffffff',
+                backgroundColor: '#508afe',
+              }"
             >
-              群
-            </span>
+              {{ item.name && (item.name.substr(0, 1) || '') }}
+            </n-avatar>
 
             <span class="text">{{ item.remark_name || item.name }}</span>
           </div>
         </template>
         <span> {{ item.remark_name || item.name }} </span>
-      </n-popover>
+      </n-tooltip>
     </header>
 
     <!-- 标题栏目 -->
     <header
-      v-show="loadStatus == 3 && talkStore.talkItems.length > 0"
+      v-show="loadStatus == 3 && items.length > 0"
       class="el-header notify-header"
-      :class="{ shadow: false }"
     >
-      <p>会话记录({{ talkStore.talkItems.length }})</p>
+      <p>会话记录({{ items.length }})</p>
       <p>
         <span class="badge unread" v-show="unreadNum">{{ unreadNum }}未读</span>
       </p>
     </header>
 
-    <template v-if="loadStatus == 2">
-      <main id="talk-session-list" class="el-main me-scrollbar">
-        <!-- 加载中模块 -->
-        <template v-if="loadStatus == 2">
-          <div class="skeleton flex-center" v-for="i in 10" :key="i">
-            <div class="avatar"><n-skeleton circle size="medium" /></div>
-            <div class="content">
-              <n-skeleton text :repeat="1" />
-              <n-skeleton text style="width: 60%" />
-            </div>
+    <!-- 侧边栏目 -->
+    <main id="talk-session-list" class="el-main me-scrollbar">
+      <!-- 加载中模块 -->
+      <template v-if="loadStatus == 2">
+        <div class="skeleton flex-center" v-for="i in 10" :key="i">
+          <div class="avatar"><n-skeleton circle size="medium" /></div>
+          <div class="content">
+            <n-skeleton text :repeat="1" />
+            <n-skeleton text style="width: 60%" />
           </div>
-        </template>
-      </main>
-    </template>
+        </div>
+      </template>
 
-    <template v-else>
-      <div
-        id="talk-session-list"
-        class="el-main scroller me-scrollbar me-scrollbar-thumb"
-      >
+      <!-- 加载成功模块 -->
+      <template v-if="loadStatus == 3">
         <TalkItem
           v-for="item in items"
           :key="item.index_name"
@@ -481,30 +466,25 @@ onMounted(() => {
           @top-talk="onToTopTalk"
           @contextmenu.prevent="onContextMenuTalk($event, item)"
         />
-      </div>
 
-      <!-- <RecycleScroller
-        id="talk-session-list"
-        class="el-main scroller me-scrollbar me-scrollbar-thumb"
-        :items="items"
-        :item-size="72"
-        key-field="index_name"
-        v-slot="{ item }"
-      >
-        <div style="height: 72px">
-          <TalkItem
-            :key="item.index_name"
-            :data="item"
-            :avatar="item.avatar"
-            :username="item.remark_name || item.name"
-            :active="item.index_name == indexName"
-            @tab-talk="onTabTalk"
-            @top-talk="onToTopTalk"
-            @contextmenu.prevent="onContextMenuTalk($event, item)"
-          />
+        <div class="empty-list" v-show="items.length === 0">
+          <img src="@/assets/image/no-data.svg" alt="" />
+          <p>暂无会话</p>
         </div>
-      </RecycleScroller> -->
-    </template>
+      </template>
+
+      <!-- 加载失败模块 -->
+      <template v-if="loadStatus == 4">
+        <n-empty
+          description="数据加载异常，请点击重试..."
+          style="margin-top: 30%"
+        >
+          <template #extra>
+            <n-button size="small" text @click="onReload"> 加载数据 </n-button>
+          </template>
+        </n-empty>
+      </template>
+    </main>
   </section>
 
   <GroupLaunch
@@ -515,6 +495,12 @@ onMounted(() => {
 </template>
 
 <style lang="less" scoped>
+.me-scrollbar {
+  &::-webkit-scrollbar {
+    background-color: unset;
+  }
+}
+
 .tools-header {
   height: 60px;
   flex-shrink: 0;
@@ -539,11 +525,11 @@ onMounted(() => {
   .unread {
     background-color: #ff4d4f;
     color: white;
-    cursor: pointer;
   }
 }
 
 .tops-header {
+  // background: #f0f8ff;
   padding: 5px 8px;
   padding-right: 0;
   padding-right: 8px;
@@ -564,31 +550,7 @@ onMounted(() => {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    position: relative;
 
-    .icon-mark {
-      position: absolute;
-      height: 25px;
-      width: 25px;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      right: -12px;
-      bottom: 15px;
-      transform: scale(0.6);
-      border-radius: 50%;
-
-      &.group {
-        color: #3370ff;
-        background-color: #e1eaff;
-      }
-
-      &.robot {
-        color: #dc9b04 !important;
-        background-color: #faf1d1 !important;
-      }
-    }
     &.active {
       .text {
         color: rgb(80 138 254);
@@ -599,7 +561,8 @@ onMounted(() => {
       display: inline-block;
       height: 20px;
       font-size: 12px;
-      transform: scale(0.9);
+      color: #8f959e;
+      transform: scale(0.84);
       text-align: center;
       line-height: 20px;
       word-break: break-all;
@@ -625,13 +588,5 @@ onMounted(() => {
   margin-top: 30%;
   width: 100%;
   text-align: center;
-}
-
-html[data-theme='dark'] {
-  .notify-header {
-    &.shadow {
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    }
-  }
 }
 </style>
