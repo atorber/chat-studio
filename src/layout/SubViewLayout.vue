@@ -23,7 +23,7 @@ defineProps({
             v-if="menu.show !== false"
             class="menu pointer"
             :class="{
-              selectd: $route.path == menu.path,
+              selectd: $route.path === menu.path,
             }"
           >
             <div class="icon">

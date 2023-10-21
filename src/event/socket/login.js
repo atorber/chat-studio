@@ -31,7 +31,7 @@ class Login extends Base {
     })
 
     if (this.isTalk(1, this.resource.user_id, this.getAccountId())) {
-      useDialogueStore().setOnlineStatus(this.resource.status == 1)
+      useDialogueStore().setOnlineStatus(this.resource.status === 1)
     }
   }
 }

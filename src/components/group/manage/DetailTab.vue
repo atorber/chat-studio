@@ -18,7 +18,25 @@ const modelDetail = reactive({
   avatar: '',
   profile: '',
 })
+function onSubmitBaseInfo() {
+  if (modelDetail.name.trim() === '') {
+    return window.$message.info('群名称不能为空')
+  }
 
+  ServeEditGroup({
+    group_id: props.id,
+    group_name: modelDetail.name,
+    avatar: modelDetail.avatar,
+    profile: modelDetail.profile,
+  }).then(res => {
+    if (res.code === 200) {
+      window.$message.success('群信息更新成功')
+    } else {
+      window.$message.error(res.message)
+    }
+  })
+  return null
+}
 const onUploadAvatar = avatar => {
   cropper.value = false
   modelDetail.avatar = avatar
@@ -28,29 +46,10 @@ const onUploadAvatar = avatar => {
 
 const onLoadData = () => {
   ServeGroupDetail({ group_id: props.id }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       modelDetail.name = res.data.group_name
       modelDetail.avatar = res.data.avatar
       modelDetail.profile = res.data.profile
-    }
-  })
-}
-
-function onSubmitBaseInfo() {
-  if (modelDetail.name.trim() == '') {
-    return window['$message'].info('群名称不能为空')
-  }
-
-  ServeEditGroup({
-    group_id: props.id,
-    group_name: modelDetail.name,
-    avatar: modelDetail.avatar,
-    profile: modelDetail.profile,
-  }).then(res => {
-    if (res.code == 200) {
-      window['$message'].success('群信息更新成功')
-    } else {
-      window['$message'].error(res.message)
     }
   })
 }

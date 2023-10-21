@@ -21,7 +21,7 @@ const rules = {
     validator(rule, value) {
       if (!value) {
         return new Error('手机号不能为空！')
-      } else if (!isMobile(value)) {
+      } if (!isMobile(value)) {
         return new Error('请正确填写手机号！')
       }
 
@@ -58,14 +58,14 @@ const onForget = () => {
   })
 
   response.then(res => {
-    if (res.code == 200) {
-      window['$message'].success('密码修改成功')
+    if (res.code === 200) {
+      window.$message.success('密码修改成功')
 
       setTimeout(() => {
         router.push('/auth/login')
       }, 500)
     } else {
-      window['$message'].warning(res.message)
+      window.$message.warning(res.message)
     }
   })
 
@@ -85,7 +85,7 @@ const onValidate = e => {
 // 发送短信
 const onSendSms = () => {
   if (!isMobile(model.username)) {
-    window['$message'].warning('请正确填写手机号')
+    window.$message.warning('请正确填写手机号')
     return
   }
 
@@ -95,11 +95,11 @@ const onSendSms = () => {
   })
 
   response.then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       lock.start()
-      window['$message'].success('短信发送成功')
+      window.$message.success('短信发送成功')
     } else {
-      window['$message'].warning(res.message)
+      window.$message.warning(res.message)
     }
   })
 
@@ -124,7 +124,7 @@ onUnmounted(() => {
             placeholder="登录账号/手机号"
             v-model:value="model.username"
             :maxlength="11"
-            @keydown.enter.native="onValidate"
+            @keydown.enter="onValidate"
           />
         </n-form-item>
 
@@ -133,7 +133,7 @@ onUnmounted(() => {
             placeholder="验证码"
             :maxlength="6"
             v-model:value="model.sms_code"
-            @keydown.enter.native="onValidate"
+            @keydown.enter="onValidate"
           />
           <n-button
             tertiary
@@ -151,7 +151,7 @@ onUnmounted(() => {
             type="password"
             show-password-on="click"
             v-model:value="model.password"
-            @keydown.enter.native="onValidate"
+            @keydown.enter="onValidate"
           />
         </n-form-item>
 

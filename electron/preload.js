@@ -4,16 +4,12 @@ const { contextBridge, ipcRenderer } = require('electron')
 contextBridge.exposeInMainWorld('electron', {
   // 设置消息未读数
   setBadge: num => {
-    ipcRenderer.send('ipc:set-badge', num == 0 ? '' : `${num}`)
+    ipcRenderer.send('ipc:set-badge', num === 0 ? '' : `${num}`)
   },
   // 获取窗口全屏状态
-  getFullScreenStatus: () => {
-    return ipcRenderer.sendSync('get-full-screen', '')
-  },
+  getFullScreenStatus: () => ipcRenderer.sendSync('get-full-screen', ''),
   // 系统信息
-  getAppPlatform: () => {
-    return ipcRenderer.sendSync('app-info', '')
-  },
+  getAppPlatform: () => ipcRenderer.sendSync('app-info', ''),
 
   openLink: link => {
     ipcRenderer.send('ipc:open-link', link)
@@ -21,8 +17,8 @@ contextBridge.exposeInMainWorld('electron', {
 })
 
 // 窗口变化事件
-ipcRenderer.on('full-screen', function (event, value) {
-  isFullScreenStatus = value == 'enter'
+ipcRenderer.on('full-screen', (event, value) => {
+  isFullScreenStatus = value === 'enter'
 
   document.dispatchEvent(
     new CustomEvent('full-screen-event', { detail: value })

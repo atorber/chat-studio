@@ -31,10 +31,10 @@ const onLoadData = () => {
     name: search.name,
   })
     .then(res => {
-      if (res.code == 200) {
-        let list = res.data.items || []
+      if (res.code === 200) {
+        const list = res.data.items || []
 
-        if (search.page == 1) {
+        if (search.page === 1) {
           items.value = list
         } else {
           items.value.push(...list)
@@ -49,7 +49,7 @@ const onLoadData = () => {
 }
 
 const onLoadMore = () => {
-  search.page++
+  search.page += 1
   onLoadData()
 }
 
@@ -89,7 +89,7 @@ onLoadData()
           </div>
         </header>
 
-        <main class="el-main flex-center" v-if="items.length == 0">
+        <main class="el-main flex-center" v-if="items.length === 0">
           <n-empty size="200" description="暂无相关数据">
             <template #icon>
               <img src="@/assets/image/no-data.svg" alt="" />
@@ -104,7 +104,8 @@ onLoadData()
 
           <div class="cards">
             <GroupCard
-              v-for="item in items"
+              v-for="(item,index) in items"
+              :key="index"
               :avatar="item.avatar"
               :username="item.name"
               :gender="item.gender"

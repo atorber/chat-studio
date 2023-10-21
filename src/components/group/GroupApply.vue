@@ -23,17 +23,17 @@ const onMaskClick = () => {
 const onSubmit = () => {
   loading.value = true
 
-  let response = ServeCreateGroupApply({
+  const response = ServeCreateGroupApply({
     group_id: props.gid,
     remark: remark.value,
   })
 
   response.then(res => {
-    if (res.code == 200) {
-      window['$message'].success('入群申请提交成功...')
+    if (res.code === 200) {
+      window.$message.success('入群申请提交成功...')
       onMaskClick()
     } else {
-      window['$message'].warning(res.message)
+      window.$message.warning(res.message)
     }
   })
 

@@ -12,8 +12,8 @@ function fileSlice(file, uploadId, eachSize) {
 
   // 处理每个分片的上传操作
   for (let i = 0; i < splitNum; i++) {
-    let start = i * eachSize
-    let end = Math.min(file.size, start + eachSize)
+    const start = i * eachSize
+    const end = Math.min(file.size, start + eachSize)
 
     const form = new FormData()
     form.append('file', file.slice(start, end))
@@ -28,18 +28,12 @@ function fileSlice(file, uploadId, eachSize) {
 }
 
 export const useUploadsStore = defineStore('uploads', {
-  state: () => {
-    return {
+  state: () => ({
       isShow: false,
       items: [],
-    }
-  },
+    }),
   getters: {
-    successCount: (state) => {
-      return state.items.filter(item => {
-        return item.status === 2
-      }).length
-    },
+    successCount: (state) => state.items.filter(item => item.status === 2).length,
   },
   actions: {
     close(){
@@ -52,20 +46,20 @@ export const useUploadsStore = defineStore('uploads', {
         file_name: file.name,
         file_size: file.size,
       }).then(res => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           const { upload_id, split_size } = res.data
 
           this.items.unshift({
-            file: file,
+            file,
             talk_type: talkType,
             receiver_id: receiverId,
-            upload_id: upload_id,
+            upload_id,
             uploadIndex: 0,
             percentage: 0,
             status: 0, // 文件上传状态 0:等待上传 1:上传中 2:上传完成 3:网络异常
             files: fileSlice(file, upload_id, split_size),
             avatar: '',
-            username: username,
+            username,
           })
 
           this.triggerUpload(upload_id)
@@ -85,13 +79,13 @@ export const useUploadsStore = defineStore('uploads', {
     triggerUpload(uploadId) {
       const item = this.findItem(uploadId)
 
-      let form = item.files[item.uploadIndex]
+      const form = item.files[item.uploadIndex]
 
       item.status = 1
 
       ServeFileSubareaUpload(form)
         .then(res => {
-          if (res.code == 200) {
+          if (res.code === 200) {
             item.uploadIndex++
 
             if (item.uploadIndex === item.files.length) {
@@ -99,7 +93,7 @@ export const useUploadsStore = defineStore('uploads', {
               item.percentage = 100
               this.sendUploadMessage(item)
             } else {
-              let percentage = (item.uploadIndex / item.files.length) * 100
+              const percentage = (item.uploadIndex / item.files.length) * 100
               item.percentage = percentage.toFixed(1)
               this.triggerUpload(uploadId)
             }

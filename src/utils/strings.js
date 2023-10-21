@@ -6,11 +6,11 @@
 export function trim(str, type = null) {
   if (type) {
     return str.replace(/(^\s*)|(\s*$)/g, '')
-  } else if (type == 'l') {
+  } if (type === 'l') {
     return str.replace(/(^\s*)/g, '')
-  } else {
+  } 
     return str.replace(/(\s*$)/g, '')
-  }
+  
 }
 
 /**
@@ -29,8 +29,8 @@ export function hidePhone(phone) {
  * @param {String} color 超链接颜色
  */
 export function textReplaceLink(text, color = '#409eff') {
-  let exp =
-    /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi
+  const exp =
+    /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi
   return text.replace(
     exp,
     `<a href='$1' alt='link' style="color:${color};text-decoration: revert;">$1</a >`
@@ -44,9 +44,7 @@ export function textReplaceLink(text, color = '#409eff') {
  * @param {String} color 超链接颜色
  */
 export function textReplaceMention(text, color = '#2196F3') {
-  return text.replace(new RegExp(/@\S+/, 'g'), ($0, $1) => {
-    return `<span style="color:${color};">${$0}</span>`
-  })
+  return text.replace(/@\S+/g, ($0, _$1) => `<span style="color:${color};">${$0}</span>`)
 }
 
 /**
@@ -55,16 +53,16 @@ export function textReplaceMention(text, color = '#2196F3') {
  * @param {string|number} value 文件大小(字节)
  */
 export function fileFormatSize(value) {
-  if (null == value || value == '') {
+  if (value === null || value === '') {
     return '0'
   }
 
-  let unitArr = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  const unitArr = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
   let index = 0
-  let srcsize = parseFloat(value)
+  const srcsize = parseFloat(value)
   index = Math.floor(Math.log(srcsize) / Math.log(1000))
 
-  let size = srcsize / Math.pow(1000, index)
+  let size = srcsize / 1000**index
   size = size.toFixed(2) //保留的小数位数
   return size + unitArr[index]
 }
@@ -75,7 +73,7 @@ export function fileFormatSize(value) {
  * @param {String} fileName
  */
 export function fileSuffix(fileName) {
-  let ext = fileName.split('.')
+  const ext = fileName.split('.')
 
   return ext[ext.length - 1]
 }

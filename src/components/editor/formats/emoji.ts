@@ -4,7 +4,9 @@ const ImageBlot = Quill.import('formats/image');
 
 class EmojiBlot extends ImageBlot {
     static blotName = 'emoji';
+
     static tagName = 'img';
+
     static className = 'ed-emoji';
 
     static create(value: HTMLImageElement) {

@@ -18,7 +18,7 @@ const props = defineProps<{
 const img = (src: string, width = 200) => {
   const info: any = getImageInfo(src)
 
-  if (info.width == 0 || info.height == 0) {
+  if (info.width === 0 || info.height === 0) {
     return {}
   }
 
@@ -30,8 +30,8 @@ const img = (src: string, width = 200) => {
   }
 
   return {
-    width: width + 'px',
-    height: parseInt(info.height / (info.width / width)) + 'px',
+    width: `${width  }px`,
+    height: `${parseInt(info.height / (info.width / width))  }px`,
   }
 }
 

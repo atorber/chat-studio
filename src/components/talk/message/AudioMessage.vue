@@ -1,11 +1,16 @@
 <script setup>
-import { ref, computed, reactive } from 'vue'
-import { NProgress } from 'naive-ui'
-import { LoadingOne, PlayOne, HeadsetOne, PauseOne } from '@icon-park/vue-next'
+import { ref, reactive } from 'vue'
+import { PlayOne, PauseOne } from '@icon-park/vue-next'
 
 defineProps({
-  extra: Object,
-  data: Object,
+  extra: {
+    type: Object,
+    default: () => ({}),  // 设置默认值为一个空对象
+  },
+  data: {
+    type: Object,
+    default: () => ({}),  // 设置默认值为一个空对象
+  },
 })
 
 const audioRef = ref()
@@ -33,7 +38,19 @@ const onPlayEnd = () => {
   state.isAudioPlay = false
   state.progress = 0
 }
+const formatTime = (value = 0) => {
+  if (value === 0) {
+    return '0'
+  }
 
+  const minutes = parseInt(value / 60)
+  let seconds = value
+  if (minutes > 0) {
+    seconds = parseInt(value - minutes * 60)
+  }
+
+  return `${minutes}'${seconds}"`
+}
 const onCanplay = () => {
   state.duration = audioRef.value.duration
   durationDesc.value = formatTime(parseInt(audioRef.value.duration))
@@ -41,31 +58,17 @@ const onCanplay = () => {
 }
 
 const onError = e => {
-  console.log('音频播放异常===>', e)
+  console.log('音频播放异常==>', e)
 }
 
 const onTimeUpdate = () => {
-  let audio = audioRef.value
-  if (audio.duration == 0) {
+  const audio = audioRef.value
+  if (audio.duration === 0) {
     state.progress = 0
   } else {
     state.currentTime = audio.currentTime
     state.progress = (audio.currentTime / audio.duration) * 100
   }
-}
-
-const formatTime = (value = 0) => {
-  if (value == 0) {
-    return '0'
-  }
-
-  let minutes = parseInt(value / 60)
-  let seconds = value
-  if (minutes > 0) {
-    seconds = parseInt(value - minutes * 60)
-  }
-
-  return `${minutes}'${seconds}"`
 }
 </script>
 <template>
@@ -90,7 +93,7 @@ const formatTime = (value = 0) => {
       </div>
     </div>
     <div class="desc">
-      <span class="line" v-for="i in 23"></span>
+      <span class="line" v-for="i in 23" :key="i">{{ i }}</span>
       <span
         class="indicator"
         :style="{ left: state.progress + '%' }"

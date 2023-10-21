@@ -41,14 +41,14 @@ const onLogin = () => {
   })
 
   response.then(async res => {
-    if (res.code == 200) {
-      window['$message'].success('登录成功')
+    if (res.code === 200) {
+      window.$message.success('登录成功')
       setAccessToken(res.data.access_token, res.data.expires_in)
       socket.connect()
       userStore.loadSetting()
       router.push(route.query.redirect || '/')
     } else {
-      window['$message'].warning(res.message)
+      window.$message.warning(res.message)
     }
   })
 
@@ -69,7 +69,7 @@ const onValidate = e => {
 }
 
 const onClickAccount = type => {
-  if (type == 1) {
+  if (type === 1) {
     model.username = '18798272054'
     model.password = 'admin123'
   } else {
@@ -94,7 +94,7 @@ const onClickAccount = type => {
             placeholder="请输入手机号"
             v-model:value="model.username"
             :maxlength="11"
-            @keydown.enter.native="onValidate"
+            @keydown.enter="onValidate"
           />
         </n-form-item>
 
@@ -104,7 +104,7 @@ const onClickAccount = type => {
             type="password"
             show-password-on="click"
             v-model:value="model.password"
-            @keydown.enter.native="onValidate"
+            @keydown.enter="onValidate"
           />
         </n-form-item>
 

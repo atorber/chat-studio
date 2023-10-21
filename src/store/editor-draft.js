@@ -4,10 +4,8 @@ import { defineStore } from 'pinia'
 export const useEditorDraftStore = defineStore('editor-draft', {
   // 开启数据持久化
   persist: true,
-  state: () => {
-    return {
+  state: () => ({
       items: {},
-    }
-  },
+    }),
   actions: {},
 })

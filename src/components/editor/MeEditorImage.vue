@@ -26,7 +26,7 @@ const onMaskClick = () => {
 const onSendClick = () => {
   state.loading = true
 
-  let call = emitCall(null, null, value => {
+  const call = emitCall(null, null, value => {
     state.loading = false
     value && onMaskClick()
   })
@@ -35,7 +35,7 @@ const onSendClick = () => {
 }
 
 function loadFileSrc(file) {
-  let reader = new FileReader()
+  const reader = new FileReader()
 
   state.size = file.size
 
@@ -66,8 +66,8 @@ onMounted(() => {
       <img :src="state.src" />
     </div>
 
-    <template style="text-align: center" #footer>
-      <div style="width: 100%; text-align: center">
+    <template #footer>
+      <div class="text-center" style="width: 100%; text-align: center">
         <n-button type="primary" @click="onSendClick" :loading="state.loading">
           发送图片({{ fileFormatSize(state.size) }})
         </n-button>
@@ -77,6 +77,10 @@ onMounted(() => {
 </template>
 
 <style lang="less" scoped>
+
+.text-center{
+  text-align: center
+}
 .preview {
   position: relative;
   box-sizing: border-box;

@@ -32,7 +32,7 @@ const onSingleForward = () => {
 
 const onMultiDelete = () => {
   // 批量删除
-  let ids = dialogueStore.selectItems.map(item => item.id)
+  const ids = dialogueStore.selectItems.map(item => item.id)
 
   if (!ids.length) return
 
@@ -40,12 +40,12 @@ const onMultiDelete = () => {
 }
 
 const onContactModal = data => {
-  let ids = dialogueStore.selectItems.map(item => item.id)
-  let user_ids = []
-  let group_ids = []
+  const ids = dialogueStore.selectItems.map(item => item.id)
+  const user_ids = []
+  const group_ids = []
 
   for (const o of data) {
-    if (o.type == 1) {
+    if (o.type === 1) {
       user_ids.push(o.id)
     } else {
       group_ids.push(o.id)
@@ -98,8 +98,8 @@ const onContactModal = data => {
 
   <ContactModal
     v-if="isShowContactModal"
-    v-on:close="isShowContactModal = false"
-    v-on:on-submit="onContactModal"
+    @close="isShowContactModal = false"
+    @on-submit="onContactModal"
   />
 </template>
 <style lang="less" scoped>

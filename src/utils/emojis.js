@@ -237,7 +237,7 @@ export const emojiList = {
 }
 
 const regEmoji = emojisKeys
-  .map(value => '|\\' + value)
+  .map(value => `|\\${  value}`)
   .join('')
   .replace('|', '')
 
@@ -247,7 +247,5 @@ const regEmoji = emojisKeys
  * @param {String} content 需要替换的字符串
  */
 export function textReplaceEmoji(content) {
-  return content.replace(new RegExp(`(${regEmoji})`, 'gi'), ($0, $1) => {
-    return emojis[$1]
-  })
+  return content.replace(new RegExp(`(${regEmoji})`, 'gi'), ($0, $1) => emojis[$1])
 }

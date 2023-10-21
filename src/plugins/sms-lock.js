@@ -12,7 +12,7 @@ class SmsLock {
   lockName = ''
 
   // 回调方法
-  callBack = () => {}
+  static callBack = () => {}
 
   /**
    * 实例化构造方法
@@ -20,7 +20,7 @@ class SmsLock {
    * @param {String} purpose 唯一标识
    * @param {Number} time
    */
-  constructor(purpose, lockTime = 60, fn = time => {}) {
+  constructor(purpose, lockTime = 60, fn = _time => {}) {
     this.lockTime = lockTime
 
     this.lockName = `SMSLOCK_${purpose}`
@@ -60,6 +60,7 @@ class SmsLock {
 
   // 获取当前时间
   getCurrentTime() {
+    console.debug(this.lockName)
     return Math.floor(new Date().getTime() / 1000)
   }
 
@@ -73,5 +74,7 @@ class SmsLock {
     clearTimeout(this.timer)
   }
 }
-
+export {
+  SmsLock
+}
 export default SmsLock

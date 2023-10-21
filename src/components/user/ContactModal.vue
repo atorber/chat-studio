@@ -24,35 +24,22 @@ const items = ref<Item[]>([])
 const keywords = ref('')
 const loadGroupStatus = ref(false)
 
-const searchFilter = computed(() => {
-  return items.value.filter((item: Item) => {
-    return (
-      tabsIndex.value == item.type && item.keyword.match(keywords.value) != null
-    )
-  })
-})
+const searchFilter = computed(() => items.value.filter((item: Item) => (
+      tabsIndex.value === item.type && item.keyword.match(keywords.value) !== null
+    )))
 
-const checkedFilter = computed(() => {
-  return items.value.filter((item: Item) => item.checked)
-})
+const checkedFilter = computed(() => items.value.filter((item: Item) => item.checked))
 
-const isCanSubmit = computed(() => {
-  return !checkedFilter.value.length
-})
-
-const onLoad = () => {
-  onLoadContact()
-}
+const isCanSubmit = computed(() => !checkedFilter.value.length)
 
 const onLoadContact = () => {
   loading.value = true
   ServeGetContacts()
     .then(res => {
-      if (res.code == 200) {
-        let list = res.data.items || []
+      if (res.code === 200) {
+        const list = res.data.items || []
 
-        items.value = list.map((item: any) => {
-          return {
+        items.value = list.map((item: any) => ({
             id: item.id,
             avatar: item.avatar,
             type: 1,
@@ -60,13 +47,16 @@ const onLoadContact = () => {
             keyword: item.remark + item.nickname,
             remark: item.remark,
             checked: false,
-          }
-        })
+          }))
       }
     })
     .finally(() => {
       loading.value = false
     })
+}
+
+const onLoad = () => {
+  onLoadContact()
 }
 
 const onLoadGroup = async () => {
@@ -75,13 +65,12 @@ const onLoadGroup = async () => {
   }
 
   loading.value = true
-  let { code, data } = await ServeGetGroups()
-  if (code != 200) {
+  const { code, data } = await ServeGetGroups()
+  if (code !== 200) {
     return
   }
 
-  let list = data.items.map((item: any) => {
-    return {
+  const list = data.items.map((item: any) => ({
       id: item.id,
       avatar: item.avatar,
       type: 2,
@@ -89,8 +78,7 @@ const onLoadGroup = async () => {
       keyword: item.group_name,
       remark: '',
       checked: false,
-    }
-  })
+    }))
 
   items.value.push(...list)
 
@@ -103,7 +91,7 @@ const onMaskClick = () => {
 }
 
 const onTriggerContact = (item: any) => {
-  let data = items.value.find((val: any) => val.id === item.id)
+  const data = items.value.find((val: any) => val.id === item.id)
 
   if (data) {
     data.checked = !data.checked
@@ -111,19 +99,17 @@ const onTriggerContact = (item: any) => {
 }
 
 const onSubmit = () => {
-  let data = checkedFilter.value.map((item: any) => {
-    return {
+  const data = checkedFilter.value.map((item: any) => ({
       id: item.id,
       type: item.type,
-    }
-  })
+    }))
 
   emit('on-submit', data)
 }
 
 const onTabs = (value: number) => {
   tabsIndex.value = value
-  if (value == 2) {
+  if (value === 2) {
     onLoadGroup()
   }
 }
@@ -180,7 +166,8 @@ onLoad()
               <div class="friend-items">
                 <div
                   class="friend-item pointer"
-                  v-for="item in searchFilter"
+                  v-for="(item,index) in searchFilter"
+                  :key="index"
                   @click="onTriggerContact(item)"
                 >
                   <div class="avatar">
@@ -223,7 +210,8 @@ onLoad()
 
                 <div
                   class="friend-item pointer"
-                  v-for="item in checkedFilter"
+                  v-for="(item,index) in checkedFilter"
+                  :key="index"
                   @click="onTriggerContact(item)"
                 >
                   <div class="avatar">
@@ -239,7 +227,7 @@ onLoad()
                     <span class="text-ellipsis">
                       {{ item.remark || item.name }}
                     </span>
-                    <span v-if="item.type == 2" class="badge group">群</span>
+                    <span v-if="item.type === 2" class="badge group">群</span>
                   </div>
 
                   <div class="checkbox">

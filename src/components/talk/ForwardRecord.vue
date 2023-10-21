@@ -31,7 +31,7 @@ const onLoadData = () => {
     pid: props.pid,
     record_id: props.recordId,
   }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       records.value = res.data.items || []
 
       title.value = `会话记录(${records.value.length})`

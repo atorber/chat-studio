@@ -14,10 +14,10 @@ import { NAvatar } from 'naive-ui';
 import { notifyIcon } from '@/constant/default';
 
 function generateRandomString(length) {
-  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var result = '';
-  for (var i = 0; i < length; i++) {
-      var randomIndex = Math.floor(Math.random() * chars.length);
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * chars.length);
       result += chars.charAt(randomIndex);
   }
   return result;
@@ -43,8 +43,11 @@ class Socket {
    * WsSocket 实例
    */
   socket;
+
   client;
+
   clientID;
+
   apis;
 
   /**
@@ -52,15 +55,15 @@ class Socket {
    */
   constructor() {
     this.socket = new WsSocket(urlCallback, {
-      onError: evt => {
+      onError: _evt => {
         console.log('Websocket 连接失败回调方法');
       },
-      onOpen: evt => {
+      onOpen: _evt => {
         // 更新 WebSocket 连接状态
         useUserStore().updateSocketStatus(true);
         useTalkStore().loadTalkList();
       },
-      onClose: evt => {
+      onClose: _evt => {
         // 更新 WebSocket 连接状态
         useUserStore().updateSocketStatus(false);
       },
@@ -72,16 +75,16 @@ class Socket {
     this.clientID = generateRandomString(10);  // 生成一个长度为10的随机字符串
     console.log('客户端', this.clientID);
     this.apis = {
-      ping:this.clientID+ '/' +'ping',
-      pong:this.clientID+ '/' +'pong',
-      message:this.clientID+ '/' +'im/message',
-      messageRead:this.clientID+ '/' +'im/message/read',
-      contactStatus:this.clientID+ '/' +'im/contact/status',
-      messageKeyboard:this.clientID+ '/' +'im/message/keyboard',
-      messageRevoke:this.clientID+ '/' +'im/message/revoke',
-      contactApply:this.clientID+ '/' +'im/contact/apply',
-      groupApply:this.clientID+ '/' +'im/group/apply',
-      eventError:this.clientID+ '/' +'event/error'
+      ping:`${this.clientID }/ping`,
+      pong:`${this.clientID }/pong`,
+      message:`${this.clientID }/im/message`,
+      messageRead:`${this.clientID }/im/message/read`,
+      contactStatus:`${this.clientID }/im/contact/status`,
+      messageKeyboard:`${this.clientID }/im/message/keyboard`,
+      messageRevoke:`${this.clientID }/im/message/revoke`,
+      contactApply:`${this.clientID }/im/contact/apply`,
+      groupApply:`${this.clientID }/im/group/apply`,
+      eventError:`${this.clientID }/event/error`
     }
     this.client = new Client(endpoint, this.clientID);  // 创建新的mqtt-paho客户端实例
 
@@ -101,7 +104,7 @@ class Socket {
     };
 
     this.client.onMessageArrived = message => {  // 收到消息时的回调函数
-      console.log('接收到消息:', JSON.stringify(message));
+      // console.log('接收到消息:', JSON.stringify(message));
       this.onMessage(message.destinationName, message.payloadString);
     };
 
@@ -111,6 +114,7 @@ class Socket {
   subscribeToTopics() {
     console.debug('订阅消息...')
     this.client.subscribe(this.apis.ping);
+    this.client.subscribe(this.apis.pong);
     this.client.subscribe(this.apis.message);
     this.client.subscribe(this.apis.messageRead);
     this.client.subscribe(this.apis.contactStatus);
@@ -121,14 +125,25 @@ class Socket {
     this.client.subscribe(this.apis.eventError);
   }
 
+      // 新增方法处理读取消息事件
+      handleMessageRead(data) {
+  console.debug(this.clientID)
+        const dialogueStore = useDialogueStore();
+        if (dialogueStore.index_name === `1_${data.sender_id}`) {
+          for (const msgid of data.ids) {
+            dialogueStore.updateDialogueRecord({ id: msgid, is_read: 1 });
+          }
+        }
+      }
+
   onMessage(topic, message) {
     console.debug(this.client.isConnected())
-    console.debug('主题:', topic)
+    console.debug('topic:', topic)
     console.debug('payload:', message)
     const data = JSON.parse(message);
     switch (topic) {
       case this.apis.ping:
-        this.client.publish(this.apis.pong, JSON.stringify({event:'pong'}));
+        this.client.publish(this.apis.pong, JSON.stringify(''));
         this.emit('pong', '');
         break;
       case this.apis.message:
@@ -150,24 +165,15 @@ class Socket {
         this.handleContactApply(data);
         break;
       case this.apis.eventError:
-        window['$message'].error(JSON.stringify(data));
+        window.$message.error(JSON.stringify(data));
         break;
-      // ...其他case处理其他主题...
-    }
-  }
-
-  // 新增方法处理读取消息事件
-  handleMessageRead(data) {
-    const dialogueStore = useDialogueStore();
-    if (dialogueStore.index_name == `1_${data.sender_id}`) {
-      for (const msgid of data.ids) {
-        dialogueStore.updateDialogueRecord({ id: msgid, is_read: 1 });
-      }
+      default:
+        break
     }
   }
 
   // 新增方法处理好友申请事件
-  handleContactApply(data) {
+  static handleContactApply(data) {
     window.$notification.create({
       title: '好友申请通知',
       content: data.remark,
@@ -219,7 +225,7 @@ class Socket {
       return false;
     }
 
-    return this.socket.connect.readyState === 1 && this.client.isConnected();  // 检查WebSocket和mqtt连接状态
+    return this.socket.connect.readyState === 1;  // 检查WebSocket和mqtt连接状态
   }
 
   /**
@@ -229,7 +235,7 @@ class Socket {
     this.socket.on('ping', data => {
       console.debug('ping:', data)
       this.client.publish(this.apis.ping, JSON.stringify(data))
-      this.emit('pong', '')
+      // this.emit('pong', '')
     })
 
     this.socket.on('pong', data => {
@@ -239,14 +245,14 @@ class Socket {
     // 对话消息事件
     this.socket.on('im.message', data => {
       this.client.publish(this.apis.message, JSON.stringify(data))
-      new EventTalk(data)
+      // new EventTalk(data)
     })
 
     this.socket.on('im.message.read', data => {
       this.client.publish(this.apis.messageRead, JSON.stringify(data))
 
       // const dialogueStore = useDialogueStore()
-      // if (dialogueStore.index_name == `1_${data.sender_id}`) {
+      // if (dialogueStore.index_name === `1_${data.sender_id}`) {
       //   for (const msgid of data.ids) {
       //     dialogueStore.updateDialogueRecord({ id: msgid, is_read: 1 })
       //   }
@@ -337,7 +343,7 @@ class Socket {
    */
   emit(event, data) {
     this.socket.emit(event, data)
-    this.client.publish(event.replace('.', '/'), JSON.stringify(data));
+    this.client.publish(event.replace(/[_.]/g, '/'), JSON.stringify(data));
   }
 }
 

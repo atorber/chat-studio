@@ -1,29 +1,23 @@
 import { createApp } from 'vue'
 import Loading from './loading.vue'
 
-export default {
-  mounted(el, binding) {
-    const app = createApp(Loading)
-    const instance = app.mount(document.createElement('div'))
-    el.instance = instance
+// 移除元素
+const removeEl = el => {
+  if (el.dataset.position) {
+    el.style.position = ''
+  }
 
-    if (binding.value) {
-      if (el.style.position == '') {
-        el.dataset['position'] = true
-      }
+  if (el.dataset.overflow) {
+    el.style.overflow = ''
+  }
 
-      if (el.style.overflow == '') {
-        el.dataset['overflow'] = true
-      }
+  delete el.dataset.position
+  delete el.dataset.overflow
 
-      appendEl(el)
-    }
-  },
-  updated(el, binding) {
-    if (binding.value !== binding.oldValue) {
-      binding.value ? appendEl(el) : removeEl(el)
-    }
-  },
+  const {$el} = el.instance
+  if (el?.contains($el)) {
+    el?.removeChild($el)
+  }
 }
 
 // 插入元素
@@ -35,21 +29,27 @@ const appendEl = el => {
   el?.appendChild(el.instance.$el)
 }
 
-// 移除元素
-const removeEl = el => {
-  if (el.dataset['position']) {
-    el.style.position = ''
-  }
+export default {
+  mounted(el, binding) {
+    const app = createApp(Loading)
+    const instance = app.mount(document.createElement('div'))
+    el.instance = instance
 
-  if (el.dataset['overflow']) {
-    el.style.overflow = ''
-  }
+    if (binding.value) {
+      if (el.style.position === '') {
+        el.dataset.position = true
+      }
 
-  delete el.dataset['position']
-  delete el.dataset['overflow']
+      if (el.style.overflow === '') {
+        el.dataset.overflow = true
+      }
 
-  let $el = el.instance.$el
-  if (el?.contains($el)) {
-    el?.removeChild($el)
-  }
+      appendEl(el)
+    }
+  },
+  updated(el, binding) {
+    if (binding.value !== binding.oldValue) {
+      binding.value ? appendEl(el) : removeEl(el)
+    }
+  },
 }

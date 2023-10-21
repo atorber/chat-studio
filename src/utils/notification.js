@@ -6,20 +6,21 @@ export function applyNotificationAuth(fn) {
   const notification = WebNotification
 
   if (notification) {
-    notification.requestPermission(result => {
-      return fn('granted' === result) // granted（允许） || denied（拒绝）
-    })
+    notification.requestPermission(result => 
+       fn(result === 'granted') // granted（允许） || denied（拒绝）
+    )
   } else {
     console.warn('浏览器不支持通知!')
     return fn(false)
   }
+  return null
 }
 
 // 显示浏览器通知
 export function WebNotify(title = '', options = {}) {
   const notification = new WebNotification(title, options)
 
-  notification.onclick = function (event) {
+  notification.onclick = function (_event) {
     notification.close()
   }
 }

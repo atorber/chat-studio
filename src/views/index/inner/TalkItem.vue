@@ -19,7 +19,7 @@ defineProps({
   },
   active: {
     type: Boolean,
-    default: '',
+    default: false,
   },
 })
 </script>
@@ -33,7 +33,7 @@ defineProps({
     <div class="avatar-box">
       <im-avatar :src="avatar" :size="34" :username="data.name" />
       <div class="top-mask" @click.stop="emit('top-talk', data)">
-        <n-icon :component="data.is_top == 1 ? ArrowDown : ArrowUp" />
+        <n-icon :component="data.is_top === 1 ? ArrowDown : ArrowUp" />
       </div>
     </div>
 
@@ -43,7 +43,7 @@ defineProps({
           <span class="nickname">{{ username }}</span>
           <span class="badge top" v-show="data.is_top">顶</span>
           <span class="badge roboot" v-show="data.is_robot">助</span>
-          <span class="badge group" v-show="data.talk_type == 2">群</span>
+          <span class="badge group" v-show="data.talk_type === 2">群</span>
         </div>
         <div class="datetime"><Xtime :time="data.updated_at" /></div>
       </div>
@@ -57,7 +57,7 @@ defineProps({
           <template v-else>
             <span
               class="online"
-              v-show="data.talk_type == 1 && data.is_online == 1"
+              v-show="data.talk_type === 1 && data.is_online === 1"
             >
               [在线]
             </span>

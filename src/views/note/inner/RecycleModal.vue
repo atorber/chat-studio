@@ -56,7 +56,7 @@ const loadAnnexList = () => {
   state.annex.loading = true
   ServeGetRecoverAnnexList()
     .then(res => {
-      if (res.code == 200) {
+      if (res.code === 200) {
         state.annex.items = res.data.items || []
       }
     })
@@ -70,7 +70,7 @@ const onDeleteArticle = (index, id) => {
   ServeForeverDeleteArticle({
     article_id: id,
   }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       state.note.items.splice(index, 1)
     }
   })
@@ -81,7 +81,7 @@ const onRecoverArticle = (index, id) => {
   ServeRecoverArticle({
     article_id: id,
   }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       state.note.items.splice(index, 1)
     }
   })
@@ -89,9 +89,9 @@ const onRecoverArticle = (index, id) => {
 
 const onRecoverAnnex = (index, id) => {
   ServeRecoverArticleAnnex({
-    annex_id: data.id,
+    annex_id: id,
   }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       state.annex.items.splice(index, 1)
     }
   })
@@ -100,7 +100,7 @@ const onDeleteAnnex = (index, id) => {
   ServeForeverDeleteAnnex({
     annex_id: id,
   }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       state.annex.items.splice(index, 1)
     }
   })
@@ -133,10 +133,10 @@ onMounted(() => {
     <section class="main-box el-container is-vertical o-hidden">
       <header class="el-header bdr-b header" style="height: 50px">
         <div class="type-items">
-          <span :class="{ active: tabIndex == 1 }" @click="triggerType(1)">
+          <span :class="{ active: tabIndex === 1 }" @click="triggerType(1)">
             笔记列表
           </span>
-          <span :class="{ active: tabIndex == 2 }" @click="triggerType(2)">
+          <span :class="{ active: tabIndex === 2 }" @click="triggerType(2)">
             附件列表
           </span>
         </div>
@@ -147,10 +147,10 @@ onMounted(() => {
 
       <!-- 笔记列表 -->
       <main
-        v-if="tabIndex == 1"
+        v-if="tabIndex === 1"
         class="el-main me-scrollbar me-scrollbar-thumb"
         :class="{
-          'flex-center': state.note.items.length == 0,
+          'flex-center': state.note.items.length === 0,
           'main-bag': state.note.items.length > 0,
         }"
       >
@@ -229,7 +229,7 @@ onMounted(() => {
         v-else
         class="el-main me-scrollbar"
         :class="{
-          'flex-center': state.annex.items.length == 0,
+          'flex-center': state.annex.items.length === 0,
           'main-bag': state.annex.items.length > 0,
         }"
       >
@@ -237,7 +237,7 @@ onMounted(() => {
           <Loading />
         </template>
 
-        <template v-else-if="state.annex.items.length == 0">
+        <template v-else-if="state.annex.items.length === 0">
           <n-empty size="200" description="暂无相关数据">
             <template #icon>
               <img src="@/assets/image/no-data.svg" alt="" />

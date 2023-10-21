@@ -23,7 +23,7 @@ const isContactApply = computed(() => userStore.isContactApply)
 const onLoadData = (isClearTip = false) => {
   ServeGetContactApplyRecords()
     .then(res => {
-      if (res.code == 200) {
+      if (res.code === 200) {
         items.value = res.data.items || []
 
         if (isClearTip) {
@@ -41,35 +41,35 @@ const onInfo = item => {
 }
 
 const onAccept = throttle(item => {
-  let loading = window['$message'].loading('请稍等，正在处理')
+  const loading = window.$message.loading('请稍等，正在处理')
 
   ServeApplyAccept({
     apply_id: item.id,
     remark: item.nickname,
   }).then(({ code, message }) => {
     loading.destroy()
-    if (code == 200) {
+    if (code === 200) {
       onLoadData()
-      window['$message'].success('已同意')
+      window.$message.success('已同意')
     } else {
-      window['$message'].info(message)
+      window.$message.info(message)
     }
   })
 }, 1000)
 
 const onDecline = throttle(item => {
-  let loading = window['$message'].loading('请稍等，正在处理')
+  const loading = window.$message.loading('请稍等，正在处理')
 
   ServeApplyDecline({
     apply_id: item.id,
     remark: '拒绝',
   }).then(({ code, message }) => {
     loading.destroy()
-    if (code == 200) {
+    if (code === 200) {
       onLoadData()
-      window['$message'].success('已拒绝')
+      window.$message.success('已拒绝')
     } else {
-      window['$message'].info(message)
+      window.$message.info(message)
     }
   })
 }, 1000)
@@ -86,7 +86,7 @@ onMounted(() => {
 <template>
   <section v-loading="loading" style="min-height: 300px">
     <n-empty
-      v-show="items.length == 0"
+      v-show="items.length === 0"
       size="200"
       description="暂无相关数据"
       style="margin-top: 10%"

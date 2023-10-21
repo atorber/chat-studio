@@ -1,10 +1,10 @@
 <script setup>
-import { reactive } from 'vue'
+// import { reactive } from 'vue'
 
-const state = reactive({
-  mobile: '',
-  email: '',
-})
+// const state = reactive({
+//   mobile: '',
+//   email: '',
+// })
 </script>
 
 <template>

@@ -29,18 +29,16 @@ const onSubmit = () => {
   ServeSearchContact({
     mobile: keyword.value,
   }).then(res => {
-    onShowError(res.code != 200)
+    onShowError(res.code !== 200)
 
-    if (res.code == 200) {
+    if (res.code === 200) {
       user(res.data.id)
     }
   })
 }
 
 // 是否可提交
-const isCanSubmit = computed(() => {
-  return keyword.value.trim().length == 0
-})
+const isCanSubmit = computed(() => keyword.value.trim().length === 0)
 
 const onShowUpdate = () => {
   emit('update:show', false)
@@ -67,7 +65,7 @@ const onShowUpdate = () => {
           placeholder="必填"
           :maxlength="30"
           v-model:value="keyword"
-          @keydown.enter.native="onSubmit"
+          @keydown.enter="onSubmit"
         />
       </n-form-item>
       <p v-show="isShowError" style="color: red">

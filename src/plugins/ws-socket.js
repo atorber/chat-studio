@@ -38,9 +38,9 @@ class WsSocket {
   onCallBacks = []
 
   defaultEvent = {
-    onError: evt => {},
-    onOpen: evt => {},
-    onClose: evt => {},
+    onError: _evt => {},
+    onOpen: _evt => {},
+    onClose: _evt => {},
   }
 
   /**
@@ -53,7 +53,7 @@ class WsSocket {
     this.urlCallBack = urlCallBack
 
     // 定义 WebSocket 原生方法
-    this.events = Object.assign({}, this.defaultEvent, events)
+    this.events = { ...this.defaultEvent, ...events}
 
     this.on('connect', data => {
       this.config.heartbeat.pingInterval = data.ping_interval * 1000
@@ -62,6 +62,22 @@ class WsSocket {
       this.connect.send('{"event":"ping"}')
     })
   }
+
+    /**
+   * 解析接受的消息
+   *
+   * @param {Object} evt Websocket 消息
+   */
+    static onParse(evt) {
+      const { sid, event, content } = JSON.parse(evt.data)
+  
+      return {
+        sid,
+        event,
+        data: content,
+        orginData: evt.data,
+      }
+    }
 
   /**
    * 事件绑定
@@ -94,7 +110,7 @@ class WsSocket {
    * 连接 Websocket
    */
   connection() {
-    this.connect == null && this.loadSocket()
+    this.connect === null && this.loadSocket()
   }
 
   /**
@@ -109,22 +125,6 @@ class WsSocket {
 
       console.log(`网络连接已断开，正在尝试重新连接...`)
     }, this.config.reconnect.time)
-  }
-
-  /**
-   * 解析接受的消息
-   *
-   * @param {Object} evt Websocket 消息
-   */
-  onParse(evt) {
-    const { sid, event, content } = JSON.parse(evt.data)
-
-    return {
-      sid: sid,
-      event: event,
-      data: content,
-      orginData: evt.data,
-    }
   }
 
   /**
@@ -152,7 +152,7 @@ class WsSocket {
 
     this.connect = null
 
-    evt.code == 1006 && this.reconnect()
+    evt.code === 1006 && this.reconnect()
   }
 
   /**
@@ -175,7 +175,7 @@ class WsSocket {
   onMessage(evt) {
     this.lastTime = new Date().getTime()
 
-    let result = this.onParse(evt)
+    const result = WsSocket.onParse(evt)
 
     if (result.sid) {
       if (cache.has(result.sid)) {
@@ -187,7 +187,7 @@ class WsSocket {
     }
 
     // 判断消息事件是否被绑定
-    if (this.onCallBacks.hasOwnProperty(result.event)) {
+    if (Object.prototype.hasOwnProperty.call(this.onCallBacks, result.event)) {
       this.onCallBacks[result.event](result.data, result.orginData)
     } else {
       console.warn(`WsSocket 消息事件[${result.event}]未绑定...`)
@@ -199,7 +199,7 @@ class WsSocket {
    */
   heartbeat() {
     this.config.heartbeat.setInterval = setInterval(() => {
-      let t = new Date().getTime()
+      const t = new Date().getTime()
 
       if (t - this.lastTime > this.config.heartbeat.pingTimeout) {
         if (this.connect) {
@@ -223,7 +223,7 @@ class WsSocket {
    * @param {Object} mesage
    */
   send(mesage) {
-    if (typeof mesage == 'string') {
+    if (typeof mesage === 'string') {
       this.connect.send(mesage)
     } else {
       this.connect.send(JSON.stringify(mesage))
@@ -253,5 +253,7 @@ class WsSocket {
     }
   }
 }
-
+export {
+  WsSocket
+}
 export default WsSocket

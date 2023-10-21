@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue'
 import { NTabs, NTab } from 'naive-ui'
-import { Search } from '@icon-park/vue-next'
 import FriendApply from './inner/FriendApply.vue'
 import GroupApply from './inner/GroupApply.vue'
 

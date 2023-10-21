@@ -5,7 +5,7 @@ class Storage {
   // 缓存驱动
   storage = localStorage
 
-  constructor(prefix = '', storage) {
+  constructor(prefix, storage) {
     this.prefix = prefix
     this.storage = storage
   }

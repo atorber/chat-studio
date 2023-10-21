@@ -23,7 +23,7 @@ const props = defineProps({
   },
 })
 
-const titleModal = ref(props.id == 0 ? '发布群公告' : '编辑群公告')
+const titleModal = ref(props.id === 0 ? '发布群公告' : '编辑群公告')
 
 const formRef = ref()
 const model = reactive({
@@ -54,7 +54,7 @@ const onMaskClick = () => {
 const onSubmit = () => {
   loading.value = true
 
-  let response = ServeEditGroupNotice({
+  const response = ServeEditGroupNotice({
     notice_id: props.id,
     group_id: props.gid,
     title: model.title,
@@ -64,11 +64,11 @@ const onSubmit = () => {
   })
 
   response.then(res => {
-    if (res.code == 200) {
-      window['$message'].success(res.message)
+    if (res.code === 200) {
+      window.$message.success(res.message)
       emit('success')
     } else {
-      window['$message'].warning(res.message)
+      window.$message.warning(res.message)
     }
   })
 

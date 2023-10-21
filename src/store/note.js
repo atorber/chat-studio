@@ -11,8 +11,7 @@ import {
 } from '@/api/article'
 
 export const useNoteStore = defineStore('note', {
-  state: () => {
-    return {
+  state: () => ({
       tags: [],
       class: [],
 
@@ -40,8 +39,7 @@ export const useNoteStore = defineStore('note', {
           class_name: '',
         },
       },
-    }
-  },
+    }),
 
   actions: {
     close() {
@@ -50,7 +48,7 @@ export const useNoteStore = defineStore('note', {
 
     addNewNote(class_id = 0) {
       this.view.detail = {
-        class_id: class_id,
+        class_id,
         content: '',
         created_at: '',
         files: [],
@@ -72,17 +70,19 @@ export const useNoteStore = defineStore('note', {
 
     loadClass() {
       ServeGetArticleClass().then(({ code, data }) => {
-        if (code != 200) return false
+        if (code !== 200) return false
 
         this.class = data.items
+        return null
       })
     },
 
     loadTags() {
       ServeGetArticleTag().then(({ code, data }) => {
-        if (code != 200) return false
+        if (code !== 200) return false
 
         this.tags = data.tags
+        return null
       })
     },
 
@@ -108,7 +108,7 @@ export const useNoteStore = defineStore('note', {
     },
 
     updateNoteItem(id, params = {}) {
-      const item = this.notes.items.find(item => item.id == id)
+      const item = this.notes.items.find(item => item.id === id)
 
       item && Object.assign(item, params)
     },
@@ -123,7 +123,7 @@ export const useNoteStore = defineStore('note', {
       ServeGetArticleDetail({
         article_id: id,
       }).then(({ code, data }) => {
-        if (code != 200 && data.id != this.view.loadId) {
+        if (code !== 200 && data.id !== this.view.loadId) {
           return
         }
 
@@ -132,9 +132,7 @@ export const useNoteStore = defineStore('note', {
         data.class_name = ''
         this.view.detail = data
 
-        let node = this.class.find(item => {
-          return item.id == data.class_id
-        })
+        const node = this.class.find(item => item.id === data.class_id)
 
         this.view.detail.class_name = node.class_name || ''
       })
@@ -167,14 +165,14 @@ export const useNoteStore = defineStore('note', {
     async deleteClass(class_id) {
       const res = await ServeDeleteArticleClass({ class_id })
 
-      if (res && res.code == 200) {
+      if (res && res.code === 200) {
         const index = this.class.findIndex(item => item.id === class_id)
 
         if (index >= 0) {
           this.class.splice(index, 1)
         }
       } else {
-        window['$message'].info(res.message)
+        window.$message.info(res.message)
       }
     },
 
@@ -195,14 +193,14 @@ export const useNoteStore = defineStore('note', {
     async deleteTag(tag_id) {
       const res = await ServeDeleteArticleTag({ tag_id })
 
-      if (res && res.code == 200) {
+      if (res && res.code === 200) {
         const index = this.tags.findIndex(item => item.id === tag_id)
 
         if (index >= 0) {
           this.tags.splice(index, 1)
         }
       } else {
-        window['$message'].info(res.message)
+        window.$message.info(res.message)
       }
     },
   },

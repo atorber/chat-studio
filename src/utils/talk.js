@@ -9,7 +9,7 @@ export function formatTalkRecord(uid, data) {
   data.float = 'center'
 
   if (data.user_id > 0) {
-    data.float = data.user_id == uid ? 'right' : 'left'
+    data.float = data.user_id === uid ? 'right' : 'left'
   }
 
   data.isCheck = false
@@ -19,7 +19,7 @@ export function formatTalkRecord(uid, data) {
 
 // 播放消息提示
 export function palyMusic(muted = false) {
-  let audio = document.getElementById('audio')
+  const audio = document.getElementById('audio')
   audio.currentTime = 0
   audio.muted = muted
   audio.play()
@@ -69,7 +69,7 @@ export function formatTalkItem(params) {
   }
 
   options = { ...options, ...params }
-  options.msg_text = options.msg_text
+  // options.msg_text = options.msg_text
   options.index_name = `${options.talk_type}_${options.receiver_id}`
 
   return options
@@ -94,9 +94,9 @@ export function toTalk(talk_type, receiver_id) {
 
   ServeCreateTalkList({
     talk_type: parseInt(talk_type),
-    receiver_id: parseInt(receiver_id),
+    receiver_id: parseInt(receiver_id, 10),
   }).then(({ code, data, message }) => {
-    if (code == 200) {
+    if (code === 200) {
       sessionStorage.setItem(KEY_INDEX_NAME, `${talk_type}_${receiver_id}`)
 
       if (findTalkIndex(`${talk_type}_${receiver_id}`) === -1) {
@@ -110,9 +110,10 @@ export function toTalk(talk_type, receiver_id) {
         },
       })
     } else {
-      window['$message'].info(message)
+      window.$message.info(message)
     }
   })
+  return null
 }
 
 /**
@@ -121,7 +122,7 @@ export function toTalk(talk_type, receiver_id) {
  * @returns
  */
 export function getCacheIndexName() {
-  let index_name = sessionStorage.getItem(KEY_INDEX_NAME)
+  const index_name = sessionStorage.getItem(KEY_INDEX_NAME)
 
   if (index_name) {
     sessionStorage.removeItem(KEY_INDEX_NAME)

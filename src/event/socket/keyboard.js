@@ -27,7 +27,7 @@ class Keyboard extends Base {
   }
 
   handle() {
-    let params = this.getTalkParams()
+    const params = this.getTalkParams()
 
     // 判断当前是否正在对话
     if (params.index_name === null) {
@@ -35,16 +35,17 @@ class Keyboard extends Base {
     }
 
     // 判断是否是私信
-    if (params.talk_type != 1) {
+    if (params.talk_type !== 1) {
       return false
     }
 
     // 判断消息是否来当前对话
-    if (params.receiver_id != this.resource.sender_id) {
+    if (params.receiver_id !== this.resource.sender_id) {
       return false
     }
 
     useDialogueStore().triggerKeyboard()
+    return null
   }
 }
 

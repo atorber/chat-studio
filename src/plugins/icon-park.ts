@@ -8,3 +8,7 @@ IconProvider({
     strokeWidth: 3,
     strokeLinejoin: 'bevel',
 })
+
+export {
+    IconProvider 
+}

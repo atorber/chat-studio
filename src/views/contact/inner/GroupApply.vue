@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, inject, h } from 'vue'
-import { NPopconfirm, NInput } from 'naive-ui'
+import { NInput } from 'naive-ui'
 import { Close, CheckSmall } from '@icon-park/vue-next'
 import { useUserStore } from '@/store'
 import {
@@ -16,10 +16,10 @@ const items = ref([])
 const loading = ref(true)
 const user = inject('$user')
 
-const onLoadData = (isClearTip = false) => {
+const onLoadData = (_isClearTip = false) => {
   ServeGetGroupApplyAll()
     .then(res => {
-      if (res.code == 200) {
+      if (res.code === 200) {
         items.value = res.data.items || []
       }
     })
@@ -33,16 +33,16 @@ const onInfo = item => {
 }
 
 const onAgree = throttle(item => {
-  let loading = window['$message'].loading('请稍等，正在处理')
+  const loading = window.$message.loading('请稍等，正在处理')
 
   ServeAgreeGroupApply({
     apply_id: item.id,
   }).then(res => {
     loading.destroy()
-    if (res.code == 200) {
-      window['$message'].success('已同意')
+    if (res.code === 200) {
+      window.$message.success('已同意')
     } else {
-      window['$message'].info(res.message)
+      window.$message.info(res.message)
     }
 
     onLoadData()
@@ -51,17 +51,15 @@ const onAgree = throttle(item => {
 
 const onDelete = item => {
   let remark = ''
-  let dialog = window['$dialog'].create({
+  const dialog = window.$dialog.create({
     title: '拒绝入群申请',
-    content: () => {
-      return h(NInput, {
+    content: () => h(NInput, {
         defaultValue: '',
         placeholder: '请填写拒绝原因',
         style: { marginTop: '20px' },
         onInput: value => (remark = value),
         autofocus: true,
-      })
-    },
+      }),
     negativeText: '取消',
     positiveText: '提交',
     onPositiveClick: () => {
@@ -71,14 +69,14 @@ const onDelete = item => {
 
       ServeDeleteGroupApply({
         apply_id: item.id,
-        remark: remark,
+        remark,
       }).then(res => {
         dialog.destroy()
 
-        if (res.code == 200) {
-          window['$message'].success('已拒绝')
+        if (res.code === 200) {
+          window.$message.success('已拒绝')
         } else {
-          window['$message'].info(res.message)
+          window.$message.info(res.message)
         }
 
         onLoadData()
@@ -99,7 +97,7 @@ onMounted(() => {
 <template>
   <section v-loading="loading" style="min-height: 300px">
     <n-empty
-      v-show="items.length == 0"
+      v-show="items.length === 0"
       style="margin-top: 10%"
       size="200"
       description="暂无相关数据"

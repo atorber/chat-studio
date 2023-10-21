@@ -1,5 +1,5 @@
 // 主题配置
-export const overrides = {
+const overrides = {
   common: {
     primaryColor: '#1890ff',
     // primaryColor: '#4a72ef',
@@ -12,4 +12,8 @@ export const overrides = {
   // Dialog: {
   //   borderRadius: '10px',
   // },
+}
+
+export {
+  overrides
 }

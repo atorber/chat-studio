@@ -10,13 +10,13 @@ interface IDropdown {
 
 
 const isRevoke = (uid: any, item: any): boolean => {
-  if (uid != item.user_id) {
+  if (uid !== item.user_id) {
     return false
   }
 
-  let datetime = item.created_at.replace(/-/g, '/')
+  const datetime = item.created_at.replace(/-/g, '/')
 
-  let time = new Date().getTime() - Date.parse(datetime)
+  const time = new Date().getTime() - Date.parse(datetime)
 
   return Math.floor(time / 1000 / 60) <= 2
 }
@@ -33,7 +33,7 @@ export function useMenu() {
   })
 
   const showDropdownMenu = (e: any, uid: number, item: any) => {
-    dropdown.item = Object.assign({}, item)
+    dropdown.item = { ...item}
 
     dropdown.options = []
     if ([1, 3].includes(item.msg_type)) {

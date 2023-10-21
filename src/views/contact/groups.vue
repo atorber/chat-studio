@@ -23,31 +23,27 @@ const params = reactive({
 
 const tabIndex = ref('all')
 
-const uid = userStore.uid
+const {uid} = userStore
 
-const filterCreator = computed(() => {
-  return items.value.filter((item: any) => item.creator_id == uid)
-})
+const filterCreator = computed(() => items.value.filter((item: any) => item.creator_id === uid))
 
-const filter = computed(() => {
-  return items.value.filter((item: any) => {
-    if (tabIndex.value == 'create' && item.creator_id != uid) {
+const filter = computed(() => items.value.filter((item: any) => {
+    if (tabIndex.value === 'create' && item.creator_id !== uid) {
       return false
     }
 
-    if (tabIndex.value == 'join' && item.creator_id == uid) {
+    if (tabIndex.value === 'join' && item.creator_id === uid) {
       return false
     }
 
     return (
-      item.group_name.toLowerCase().indexOf(keywords.value.toLowerCase()) != -1
+      item.group_name.toLowerCase().indexOf(keywords.value.toLowerCase()) !== -1
     )
-  })
-})
+  }))
 
 const onLoadData = () => {
   ServeGetGroups().then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       items.value = res.data.items || []
     }
   })
@@ -62,7 +58,7 @@ const onToTalk = item => {
   toTalk(2, item.id)
 }
 
-const onGroupCallBack = data => {
+const onGroupCallBack = _data => {
   isShowCreateGroupBox.value = false
   onLoadData()
   talkStore.loadTalkList()
@@ -107,7 +103,7 @@ onMounted(() => {
       </n-space>
     </header>
 
-    <main v-if="filter.length == 0" class="el-main flex-center">
+    <main v-if="filter.length === 0" class="el-main flex-center">
       <n-empty size="200" description="暂无相关数据">
         <template #icon>
           <img src="@/assets/image/no-data.svg" alt="" />
@@ -118,7 +114,8 @@ onMounted(() => {
     <main v-else class="el-main me-scrollbar me-scrollbar-thumb pd-10">
       <div class="cards">
         <GroupCard
-          v-for="item in filter"
+          v-for="(item, index) in filter"
+          :key="index"
           :avatar="item.avatar"
           :username="item.group_name"
           :gender="item.gender"

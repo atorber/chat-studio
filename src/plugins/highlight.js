@@ -34,3 +34,9 @@ hljs.registerLanguage('protobuf', protobuf)
 hljs.registerLanguage('shell', shell)
 hljs.registerLanguage('ini', ini)
 hljs.registerLanguage('makefile', makefile)
+
+export {
+    hljs
+}
+
+export default hljs

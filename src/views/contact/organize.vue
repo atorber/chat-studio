@@ -16,24 +16,20 @@ const keywords = ref('')
 const items = ref([])
 
 // 过滤器
-const filter = computed(() => {
-  return items.value.filter(item => {
-    return (
-      item.nickname.match(keywords.value) != null &&
-      (dept.value == -1 ||
-        item.dept_items.some(item => item.dept_id == dept.value))
-    )
-  })
-})
+const filter = computed(() => items.value.filter(item => (
+      item.nickname.match(keywords.value) !== null &&
+      (dept.value === -1 ||
+        item.dept_items.some(item => item.dept_id === dept.value))
+    )))
 
 const tree = ref([])
 const breadcrumb = ref('全体成员')
 
 const onToTalk = item => {
-  if (userStore.uid != item.user_id) {
+  if (userStore.uid !== item.user_id) {
     toTalk(1, item.user_id)
   } else {
-    window['$message'].info('禁止给自己发送消息!!!')
+    window.$message.info('禁止给自己发送消息!!!')
   }
 }
 
@@ -42,10 +38,10 @@ function toTree(data) {
   data.forEach(item => (map[item.dept_id] = item))
 
   const ancestors = value => {
-    let list = []
+    const list = []
 
     value.split(',').forEach(id => {
-      map[parseInt(id)] && list.push(map[parseInt(id)].dept_name)
+      if(map[parseInt(id,10)]) list.push(map[parseInt(id,10)].dept_name)
     })
 
     return list
@@ -58,7 +54,7 @@ function toTree(data) {
     item.breadcrumb = ancestors(item.ancestors || '').join(' / ')
 
     if (parent) {
-      if (parent.children == undefined) parent.children = []
+      if (parent.children === undefined) parent.children = []
 
       parent.children.push(item)
     } else {
@@ -75,14 +71,12 @@ const onInfo = item => {
   })
 }
 
-const onNodeProps = ({ option }) => {
-  return {
+const onNodeProps = ({ option }) => ({
     onClick() {
       breadcrumb.value = option.breadcrumb || '全部成员'
       dept.value = option.dept_id
     },
-  }
-}
+  })
 
 function onLoadDepartment() {
   ServeDepartmentList().then(res => {
@@ -108,11 +102,11 @@ function onLoadDepartment() {
 
 async function onLoadData() {
   const res = await ServePersonnelList()
-  if (!res || res.code != 200) {
+  if (!res || res.code !== 200) {
     return
   }
 
-  let users = res.data.items || []
+  const users = res.data.items || []
 
   users.map(item => {
     item.online = false
@@ -120,7 +114,7 @@ async function onLoadData() {
 
     item.position_items.sort((a, b) => a.sort - b.sort)
 
-    let map = []
+    const map = []
     for (const o of item.position_items) {
       map.push(o.name)
 
@@ -178,7 +172,8 @@ onLoadDepartment()
         <main class="el-main me-scrollbar pd-10" v-if="filter.length">
           <div class="cards">
             <MemberCard
-              v-for="item in filter"
+              v-for="(item, index) in filter"
+              :key="index"
               :username="item.nickname"
               :gender="item.gender"
               :motto="item.position"

@@ -9,7 +9,7 @@ const props = defineProps<{
   maxWidth: Boolean
 }>()
 
-const float = props.data.float
+const {float} = props.data
 
 let textContent = props.data.content
 
@@ -22,8 +22,8 @@ textContent = textReplaceEmoji(textContent)
   <div
     class="im-message-text"
     :class="{
-      left: float == 'left',
-      right: float == 'right',
+      left: float === 'left',
+      right: float === 'right',
       maxwidth: maxWidth,
     }"
   >

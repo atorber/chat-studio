@@ -13,9 +13,7 @@ const model = reactive({
 })
 
 const langText = computed(() => {
-  let data = options.find(item => {
-    return item.value == model.lang
-  })
+  const data = options.find(item => item.value === model.lang)
 
   if (data) {
     return data.label
@@ -24,21 +22,19 @@ const langText = computed(() => {
   return '请选择语言类型'
 })
 
-const isCanSubmit = computed(() => {
-  return !(model.lang && model.code)
-})
+const isCanSubmit = computed(() => !(model.lang && model.code))
 
 const onMaskClick = () => {
   emit('close')
 }
 
 const onSubmit = () => {
-  let data = {
+  const data = {
     lang: model.lang,
     code: model.code,
   }
 
-  if (model.lang == 'json') {
+  if (model.lang === 'json') {
     try {
       data.code = JSON.stringify(JSON.parse(model.code), null, 2)
     } catch (error) {

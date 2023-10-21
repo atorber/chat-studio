@@ -23,24 +23,26 @@ const onMaskClick = () => {
 }
 
 const onLoadData = async () => {
-  let { code, data } = await ServeContactGroupList()
+  const { code, data } = await ServeContactGroupList()
 
-  if (code != 200) return
+  if (code !== 200) return
 
-  let items = data.items || []
+  const items = data.items || []
   for (const item of items) {
     if (item.id) {
+      index += 1
       options.push({
         id: item.id,
         name: item.name,
-        index: index++,
+        index,
         count: item.count,
       })
     }
   }
 
   if (!options.length) {
-    options.push({ id: 0, name: '', index: index++, count: 0 })
+    index += 1
+    options.push({ id: 0, name: '', index, count: 0 })
   }
 }
 
@@ -48,30 +50,31 @@ const onSubmit = () => {
   ServeContactGroupSave({
     items: options,
   }).then(({ code, message }) => {
-    if (code == 200) {
-      window['$message'].success('保存成功')
+    if (code === 200) {
+      window.$message.success('保存成功')
       emit('relaod')
       emit('close')
     } else {
-      window['$message'].error(message)
+      window.$message.error(message)
     }
   })
 }
 
 const addOption = () => {
-  options.push({ name: '', id: 0, index: index++, count: 0 })
+  index += 1
+  options.push({ name: '', id: 0, index, count: 0 })
 }
 
 const delOption = (item: Item) => {
-  let fn = () => {
-    let i = options.findIndex(value => value.index == item.index)
+  const fn = () => {
+    const i = options.findIndex(value => value.index === item.index)
     if (i >= 0) {
       options.length > 0 && options.splice(i, 1)
     }
   }
 
   if (item.count > 0) {
-    window['$dialog'].create({
+    window.$dialog.create({
       title: '温馨提示',
       content: `【${item.name}】分组下有${item.count}个好友，确定要删除吗？`,
       positiveText: '确定',
@@ -84,9 +87,7 @@ const delOption = (item: Item) => {
 }
 
 // 是否可提交
-const isCanSubmit = computed(() => {
-  return options.some((item: Item) => item.name.trim().length === 0)
-})
+const isCanSubmit = computed(() => options.some((item: Item) => item.name.trim().length === 0))
 
 onLoadData()
 </script>
@@ -102,7 +103,7 @@ onLoadData()
     style="max-width: 450px"
     :on-after-leave="onMaskClick"
   >
-    <n-empty v-show="options.length == 0" size="50" description="暂未设置分组">
+    <n-empty v-show="options.length === 0" size="50" description="暂未设置分组">
       <template #icon>
         <img src="@/assets/image/no-data.svg" alt="" />
       </template>

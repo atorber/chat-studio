@@ -3,13 +3,13 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-let second = ref(6)
+const second = ref(6)
 
 let timer = null
 
 onMounted(() => {
   timer = setInterval(() => {
-    second.value--
+    second.value -= 1
 
     if (second.value === 0) {
       clearInterval(timer)

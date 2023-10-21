@@ -52,11 +52,11 @@ const onSendEmail = () => {
   })
 
   response.then(({ code, message }) => {
-    if (code == 200) {
+    if (code === 200) {
       lock.start()
-      window['$message'].success('邮件发送成功')
+      window.$message.success('邮件发送成功')
     } else {
-      window['$message'].warning(message)
+      window.$message.warning(message)
     }
   })
 }
@@ -64,14 +64,14 @@ const onSendEmail = () => {
 const onSubmit = () => {
   loading.value = true
 
-  let response = ServeUpdateEmail(model)
+  const response = ServeUpdateEmail(model)
 
   response.then(({ code, message }) => {
-    if (code == 200) {
-      window['$message'].success('密码修改成功...')
+    if (code === 200) {
+      window.$message.success('密码修改成功...')
       emit('success', model.email)
     } else {
-      window['$message'].warning(message)
+      window.$message.warning(message)
     }
   })
 

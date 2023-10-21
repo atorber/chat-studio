@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import { Close } from '@icon-park/vue-next'
 import { storage } from '@/utils/storage'
 
-let isShow = ref(false)
+const isShow = ref(false)
 
-let num = storage.get('reward', 0)
+const num = storage.get('reward', 0)
 
 setTimeout(() => {
   isShow.value = num <= 2

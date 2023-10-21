@@ -50,8 +50,8 @@ const props = defineProps({
 
 const isShowHistory = ref(false)
 
-const onSendMessage = (data = {}, callBack: any) => {
-  let message = {
+const onSendMessage = (data, callBack: any) => {
+  const message = {
     ...data,
     receiver: {
       receiver_id: props.receiver_id,
@@ -61,27 +61,27 @@ const onSendMessage = (data = {}, callBack: any) => {
 
   ServePublishMessage(message)
     .then(({ code, message }) => {
-      if (code == 200) {
+      if (code === 200) {
         callBack(true)
       } else {
-        window['$message'].warning(message)
+        window.$message.warning(message)
       }
     })
     .catch(() => {
-      window['$message'].warning('网络繁忙,请稍后重试!')
+      window.$message.warning('网络繁忙,请稍后重试!')
     })
 }
 
 // 发送文本消息
 const onSendTextEvent = throttle((value: any) => {
-  let { data, callBack } = value
+  const { data, callBack } = value
 
-  let message = {
+  const message = {
     type: 'text',
     content: data.items[0].content,
     quote_id: data.quoteId,
     mention: {
-      all: data.mentions.find((v: any) => v.atid == 0) ? 1 : 0,
+      all: data.mentions.find((v: any) => v.atid === 0) ? 1 : 0,
       uids: data.mentionUids,
     },
   }
@@ -89,7 +89,7 @@ const onSendTextEvent = throttle((value: any) => {
   onSendMessage(message, (ok: boolean) => {
     if (!ok) return
 
-    let el = document.getElementById('talk-session-list')
+    const el = document.getElementById('talk-session-list')
     if (el) {
       // 对话列表滚动条置顶
       el.scrollTop = 0
@@ -106,25 +106,25 @@ const onSendImageEvent = ({ data, callBack }) => {
 
 // 发送图片消息
 const onSendVideoEvent = async ({ data }) => {
-  let resp = await getVideoImage(data)
+  const resp = await getVideoImage(data)
 
   const coverForm = new FormData()
   coverForm.append('file', resp.file)
 
-  let cover = await ServeUploadImage(coverForm)
-  if (cover.code != 200) return
+  const cover = await ServeUploadImage(coverForm)
+  if (cover.code !== 200) return
 
   const form = new FormData()
   form.append('file', data)
 
-  let video = await ServeUploadImage(form)
-  if (video.code != 200) return
+  const video = await ServeUploadImage(form)
+  if (video.code !== 200) return
 
-  let message = {
+  const message = {
     type: 'video',
     url: video.data.src,
     cover: cover.data.src,
-    duration: parseInt(resp.duration),
+    duration: parseInt(resp.duration, 10),
     size: data.size,
   }
 
@@ -138,9 +138,9 @@ const onSendCodeEvent = ({ data, callBack }) => {
 
 // 发送文件消息
 const onSendFileEvent = ({ data }) => {
-  let maxsize = 200 * 1024 * 1024
+  const maxsize = 200 * 1024 * 1024
   if (data.size > maxsize) {
-    return window['$message'].warning('上传文件不能超过100M!')
+    return window.$message.warning('上传文件不能超过100M!')
   }
 
   uploadsStore.initUploadFile(
@@ -149,11 +149,12 @@ const onSendFileEvent = ({ data }) => {
     props.receiver_id,
     dialogueStore.talk.username
   )
+  return null
 }
 
 // 发送投票消息
 const onSendVoteEvent = ({ data, callBack }) => {
-  let response = ServeSendVote({
+  const response = ServeSendVote({
     receiver_id: props.receiver_id,
     mode: data.mode,
     anonymous: data.anonymous,
@@ -162,10 +163,10 @@ const onSendVoteEvent = ({ data, callBack }) => {
   })
 
   response.then(({ code, message }) => {
-    if (code == 200) {
+    if (code === 200) {
       callBack(true)
     } else {
-      window['$message'].warning(message)
+      window.$message.warning(message)
     }
   })
 
@@ -178,7 +179,7 @@ const onSendEmoticonEvent = ({ data, callBack }) => {
 }
 
 const onSendMixedEvent = ({ data, callBack }) => {
-  let message = {
+  const message = {
     type: 'mixed',
     quote_id: data.quoteId,
     items: data.items,
@@ -226,7 +227,9 @@ const evnets = {
 
 // 编辑器事件
 const onEditorEvent = (msg: any) => {
-  evnets[msg.event] && evnets[msg.event](msg)
+   if(evnets[msg.event]){
+    evnets[msg.event](msg)
+   }
 }
 
 onMounted(() => {
@@ -240,7 +243,7 @@ onMounted(() => {
     <Editor
       v-else
       @editor-event="onEditorEvent"
-      :vote="talk_type == 2"
+      :vote="talk_type === 2"
       :members="members"
     />
   </footer>

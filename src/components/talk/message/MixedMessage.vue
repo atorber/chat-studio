@@ -11,39 +11,25 @@ const props = defineProps<{
   maxWidth: Boolean
 }>()
 
-const float = props.data.float
+const { float } = props.data
 
-const maxWidth = (src, width = 200) => {
+// const calcMaxWidth = (src: string, width: number = 200) => {
+//   const info = getImageInfo(src)
+//   return info.width === 0 ? width : Math.min(info.width, width)
+// }
+
+const calcImageStyle = (src: string, width: number = 200) => {
   const info = getImageInfo(src)
-
-  if (info.width == 0) {
-    return width
-  }
-
-  if (info.width < width) {
-    return info.width
-  }
-
-  return width
-}
-
-const img = (src, width = 200) => {
-  const info = getImageInfo(src)
-
-  if (info.width == 0 || info.height == 0) {
+  if (info.width === 0 || info.height === 0) {
     return {}
   }
 
-  if (info.width < width) {
-    return {
-      width: `${info.width}px`,
-      height: `${info.height}px`,
-    }
-  }
+  const newWidth = Math.min(info.width, width)
+  const newHeight = Math.floor((info.height / info.width) * newWidth)
 
   return {
-    width: width + 'px',
-    height: parseInt(info.height / (info.width / width)) + 'px',
+    width: `${newWidth}px`,
+    height: `${newHeight}px`,
   }
 }
 </script>
@@ -52,21 +38,21 @@ const img = (src, width = 200) => {
   <div
     class="im-message-mixed"
     :class="{
-      left: float == 'left',
-      right: float == 'right',
-      maxwidth: maxWidth,
+      left: float === 'left',
+      right: float === 'right',
+      maxwidth: props.maxWidth,
     }"
   >
     <pre>
-      <template v-for="item in extra.items">
+      <template v-for="(item, index) in props.extra.items" :key="index">
         <template v-if="item.type === 1">
           <span v-html="textReplaceEmoji(textReplaceLink(item.content))" />
         </template>
 
         <template v-else-if="item.type === 3">
           <div
-            :style="img(item.content, 300)"
-            style="display: flex; margin: 5px 0;border-radius: 8px;overflow: hidden;;"
+            :style="calcImageStyle(item.content, 300)"
+            style="display: flex; margin: 5px 0; border-radius: 8px; overflow: hidden;"
           >
             <n-image :src="item.content"></n-image>
           </div>

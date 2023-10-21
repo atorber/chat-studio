@@ -49,7 +49,7 @@ const lock = new SmsLock(
 
 const onSendSms = () => {
   if (!isMobile(model.mobile)) {
-    window['$message'].warning('请正确填写手机号')
+    window.$message.warning('请正确填写手机号')
     return
   }
 
@@ -59,17 +59,17 @@ const onSendSms = () => {
   })
 
   response.then(({ code, data, message }) => {
-    if (code == 200) {
+    if (code === 200) {
       lock.start()
 
       if (data.is_debug) {
         model.sms_code = data.sms_code
-        window['$message'].success('已开启验证码自动填充')
+        window.$message.success('已开启验证码自动填充')
       } else {
-        window['$message'].success('短信发送成功')
+        window.$message.success('短信发送成功')
       }
     } else {
-      window['$message'].warning(message)
+      window.$message.warning(message)
     }
   })
 }
@@ -77,14 +77,14 @@ const onSendSms = () => {
 const onSubmit = () => {
   loading.value = true
 
-  let response = ServeUpdateMobile(model)
+  const response = ServeUpdateMobile(model)
 
   response.then(({ code, message }) => {
-    if (code == 200) {
-      window['$message'].success('手机号修改成功...')
+    if (code === 200) {
+      window.$message.success('手机号修改成功...')
       emit('success', model.mobile)
     } else {
-      window['$message'].warning(message)
+      window.$message.warning(message)
     }
   })
 

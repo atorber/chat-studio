@@ -20,18 +20,18 @@ let once = false
 const errorHandler = error => {
   // 判断是否是响应错误信息
   if (error.response) {
-    if (error.response.status == 401) {
+    if (error.response.status === 401) {
       delAccessToken()
 
       if (!once) {
         once = true
-        window['$dialog'].info({
+        window.$dialog.info({
           title: '友情提示',
           content: '当前登录已失效，请重新登录？',
           positiveText: '立即登录?',
           maskClosable: false,
           onPositiveClick: () => {
-            location.reload()
+            window.location.reload()
           },
         })
       }
@@ -46,7 +46,7 @@ request.interceptors.request.use(config => {
   const token = getAccessToken()
 
   if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`
+    config.headers.Authorization = `Bearer ${token}`
   }
 
   return config
@@ -63,14 +63,12 @@ request.interceptors.response.use(response => response.data, errorHandler)
  * @param {Object} options
  * @returns {Promise<any>}
  */
-export const get = (url, data = {}, options = {}) => {
-  return request({
+export const get = (url, data = {}, options = {}) => request({
     url,
     params: data,
     method: 'get',
     ...options,
   })
-}
 
 /**
  * POST 请求
@@ -80,14 +78,12 @@ export const get = (url, data = {}, options = {}) => {
  * @param {Object} options
  * @returns {Promise<any>}
  */
-export const post = (url, data = {}, options = {}) => {
-  return request({
+export const post = (url, data = {}, options = {}) => request({
     url,
     method: 'post',
-    data: data,
+    data,
     ...options,
   })
-}
 
 /**
  * 上传文件 POST 请求
@@ -97,11 +93,9 @@ export const post = (url, data = {}, options = {}) => {
  * @param {Object} options
  * @returns {Promise<any>}
  */
-export const upload = (url, data = {}, options = {}) => {
-  return request({
+export const upload = (url, data = {}, options = {}) => request({
     url,
     method: 'post',
-    data: data,
+    data,
     ...options,
   })
-}

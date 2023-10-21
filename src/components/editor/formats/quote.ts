@@ -4,7 +4,9 @@ const BlockEmbed = Quill.import('blots/block/embed');
 
 class QuoteBlot extends BlockEmbed {
     static blotName = 'quote';
+
     static tagName = 'div';
+
     static className = 'quote-card';
 
     static create(value): any {
@@ -27,7 +29,7 @@ class QuoteBlot extends BlockEmbed {
         quoteCardTitle.textContent = title;
         quoteCardContent.appendChild(quoteCardTitle);
 
-        if (image.length == 0) {
+        if (image.length === 0) {
             const quoteCardMeta = document.createElement('span');
             quoteCardMeta.classList.add('quote-card-meta');
             quoteCardMeta.textContent = describe;

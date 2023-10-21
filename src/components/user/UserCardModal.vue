@@ -15,7 +15,10 @@ const emit = defineEmits(['update:show', 'update:uid',"changeRemark"])
 
 const props = defineProps({
   show: Boolean,
-  uid: Number,
+  uid: {
+    type: Number,
+    default: 0,  // 设置默认值为一个空对象
+  },
 })
 
 const loading = ref(true)
@@ -38,9 +41,7 @@ const modelRemark = ref('')
 
 const options = ref<any>([])
 const groupName = computed(() => {
-  const item = options.value.find((item: any) => {
-    return item.key == state.group_id
-  })
+  const item = options.value.find((item: any) => item.key === state.group_id)
 
   if (item) {
     return item.label
@@ -53,20 +54,20 @@ const onLoadData = () => {
   ServeSearchUser({
     user_id: props.uid,
   }).then(({ code, data }) => {
-    if (code == 200) {
+    if (code === 200) {
       Object.assign(state, data)
 
       modelRemark.value = state.remark
 
       loading.value = false
     } else {
-      window['$message'].info('用户信息不存在', { showIcon: false })
+      window.$message.info('用户信息不存在', { showIcon: false })
     }
   })
 
   ServeContactGroupList().then(res => {
-    if (res.code == 200) {
-      let items = res.data.items || []
+    if (res.code === 200) {
+      const items = res.data.items || []
       options.value = []
       for (const iter of items) {
         options.value.push({ label: iter.name, key: iter.id })
@@ -82,20 +83,21 @@ const onToTalk = () => {
 
 const onJoinContact = () => {
   if (!state.text.length) {
-    return window['$message'].info('备注信息不能为空')
+    return window.$message.info('备注信息不能为空')
   }
 
   ServeCreateContact({
     friend_id: props.uid,
     remark: state.text,
   }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       isOpenFrom.value = false
-      window['$message'].success('申请发送成功')
+      window.$message.success('申请发送成功')
     } else {
-      window['$message'].error(res.message)
+      window.$message.error(res.message)
     }
   })
+  return null
 }
 
 const onChangeRemark = () => {
@@ -103,9 +105,9 @@ const onChangeRemark = () => {
     friend_id: props.uid,
     remark: modelRemark.value,
   }).then(({ code, message }) => {
-    if (code == 200) {
+    if (code === 200) {
       editCardPopover.value.setShow(false)
-      window['$message'].success('备注成功')
+      window.$message.success('备注成功')
       state.remark = modelRemark.value
 
       emit('changeRemark', {
@@ -113,7 +115,7 @@ const onChangeRemark = () => {
         remark: modelRemark.value,
       })
     } else {
-      window['$message'].error(message)
+      window.$message.error(message)
     }
   })
 }
@@ -123,11 +125,11 @@ const handleSelectGroup = value => {
     user_id: props.uid,
     group_id: value,
   }).then(({ code, message }) => {
-    if (code == 200) {
+    if (code === 200) {
       state.group_id = value
-      window['$message'].success('分组修改成功')
+      window.$message.success('分组修改成功')
     } else {
-      window['$message'].error(message)
+      window.$message.error(message)
     }
   })
 }
@@ -183,12 +185,12 @@ const onAfterEnter = () => {
 
           <div class="gender" v-show="state.gender > 0">
             <n-icon
-              v-if="state.gender == 1"
+              v-if="state.gender === 1"
               :component="Male"
               color="#508afe"
             />
             <n-icon
-              v-if="state.gender == 2"
+              v-if="state.gender === 2"
               :component="Female"
               color="#ff5722"
             />
@@ -222,10 +224,10 @@ const onAfterEnter = () => {
             <div class="info-item">
               <span class="name">性别 :</span>
               <span class="text">{{
-                state.gender == 1 ? '男' : state.gender == 2 ? '女' : '未知'
+                state.gender === 1 ? '男' : state.gender === 2 ? '女' : '未知'
               }}</span>
             </div>
-            <div class="info-item" v-if="state.friend_status == 2">
+            <div class="info-item" v-if="state.friend_status === 2">
               <span class="name">备注 :</span>
               <n-popover
                 trigger="click"
@@ -247,7 +249,7 @@ const onAfterEnter = () => {
                     :autofocus="true"
                     maxlength="10"
                     v-model:value="modelRemark"
-                    @keydown.enter.native="onChangeRemark"
+                    @keydown.enter="onChangeRemark"
                   />
                   <n-button
                     type="primary"
@@ -264,7 +266,7 @@ const onAfterEnter = () => {
               <span class="name">邮箱 :</span>
               <span class="text">{{ state.email || '-' }}</span>
             </div>
-            <div class="info-item" v-if="state.friend_status == 2">
+            <div class="info-item" v-if="state.friend_status === 2">
               <span class="name">分组 :</span>
               <n-dropdown
                 trigger="click"
@@ -280,7 +282,7 @@ const onAfterEnter = () => {
         </main>
 
         <footer
-          v-if="state.friend_status == 2"
+          v-if="state.friend_status === 2"
           class="el-footer footer bdr-t flex-center"
         >
           <n-button
@@ -299,7 +301,7 @@ const onAfterEnter = () => {
         </footer>
 
         <footer
-          v-else-if="state.friend_status == 1"
+          v-else-if="state.friend_status === 1"
           class="el-footer footer bdr-t flex-center"
         >
           <template v-if="isOpenFrom">
@@ -307,7 +309,7 @@ const onAfterEnter = () => {
               type="text"
               placeholder="请填写申请备注"
               v-model:value="state.text"
-              @keydown.enter.native="onJoinContact"
+              @keydown.enter="onJoinContact"
             />
 
             <n-button

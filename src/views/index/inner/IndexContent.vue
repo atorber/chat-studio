@@ -10,6 +10,7 @@ import GroupNotice from '@/components/group/GroupNotice.vue'
 import UploadsModal from '@/components/base/UploadsModal.vue'
 
 const user = inject('$user')
+console.debug(user)
 const userStore = useUserStore()
 const dialogueStore = useDialogueStore()
 const uploadsStore = useUploadsStore()
@@ -47,7 +48,7 @@ const onPanelHeaderEvent = eventType => {
     },
   }
 
-  events[eventType] && events[eventType]()
+  if(events[eventType]) events[eventType]()
 }
 </script>
 

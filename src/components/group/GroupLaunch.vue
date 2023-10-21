@@ -16,7 +16,7 @@ import {
   ServeGetInviteFriends,
 } from '@/api/group'
 
-const emit = defineEmits(['close', 'on-submit'])
+const emit = defineEmits(['close', 'on-submit', 'on-invite'])  // 添加 'on-invite' 事件
 const props = defineProps({
   gid: {
     type: Number,
@@ -35,17 +35,13 @@ const isShowBox = ref(true)
 
 const searchFilter = computed(() => {
   if (model.keywords) {
-    return items.value.filter(item => {
-      return item.nickname.match(model.keywords) != null
-    })
+    return items.value.filter(item => item.nickname.match(model.keywords) !== null)
   }
 
   return items.value
 })
 
-const checkedFilter = computed(() => {
-  return items.value.filter(item => item.checked)
-})
+const checkedFilter = computed(() => items.value.filter(item => item.checked))
 
 const isCanSubmit = computed(() => {
   if (props.gid > 0) {
@@ -67,15 +63,13 @@ const onLoad = () => {
     group_id: props.gid,
   })
     .then(res => {
-      if (res.code == 200 && res.data) {
-        let list = res.data || []
+      if (res.code === 200 && res.data) {
+        const list = res.data || []
 
-        items.value = list.map(item => {
-          return Object.assign(item, {
+        items.value = list.map(item => Object.assign(item, {
             nickname: item.friend_remark ? item.friend_remark : item.nickname,
             checked: false,
-          })
-        })
+          }))
       }
     })
     .finally(() => {
@@ -88,9 +82,7 @@ const onMaskClick = () => {
 }
 
 const onTriggerContact = item => {
-  let data = items.value.find(val => {
-    return val.id === item.id
-  })
+  const data = items.value.find(val => val.id === item.id)
 
   data && (data.checked = !data.checked)
 }
@@ -102,10 +94,10 @@ const onCreateSubmit = ids => {
     profile: '',
     ids: ids.join(','),
   }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       onReset()
       emit('on-submit', res.data)
-      window['$message'].success('创建成功')
+      window.$message.success('创建成功')
       isShowBox.value = false
     }
   })
@@ -116,18 +108,18 @@ const onInviteSubmit = ids => {
     group_id: props.gid,
     ids: ids.join(','),
   }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       emit('on-invite')
-      window['$message'].success('邀请成功')
+      window.$message.success('邀请成功')
       isShowBox.value = false
     }
   })
 }
 
 const onSubmit = () => {
-  let ids = checkedFilter.value.map(item => item.id)
+  const ids = checkedFilter.value.map(item => item.id)
 
-  if (props.gid == 0) {
+  if (props.gid === 0) {
     onCreateSubmit(ids)
   } else {
     onInviteSubmit(ids)
@@ -141,7 +133,7 @@ onLoad()
   <n-modal
     v-model:show="isShowBox"
     preset="card"
-    :title="gid == 0 ? '创建群聊' : '邀请新的联系人'"
+    :title="gid === 0 ? '创建群聊' : '邀请新的联系人'"
     class="modal-radius"
     style="max-width: 650px; height: 550px"
     :on-after-leave="onMaskClick"
@@ -172,7 +164,8 @@ onLoad()
               <div class="friend-items">
                 <div
                   class="friend-item pointer"
-                  v-for="item in searchFilter"
+                  v-for="(item,index) in searchFilter"
+                  :key="index"
                   @click="onTriggerContact(item)"
                 >
                   <div class="avatar">
@@ -235,7 +228,8 @@ onLoad()
               <div class="friend-items">
                 <div
                   class="friend-item pointer"
-                  v-for="item in checkedFilter"
+                  v-for="(item,index) in checkedFilter"
+                  :key="index"
                   @click="onTriggerContact(item)"
                 >
                   <div class="avatar">

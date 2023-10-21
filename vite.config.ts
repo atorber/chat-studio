@@ -3,6 +3,7 @@ import path from 'path'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import compressPlugin from 'vite-plugin-compression'
+import eslintPlugin from "vite-plugin-eslint";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
@@ -20,7 +21,7 @@ export default defineConfig(({ command, mode }) => {
     },
     root: process.cwd(),
     assetsInclude: ['./src/assets'],
-    plugins: [vue(), vueJsx({}), compressPlugin()],
+    plugins: [vue(), vueJsx({}), compressPlugin(), eslintPlugin(), ],
     define: {
       __APP_ENV__: env.APP_ENV,
     },

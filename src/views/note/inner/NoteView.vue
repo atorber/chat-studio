@@ -12,7 +12,6 @@ import {
   FullScreen,
   OffScreen,
 } from '@icon-park/vue-next'
-import Loading from '@/components/base/Loading.vue'
 import AnnexUploadModal from './AnnexUploadModal.vue'
 import TagsClipModal from './TagsClipModal.vue'
 import { debounce } from '@/utils/common'
@@ -51,7 +50,7 @@ const loadStatus = computed(() => store.view.loadStatus)
 const loading = ref(false)
 
 const editorMode = computed(() =>
-  store.view.editorMode == 'preview' ? false : 'plaintext-only'
+  store.view.editorMode === 'preview' ? false : 'plaintext-only'
 )
 
 const onFull = () => {
@@ -62,17 +61,17 @@ const onFull = () => {
 const onUploadImage = (event, insertImage, files) => {
   if (!files.length) return
 
-  let formdata = new FormData()
+  const formdata = new FormData()
   formdata.append('image', files[0])
 
   ServeUploadArticleImg(formdata).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       insertImage({
         url: res.data.url,
         desc: files[0].name,
       })
     } else {
-      window['$message'].info(res.message)
+      window.$message.info(res.message)
     }
   })
 }
@@ -85,9 +84,9 @@ const onChange = (text, html) => {
 
 // 保存笔记
 const onSave = isCloseEditMode => {
-  let data = detail.value
+  const data = detail.value
 
-  if (editor.markdown == '' && data.id == 0) {
+  if (editor.markdown === '' && data.id === 0) {
     store.close()
     return
   }
@@ -101,11 +100,11 @@ const onSave = isCloseEditMode => {
     content: editor.html,
   })
     .then(res => {
-      if (res.code != 200) {
-        return window['$message'].info(res.message)
+      if (res.code !== 200) {
+        return window.$message.info(res.message)
       }
 
-      if (data.id == 0) {
+      if (data.id === 0) {
         store.loadClass()
         store.loadNoteList({}, false)
       } else {
@@ -120,13 +119,16 @@ const onSave = isCloseEditMode => {
         store.setEditorMode('preview')
       }
 
-      window['$message'].success('保存成功', {
+      window.$message.success('保存成功', {
         duration: 1000,
       })
+    
+      return null
     })
     .finally(() => {
       loading.value = false
     })
+    
 }
 
 // 防抖的保存事件
@@ -136,7 +138,7 @@ const onSaveDebounce = debounce(isCloseEditMode => {
 
 // 标题输入键盘事件
 const onTitle = e => {
-  if (e.keyCode == 13) {
+  if (e.keyCode === 13) {
     e.preventDefault()
     return
   }
@@ -151,29 +153,31 @@ const onTitle = e => {
 
 // 收藏笔记
 const onCollection = () => {
-  let type = detail.value.is_asterisk == 1 ? 2 : 1
+  const type = detail.value.is_asterisk === 1 ? 2 : 1
 
   ServeSetAsteriskArticle({
     article_id: detail.value.id,
-    type: type,
+    type,
   }).then(res => {
     if (res.code !== 200) return false
 
-    store.setCollectionStatus(type == 1)
+    store.setCollectionStatus(type === 1)
+    return null
   })
+  
 }
 
 // 下载笔记
 const onDownload = () => {
-  let title = store.view.detail.title + '.md'
-  let blob = new Blob([store.view.detail.md_content], {
+  const title = `${store.view.detail.title  }.md`
+  const blob = new Blob([store.view.detail.md_content], {
     type: 'text/plain',
   })
 
-  let reader = new FileReader()
+  const reader = new FileReader()
   reader.readAsDataURL(blob)
   reader.onload = function (e) {
-    let a = document.createElement('a')
+    const a = document.createElement('a')
     a.download = title
     a.href = e.target.result
     document.body.appendChild(a)
@@ -201,13 +205,14 @@ const onDelete = () => {
         if (res.code !== 200) return false
 
         store.close()
+      return null
       })
     },
   })
 }
 
 const onShare = () => {
-  window['$message'].info('开发中...')
+  window.$message.info('开发中...')
 }
 </script>
 
@@ -215,7 +220,7 @@ const onShare = () => {
   <section
     class="el-container section"
     :class="{ full: isFull }"
-    v-loading="loadStatus == 0"
+    v-loading="loadStatus === 0"
   >
     <main class="el-main" style="padding: 0 5px">
       <section class="el-container is-vertical height100">
@@ -229,7 +234,7 @@ const onShare = () => {
         </header>
 
         <header
-          v-if="store.view.editorMode == 'preview'"
+          v-if="store.view.editorMode === 'preview'"
           class="el-header sub-header text-ellipsis"
         >
           <span>分类: {{ store.view.detail.class_name || '默认分类' }}</span>
@@ -238,7 +243,7 @@ const onShare = () => {
 
         <main class="el-main" style="overflow: auto">
           <v-md-editor
-            v-if="store.view.editorMode == 'preview'"
+            v-if="store.view.editorMode === 'preview'"
             v-model="editor.markdown"
             mode="preview"
             height="100%"
@@ -272,7 +277,7 @@ const onShare = () => {
       </div>
 
       <div
-        v-show="store.view.editorMode == 'preview'"
+        v-show="store.view.editorMode === 'preview'"
         class="nav-item"
         @click="store.setEditorMode('edit')"
       >
@@ -281,19 +286,19 @@ const onShare = () => {
       </div>
 
       <div
-        v-show="store.view.editorMode == 'edit'"
+        v-show="store.view.editorMode === 'edit'"
         class="nav-item"
         @click="onSave(true)"
       >
         <n-icon class="icon" size="18" :component="EditOne" />
-        <p v-if="detail.id == 0 && editor.markdown.length === 0">取消</p>
+        <p v-if="detail.id === 0 && editor.markdown.length === 0">取消</p>
         <p v-else>{{ loading ? '保存中..' : '保存' }}</p>
       </div>
 
       <div
         v-show="detail.id"
         class="nav-item"
-        :class="{ active: detail.is_asterisk == 1 }"
+        :class="{ active: detail.is_asterisk === 1 }"
         @click="onCollection"
       >
         <n-icon class="icon" size="18" :component="IconStar" />

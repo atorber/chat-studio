@@ -1,7 +1,13 @@
 <script setup>
 defineProps({
-  extra: Object,
-  data: Object,
+  extra: {
+    type: Object,
+    default: () => ({}),  // 设置默认值为一个空对象
+  },
+  data: {
+    type: Object,
+    default: () => ({}),  // 设置默认值为一个空对象
+  },
 })
 </script>
 

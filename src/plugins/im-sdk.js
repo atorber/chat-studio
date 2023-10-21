@@ -4,54 +4,54 @@ class ImSDK {
    *
    * @param {*} data
    */
-  sendText(data = {}) {}
+  static sendText(_data = {}) {}
 
   /**
    * 发送图片消息
    *
    * @param {*} data
    */
-  sendImage(data = {}) {}
+  static sendImage(_data = {}) {}
 
   /**
    * 发送图片消息
    *
    * @param {*} data
    */
-  sendFile(data = {}) {}
+  static sendFile(_data = {}) {}
 
   /**
    * 发送代码消息
    *
    * @param {*} data
    */
-  sendCode(data = {}) {}
+  static sendCode(_data = {}) {}
 
   /**
    * 发送投票消息
    *
    * @param {*} data
    */
-  sendVote(data = {}) {}
+  static sendVote(_data = {}) {}
 
   /**
    * 发送位置消息
    *
    * @param {*} data
    */
-  sendLocation(data = {}) {}
+  static sendLocation(_data = {}) {}
 
   /**
    * 发送表情包
    *
    * @param {*} data
    */
-  sendEmoticon(data = {}) {}
+  static sendEmoticon(_data = {}) {}
 
   /**
    * 发送键盘消息
    */
-  sendKeyboardMsg() {}
+  static sendKeyboardMsg() {}
 }
 
-export default new ImSDK()
+export default new ImSDK();

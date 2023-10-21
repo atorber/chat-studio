@@ -1,4 +1,4 @@
-import { createApp, h } from 'vue'
+import { createApp } from 'vue'
 
 /**
  * 防抖函数
@@ -10,11 +10,10 @@ import { createApp, h } from 'vue'
 export function debounce(fn, delay) {
   let timer = null
 
-  return function () {
+  return function (...args) {
     timer && clearTimeout(timer)
 
-    let content = this
-    let args = arguments
+    const content = this
     timer = setTimeout(() => {
       fn.apply(content, args)
     }, delay)
@@ -31,20 +30,24 @@ export function debounce(fn, delay) {
 export function throttle(fn, delay, call = function () {}) {
   let lastTime = 0
 
-  return function () {
+  return function (...args) {
     // 获取当前时间戳
-    let now = new Date().getTime()
+    const now = new Date().getTime()
 
     // 如果当前时间减去上次时间大于限制时间时才执行
     if (now - lastTime > delay) {
       lastTime = now
-      fn.apply(this, arguments)
+      fn.apply(this, args)
     } else {
       call()
     }
   }
 }
-
+function showModal(message) {
+  const modalElement = document.getElementById('modal');
+  modalElement.innerText = message;
+  modalElement.style.display = 'block';
+}
 /**
  * 剪贴板复制功能
  *
@@ -58,7 +61,8 @@ export function clipboard(text, callback) {
       callback && callback()
     })
     .catch(() => {
-      alert('Oops, unable to copy')
+      
+      showModal('Oops, unable to copy')
     })
 }
 
@@ -67,20 +71,20 @@ export async function clipboardImage(src, callback) {
     name: 'clipboard-write',
   })
 
-  if (state != 'granted') return
+  if (state !== 'granted') return
 
-  let image = new Image()
+  const image = new Image()
   image.src = src
   image.onload = () => {
-    let canvas = document.createElement('canvas')
+    const canvas = document.createElement('canvas')
     canvas.width = image.width
     canvas.height = image.height
-    let context = canvas.getContext('2d')
+    const context = canvas.getContext('2d')
     context.drawImage(image, 0, 0, image.width, image.height)
 
     canvas.toBlob(async blob => {
       try {
-        let item = new ClipboardItem({
+        const item = new ClipboardItem({
           [blob.type]: blob,
         })
 
@@ -108,7 +112,7 @@ export function hashStrToHexColor(str) {
 }
 
 export function emitCall(event, data, fn) {
-  return { event: event, data: data, callBack: fn || function () {} }
+  return { event, data, callBack: fn || function () {} }
 }
 
 export function modal(Constructor, props = {}) {
@@ -127,20 +131,21 @@ export function modal(Constructor, props = {}) {
   return app.mount(mountNode, true)
 }
 
-// 判断是否是客户端模式
-export function isElectronMode() {
-  return electron() != undefined
-}
-
 export function electron() {
   return window.electron
 }
 
+// 判断是否是客户端模式
+export function isElectronMode() {
+  const isElectronMode = electron() !== undefined
+  return isElectronMode
+}
+
 export function htmlDecode(input) {
   // 匹配 HTML 实体的正则表达式
-  var htmlEntities = /&(?:[a-z]+|#\d+);/gi
+  const htmlEntities = /&(?:[a-z]+|#\d+);/gi
   // 匹配已知 HTML 实体的映射
-  var htmlEntityMap = {
+  const htmlEntityMap = {
     '&amp;': '&',
     '&lt;': '<',
     '&gt;': '>',
@@ -152,15 +157,13 @@ export function htmlDecode(input) {
     // ... 添加其他实体的映射
   }
   // 使用正则表达式和映射替换输入中的实体
-  return input.replace(htmlEntities, function (match) {
-    return htmlEntityMap[match] || match
-  })
+  return input.replace(htmlEntities, (match) => htmlEntityMap[match] || match)
 }
 
 // 文件转 图片 关键函数  异步
 export function getVideoImage(file) {
-  return new Promise((resolve, reject) => {
-    let video = document.createElement('video')
+  return new Promise((resolve, _reject) => {
+    const video = document.createElement('video')
 
     video.src = URL.createObjectURL(file)
 
@@ -171,20 +174,20 @@ export function getVideoImage(file) {
     video.addEventListener('seeked', function () {
       this.width = this.videoWidth
       this.height = this.videoHeight
-      var canvas = document.createElement('canvas')
-      var ctx = canvas.getContext('2d')
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
       canvas.width = this.width
       canvas.height = this.height
       ctx?.drawImage(this, 0, 0, canvas.width, canvas.height)
 
-      let image = {
+      const image = {
         url: canvas.toDataURL('image/jpeg', 1),
         width: this.width,
         height: this.height,
         duration: this.duration,
       }
 
-      canvas.toBlob(function (blob) {
+      canvas.toBlob((blob) => {
         image.file = new File([blob], 'video_image.jpeg', {
           type: blob.type,
           lastModified: Date.now(),

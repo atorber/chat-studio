@@ -58,9 +58,65 @@ const loadConfig = reactive({
   minRecord: 0,
 })
 
+const onJumpMessage = (msgid: string) => {
+  const element = document.getElementById(msgid)
+  if (!element) {
+    if (locationMessage === null) {
+      locationMessage = {
+        msgid,
+        num: 3,
+      }
+    } else {
+      locationMessage.num -= 1
+
+      if (locationMessage.num === 0) {
+        locationMessage = null
+
+        window.$message.info('仅支持查看最近300条的记录')
+        return
+      }
+    }
+
+    const el = document.getElementById('imChatPanel')
+
+    el?.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    })
+    return
+  }
+
+  locationMessage = null
+
+  element?.scrollIntoView({
+    behavior: 'smooth',
+  })
+
+  addClass(element, 'border')
+
+  setTimeout(() => {
+     if (element) removeClass(element, 'border')
+  }, 3000)
+}
+
 // 置底按钮
 const skipBottom = ref(false)
+function onAfterRead(records: IMessageRecord[]) {
+  const ids: number[] = []
 
+  for (const record of records) {
+    if (props.receiver_id === record.user_id && record.is_read === 0) {
+      ids.push(record.id)
+    }
+  }
+
+  if (ids.length) {
+    socket.emit('im.message.read', {
+      receiver_id: props.receiver_id,
+      msg_id: ids,
+    })
+  }
+}
 // 加载会话记录
 const onLoadTalk = () => {
   const data = {
@@ -75,7 +131,7 @@ const onLoadTalk = () => {
   }
 
   let scrollHeight = 0
-  let el = document.getElementById('imChatPanel')
+  const el = document.getElementById('imChatPanel')
   if (el) {
     scrollHeight = el.scrollHeight
   }
@@ -86,8 +142,8 @@ const onLoadTalk = () => {
   response.then(res => {
     // 防止对话切换过快，数据渲染错误
     if (
-      data.talk_type != props.talk_type ||
-      data.receiver_id != props.receiver_id
+      data.talk_type !== props.talk_type ||
+      data.receiver_id !== props.receiver_id
     ) {
       locationMessage = null
       return
@@ -98,11 +154,11 @@ const onLoadTalk = () => {
     records.map((item: IMessageRecord) => formatTalkRecord(props.uid, item))
 
     // 判断是否是初次加载
-    if (data.record_id == 0) {
+    if (data.record_id === 0) {
       dialogueStore.clearDialogueRecord()
     }
 
-    if (props.talk_type == 1) {
+    if (props.talk_type === 1) {
       onAfterRead(records)
     }
 
@@ -114,7 +170,7 @@ const onLoadTalk = () => {
     nextTick(() => {
       if (!el) return
 
-      if (data.record_id == 0) {
+      if (data.record_id === 0) {
         el.scrollTop = el.scrollHeight
       } else {
         el.scrollTop = el.scrollHeight - scrollHeight
@@ -131,56 +187,39 @@ const onLoadTalk = () => {
   })
 }
 
-function onAfterRead(records: IMessageRecord[]) {
-  let ids: number[] = []
-
-  for (const record of records) {
-    if (props.receiver_id === record.user_id && record.is_read === 0) {
-      ids.push(record.id)
-    }
-  }
-
-  if (ids.length) {
-    socket.emit('im.message.read', {
-      receiver_id: props.receiver_id,
-      msg_id: ids,
-    })
-  }
-}
-
 // 是否显示消息时间
 const isShowTalkTime = (index: number, datetime: string) => {
-  if (datetime == undefined) {
+  if (datetime === undefined) {
     return false
   }
 
-  if (records.value[index].is_revoke == 1) {
+  if (records.value[index].is_revoke === 1) {
     return false
   }
 
   datetime = datetime.replace(/-/g, '/')
-  let time = Math.floor(Date.parse(datetime) / 1000)
-  let currTime = Math.floor(new Date().getTime() / 1000)
+  const time = Math.floor(Date.parse(datetime) / 1000)
+  const currTime = Math.floor(new Date().getTime() / 1000)
 
   // 当前时间5分钟内时间不显示
   if (currTime - time < 300) return false
 
   // 判断是否是最后一条消息,最后一条消息默认显示时间
-  if (index == records.value.length - 1) {
+  if (index === records.value.length - 1) {
     return true
   }
 
-  let nextDate = records.value[index + 1].created_at.replace(/-/g, '/')
+  const nextDate = records.value[index + 1].created_at.replace(/-/g, '/')
 
   return !(
-    parseTime(new Date(datetime), '{y}-{m}-{d} {h}:{i}') ==
+    parseTime(new Date(datetime), '{y}-{m}-{d} {h}:{i}') ===
     parseTime(new Date(nextDate), '{y}-{m}-{d} {h}:{i}')
   )
 }
 
 // 窗口滚动事件
 const onPanelScroll = (e: any) => {
-  if (e.target.scrollTop == 0 && loadConfig.status == 1) {
+  if (e.target.scrollTop === 0 && loadConfig.status === 1) {
     onLoadTalk()
   }
 
@@ -196,15 +235,16 @@ const onPanelScroll = (e: any) => {
 const onCopyText = (data: IMessageRecord) => {
   if (data.content && data.content.length > 0) {
     return clipboard(htmlDecode(data.content), () =>
-      window['$message'].success('复制成功')
+      window.$message.success('复制成功')
     )
   }
 
   if (data.extra?.url) {
     return clipboardImage(data.extra.url, () => {
-      window['$message'].success('复制成功')
+      window.$message.success('复制成功')
     })
   }
+  return null
 }
 
 // 删除对话消息
@@ -228,19 +268,19 @@ const onMultiSelect = (data: IMessageRecord) => {
 }
 
 const onDownloadFile = (data: IMessageRecord) => {
-  if (data.msg_type == 3) {
+  if (data.msg_type === 3) {
     return downloadImage(data.extra.url, `${data.msg_id}.${data.extra.suffix}`)
   }
 
-  if (data.msg_type == 4) {
-    return window['$message'].info('音频暂不支持下载!')
+  if (data.msg_type === 4) {
+    return window.$message.info('音频暂不支持下载!')
   }
 
-  return window['$message'].info('视频暂不支持下载!')
+  return window.$message.info('视频暂不支持下载!')
 }
 
 const onQuoteMessage = (data: IMessageRecord) => {
-  let item = {
+  const item = {
     id: data.msg_id,
     title: `${data.nickname} ${data.created_at}`,
     describe: '',
@@ -284,6 +324,8 @@ const onQuoteMessage = (data: IMessageRecord) => {
     case 12:
       item.describe = '[图文消息]'
       break // 图文消息
+    default:
+      break
   }
 
   publisher.publish('editor:quote', item)
@@ -305,6 +347,7 @@ const onContextMenu = (e: any, item: IMessageRecord) => {
   showDropdownMenu(e, props.uid, item)
 
   e.preventDefault()
+  return null
 }
 
 // 会话列表右键菜单回调事件
@@ -319,61 +362,21 @@ const onContextMenuHandle = (key: string) => {
   }
 
   // 触发事件
-  evnets[key] && evnets[key](dropdown.item)
+  if (evnets[key]) evnets[key](dropdown.item)
 
   closeDropdownMenu()
+  return null
 }
 
 // 聊天版本滚动到底部
 const onSkipBottom = () => {
-  let el = document.getElementById('imChatPanel')
+  const el = document.getElementById('imChatPanel')
   if (el) {
     el.scrollTo({
       top: el.scrollHeight + 1000,
       behavior: 'smooth',
     })
   }
-}
-
-const onJumpMessage = (msgid: string) => {
-  let element = document.getElementById(msgid)
-  if (!element) {
-    if (locationMessage === null) {
-      locationMessage = {
-        msgid: msgid,
-        num: 3,
-      }
-    } else {
-      locationMessage.num--
-
-      if (locationMessage.num === 0) {
-        locationMessage = null
-
-        window['$message'].info('仅支持查看最近300条的记录')
-        return
-      }
-    }
-
-    let el = document.getElementById('imChatPanel')
-
-    el?.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    })
-    return
-  }
-
-  locationMessage = null
-
-  element?.scrollIntoView({
-    behavior: 'smooth',
-  })
-
-  addClass(element, 'border')
-
-  setTimeout(() => {
-    element && removeClass(element, 'border')
-  }, 3000)
 }
 
 const onReload = () => {
@@ -389,7 +392,7 @@ const onRowClick = (item: IMessageRecord) => {
     if (ForwardableMessageType.includes(item.msg_type)) {
       item.isCheck = !item.isCheck
     } else {
-      window['$message'].info('此类消息不支持转发')
+      window.$message.info('此类消息不支持转发')
     }
   }
 }
@@ -409,8 +412,8 @@ onMounted(onReload)
       >
         <!-- 数据加载状态栏 -->
         <div class="load-toolbar pointer">
-          <span v-if="loadConfig.status == 0"> 正在加载数据中 ... </span>
-          <span v-else-if="loadConfig.status == 1" @click="onLoadTalk">
+          <span v-if="loadConfig.status === 0"> 正在加载数据中 ... </span>
+          <span v-else-if="loadConfig.status === 1" @click="onLoadTalk">
             查看更多消息 ...
           </span>
           <span v-else class="no-more"> 没有更多消息了 </span>
@@ -432,7 +435,7 @@ onMounted(onReload)
           </div>
 
           <!-- 撤回消息 -->
-          <div v-else-if="item.is_revoke == 1" class="message-box">
+          <div v-else-if="item.is_revoke === 1" class="message-box">
             <revoke-message
               :login_uid="uid"
               :user_id="item.user_id"
@@ -446,7 +449,7 @@ onMounted(onReload)
             v-else
             class="message-box record-box"
             :class="{
-              'direction-rt': item.float == 'right',
+              'direction-rt': item.float === 'right',
               'multi-select': dialogueStore.isOpenMultiSelect,
               'multi-select-check': item.isCheck,
             }"
@@ -479,7 +482,7 @@ onMounted(onReload)
               <div class="talk-title">
                 <span
                   class="nickname pointer"
-                  v-show="talk_type == 2 && item.float == 'left'"
+                  v-show="talk_type === 2 && item.float === 'left'"
                   @click="onClickNickname(item)"
                 >
                   {{ item.nickname }}
@@ -501,18 +504,18 @@ onMounted(onReload)
                 />
 
                 <div class="talk-tools">
-                  <template v-if="talk_type == 1 && item.float == 'right'">
+                  <template v-if="talk_type === 1 && item.float === 'right'">
                     <loading
                       theme="outline"
                       size="19"
                       fill="#000"
                       :strokeWidth="1"
                       class="icon-rotate"
-                      v-show="item.send_status == 1"
+                      v-show="item.send_status === 1"
                     />
 
-                    <span v-show="item.send_status == 1"> 正在发送... </span>
-                    <!-- <span v-show="item.send_status != 1"> 已送达 </span> -->
+                    <span v-show="item.send_status === 1"> 正在发送... </span>
+                    <!-- <span v-show="item.send_status !== 1"> 已送达 </span> -->
                   </template>
 
                   <n-icon

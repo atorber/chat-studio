@@ -6,22 +6,22 @@ import { getAccessToken } from '@/utils/auth'
  * @param {String} imgsrc 例如图片名： D8x5f13a53dbc4b9_350x345.png
  */
 export function getImageInfo(imgsrc) {
-  let data = {
+  const data = {
     width: 0,
     height: 0,
   }
 
-  let arr = imgsrc.split('_')
-  if (arr.length == 1) return data
+  const arr = imgsrc.split('_')
+  if (arr.length === 1) return data
 
   let info = arr[arr.length - 1].match(/\d+x\d+/g)
-  if (info == null) return data
+  if (info === null) return data
 
   info = info[0].split('x')
 
   return {
-    width: parseInt(info[0]),
-    height: parseInt(info[1]),
+    width: parseInt(info[0], 10),
+    height: parseInt(info[1], 10),
   }
 }
 
@@ -31,9 +31,9 @@ export function getImageInfo(imgsrc) {
  * @param {Number} cr_id
  */
 export function download(cr_id) {
-  let token = getAccessToken()
+  const token = getAccessToken()
   try {
-    let link = document.createElement('a')
+    const link = document.createElement('a')
     // link.target = '_blank'
     link.href = `${
       import.meta.env.VITE_BASE_API
@@ -44,22 +44,23 @@ export function download(cr_id) {
 
 export function insertText(obj, str) {
   if (document.selection) {
-    let sel = document.selection.createRange()
+    const sel = document.selection.createRange()
     sel.text = str
   } else if (
     typeof obj.selectionStart === 'number' &&
     typeof obj.selectionEnd === 'number'
   ) {
-    let startPos = obj.selectionStart,
-      endPos = obj.selectionEnd,
-      cursorPos = startPos,
-      tmpStr = obj.value
+    const startPos = obj.selectionStart;
+      const endPos = obj.selectionEnd;
+      let cursorPos = startPos;
+      const tmpStr = obj.value
     obj.value =
       tmpStr.substring(0, startPos) +
       str +
       tmpStr.substring(endPos, tmpStr.length)
     cursorPos += str.length
-    obj.selectionStart = obj.selectionEnd = cursorPos
+    obj.selectionEnd = cursorPos
+    obj.selectionStart = obj.selectionEnd
 
     obj.focus()
   } else {
@@ -85,17 +86,17 @@ export function removeTags(str) {
 }
 
 export function downloadImage(src, name) {
-  let image = new Image()
+  const image = new Image()
   image.setAttribute('crossOrigin', 'anonymous')
   image.onload = function () {
-    let canvas = document.createElement('canvas')
+    const canvas = document.createElement('canvas')
     canvas.width = image.width
     canvas.height = image.height
-    let context = canvas.getContext('2d')
+    const context = canvas.getContext('2d')
     context.drawImage(image, 0, 0, image.width, image.height)
-    let url = canvas.toDataURL('image/png')
-    let a = document.createElement('a')
-    let event = new MouseEvent('click')
+    const url = canvas.toDataURL('image/png')
+    const a = document.createElement('a')
+    const event = new MouseEvent('click')
     a.download = name || 'image.png'
     a.href = url
     a.dispatchEvent(event)

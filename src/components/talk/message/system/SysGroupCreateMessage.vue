@@ -4,8 +4,14 @@ import './sys-message.less'
 import { inject } from 'vue'
 
 defineProps({
-  extra: Object,
-  data: Object,
+  extra: {
+    type: Object,
+    default: () => ({}),  // 设置默认值为一个空对象
+  },
+  data: {
+    type: Object,
+    default: () => ({}),  // 设置默认值为一个空对象
+  },
 })
 
 const showUserModal = inject('$user')
@@ -20,7 +26,7 @@ const showUserModal = inject('$user')
 
       <span>创建了群聊，并邀请了</span>
 
-      <template v-for="(user, index) in extra.members">
+      <template v-for="(user, index) in extra.members" :key="index">
         <a @click="showUserModal(user.user_id)">{{ user.nickname }}</a>
         <em v-show="index < extra.members.length - 1">、</em>
       </template>

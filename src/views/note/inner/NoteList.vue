@@ -1,5 +1,5 @@
 <script setup>
-import { Search, SortAmountDown, SortAmountUp } from '@icon-park/vue-next'
+import { Search, SortAmountDown } from '@icon-park/vue-next'
 import { NImage, NScrollbar } from 'naive-ui'
 import { useNoteStore } from '@/store/note'
 import { debounce } from '@/utils/common'
@@ -10,7 +10,7 @@ const onCatDetail = item => {
   store.loadDetail(item.id)
 }
 
-const onSearchInput = debounce(e => {
+const onSearchInput = debounce(() => {
   store.loadNoteList({}, false)
 }, 500)
 </script>
@@ -40,7 +40,7 @@ const onSearchInput = debounce(e => {
 
     <main
       class="el-main height100 flex-center"
-      v-if="store.notes.loadStatus == 0"
+      v-if="store.notes.loadStatus === 0"
     >
       <Loading />
     </main>
@@ -63,7 +63,7 @@ const onSearchInput = debounce(e => {
           v-for="note in store.notes.items"
           :key="note.id"
           @click="onCatDetail(note)"
-          :class="{ selectd: store.view.loadId == note.id }"
+          :class="{ selectd: store.view.loadId === note.id }"
         >
           <div class="article-title">
             <span>{{ note.title }}</span>

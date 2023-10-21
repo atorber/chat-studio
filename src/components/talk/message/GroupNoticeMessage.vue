@@ -8,7 +8,7 @@ defineProps<{
   maxWidth: Boolean
 }>()
 
-let show = ref(false)
+const show = ref(false)
 </script>
 <template>
   <section class="im-message-group-notice pointer" @click="show = !show">

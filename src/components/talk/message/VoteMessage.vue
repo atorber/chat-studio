@@ -5,8 +5,14 @@ import { ServeConfirmVoteHandle } from '@/api/chat'
 import { useUserStore } from '@/store/user'
 
 const props = defineProps({
-  extra: Object,
-  data: Object,
+  extra: {
+    type: Object,
+    default: () => ({}),  // 设置默认值为一个空对象
+  },
+  data: {
+    type: Object,
+    default: () => ({}),  // 设置默认值为一个空对象
+  },
 })
 
 const userStore = useUserStore()
@@ -14,14 +20,10 @@ const mode = props.extra.detail.answer_mode
 const state = reactive({ options: [] })
 
 // 是否可提交
-const isCanSubmit = computed(() => {
-  return state.options.some(item => item.is_checked)
-})
+const isCanSubmit = computed(() => state.options.some(item => item.is_checked))
 
 // 是否已投票
-const isVoted = computed(() => {
-  return props.extra.vote_users.some(item => item == userStore.uid)
-})
+const isVoted = computed(() => props.extra.vote_users.some(item => item === userStore.uid))
 
 /**
  * 设置投票选项
@@ -44,7 +46,7 @@ function setOptions(options) {
  * @param {*} data
  */
 function updateStatistics(data) {
-  let count = data.count
+  const {count} = data
 
   state.options.forEach(option => {
     option.num = data.options[option.key]
@@ -62,7 +64,7 @@ function updateStatistics(data) {
  * @param {*} option
  */
 function change(data, option) {
-  if (mode == 0) {
+  if (mode === 0) {
     state.options.forEach(option => (option.is_checked = false))
   }
 
@@ -75,7 +77,7 @@ function change(data, option) {
 const onSubmit = () => {
   if (!isCanSubmit.value) return
 
-  let items = []
+  const items = []
 
   state.options.forEach(item => {
     item.is_checked && items.push(item.key)
@@ -85,10 +87,10 @@ const onSubmit = () => {
     record_id: props.data.id,
     options: items.join(','),
   }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       updateStatistics(res.data)
       props.extra.vote_users.push(userStore.uid)
-      props.extra.detail.answered_num++
+      props.extra.detail.answered_num +=1
     }
   })
 }
@@ -104,14 +106,14 @@ onMounted(() => {
     <div class="vote-from">
       <div class="vheader">
         <p style="font-weight: bold">
-          {{ mode == 1 ? '[多选投票]' : '[单选投票]' }}
+          {{ mode === 1 ? '[多选投票]' : '[单选投票]' }}
         </p>
         <p>{{ extra.detail.title }}</p>
       </div>
 
       <template v-if="isVoted">
         <div class="vbody">
-          <div class="vote-view" v-for="option in state.options">
+          <div class="vote-view" v-for="(option,index) in state.options" :key="index">
             <p class="vote-option">{{ option.key }}、 {{ option.value }}</p>
             <p class="vote-census">
               {{ option.num }} 票 {{ option.progress }}%
@@ -136,7 +138,7 @@ onMounted(() => {
         <div class="vbody">
           <div
             class="option"
-            :class="{ radio: mode == 0 }"
+            :class="{ radio: mode === 0 }"
             v-for="option in state.options"
             :key="option.key"
           >

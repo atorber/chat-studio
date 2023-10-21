@@ -1,6 +1,5 @@
 <script setup>
 import { ref, reactive } from 'vue'
-import { NModal } from 'naive-ui'
 import { Up, Down, Close } from '@icon-park/vue-next'
 import Loading from '@/components/base/Loading.vue'
 import { ServeGetGroupNotices } from '@/api/group'
@@ -14,6 +13,7 @@ const props = defineProps({
 })
 
 const isShow = ref(true)
+console.debug(isShow)
 const title = ref('群公告')
 
 const state = reactive({
@@ -30,8 +30,8 @@ const onLoadData = () => {
   ServeGetGroupNotices({
     group_id: props.groupId,
   }).then(res => {
-    if (res.code == 200) {
-      let items = res.data.items || []
+    if (res.code === 200) {
+      const items = res.data.items || []
 
       items.forEach(item => {
         item.isShow = false

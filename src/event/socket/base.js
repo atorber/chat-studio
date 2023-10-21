@@ -3,23 +3,21 @@ import { useUserStore } from '@/store/user'
 import { useDialogueStore } from '@/store/dialogue'
 
 class Base {
-  /**
-   * 初始化
-   */
-  constructor() {}
+  uid
 
   /**
    * 获取当前登录用户的ID
    */
   getAccountId() {
-    return useUserStore().uid
+    this.uid = useUserStore().uid
+    return this.uid
   }
 
   getTalkParams() {
-    let dialogueStore = useDialogueStore()
+    const dialogueStore = useDialogueStore()
 
-    let { talk_type, receiver_id } = dialogueStore.talk
-
+    const { talk_type, receiver_id } = dialogueStore.talk
+    console.debug(this.uid)
     return {
       talk_type,
       receiver_id,
@@ -35,13 +33,13 @@ class Base {
    * @param {Number} receiver_id 接收者ID
    */
   isTalk(talk_type, sender_id, receiver_id) {
-    let params = this.getTalkParams()
+    const params = this.getTalkParams()
 
-    if (talk_type != params.talk_type) {
+    if (talk_type !== params.talk_type) {
       return false
-    } else if (
-      params.receiver_id == receiver_id ||
-      params.receiver_id == sender_id
+    } if (
+      params.receiver_id === receiver_id ||
+      params.receiver_id === sender_id
     ) {
       return true
     }
@@ -52,7 +50,7 @@ class Base {
   /**
    * 判断用户是否打开对话页
    */
-  isTalkPage() {
+  static isTalkPage() {
     return ['/message', '/'].includes(router.currentRoute.value.path)
   }
 }

@@ -52,10 +52,10 @@ const items = computed((): ISessionRecord[] => {
   }
 
   return talkStore.talkItems.filter((item: any) => {
-    let keyword = item.remark || item.name
+    const keyword = item.remark || item.name
 
     return (
-      keyword.toLowerCase().indexOf(searchKeyword.value.toLowerCase()) != -1
+      keyword.toLowerCase().indexOf(searchKeyword.value.toLowerCase()) !== -1
     )
   })
 })
@@ -66,18 +66,14 @@ const loadStatus = computed(() => talkStore.loadStatus)
 // 当前会话索引
 const indexName = computed(() => dialogueStore.index_name)
 
-const renderIcon = (icon: any) => {
-  return () => {
-    return h(NIcon, null, {
+const renderIcon = (icon: any) => () => h(NIcon, null, {
       default: () => h(icon),
     })
-  }
-}
 
 const onDeleteTalk = (index_name = '') => {
   talkStore.delItem(index_name)
 
-  index_name === indexName.value && dialogueStore.$reset()
+  if(index_name === indexName.value) dialogueStore.$reset()
 }
 
 // 切换会话
@@ -107,9 +103,9 @@ const onTabTalk = (data: any, follow = false) => {
   // 设置滚动条跟随
   if (follow) {
     setTimeout(() => {
-      let el = document.getElementById('talk-session-list')
+      const el = document.getElementById('talk-session-list')
       if (el) {
-        let index = findTalkIndex(data.index_name)
+        const index = findTalkIndex(data.index_name)
         el.scrollTo({
           top: index * 66 + index * 5,
           behavior: 'smooth',
@@ -128,7 +124,7 @@ const onRemoveTalk = (data: any) => {
   ServeDeleteTalkList({
     list_id: data.id,
   }).then(({ code }) => {
-    if (code == 200) {
+    if (code === 200) {
       onDeleteTalk(data.index_name)
     }
   })
@@ -139,46 +135,47 @@ const onSetDisturb = (data: ISessionRecord) => {
   ServeSetNotDisturb({
     talk_type: data.talk_type,
     receiver_id: data.receiver_id,
-    is_disturb: data.is_disturb == 0 ? 1 : 0,
+    is_disturb: data.is_disturb === 0 ? 1 : 0,
   }).then(({ code, message }) => {
-    if (code == 200) {
-      window['$message'].success('设置成功!')
+    if (code === 200) {
+      window.$message.success('设置成功!')
       talkStore.updateItem({
         index_name: data.index_name,
-        is_disturb: data.is_disturb == 0 ? 1 : 0,
+        is_disturb: data.is_disturb === 0 ? 1 : 0,
       })
     } else {
-      window['$message'].error(message)
+      window.$message.error(message)
     }
   })
 }
 
 // 置顶会话
 const onToTopTalk = (data: ISessionRecord) => {
-  if (data.is_top == 0 && topItems.value.length >= 18) {
-    return window['$message'].info('置顶最多不能超过18个会话')
+  if (data.is_top === 0 && topItems.value.length >= 18) {
+    return window.$message.info('置顶最多不能超过18个会话')
   }
 
   ServeTopTalkList({
     list_id: data.id,
-    type: data.is_top == 0 ? 1 : 2,
+    type: data.is_top === 0 ? 1 : 2,
   }).then(({ code, message }) => {
-    if (code == 200) {
+    if (code === 200) {
       talkStore.updateItem({
         index_name: data.index_name,
-        is_top: data.is_top == 0 ? 1 : 0,
+        is_top: data.is_top === 0 ? 1 : 0,
       })
     } else {
-      window['$message'].error(message)
+      window.$message.error(message)
     }
   })
+  return null
 }
 
 // 移除联系人
 const onDeleteContact = (data: ISessionRecord) => {
-  let name = data.remark || data.name
+  const name = data.remark || data.name
 
-  window['$dialog'].create({
+  window.$dialog.create({
     showIcon: false,
     title: `删除 [${name}] 联系人？`,
     content: '删除后不再接收对方任何消息。',
@@ -188,11 +185,11 @@ const onDeleteContact = (data: ISessionRecord) => {
       ServeDeleteContact({
         friend_id: data.receiver_id,
       }).then(({ code, message }) => {
-        if (code == 200) {
-          window['$message'].success('删除联系人成功')
+        if (code === 200) {
+          window.$message.success('删除联系人成功')
           onDeleteTalk(data.index_name)
         } else {
-          window['$message'].error(message)
+          window.$message.error(message)
         }
       })
     },
@@ -201,7 +198,7 @@ const onDeleteContact = (data: ISessionRecord) => {
 
 // 退出群聊
 const onSignOutGroup = (data: ISessionRecord) => {
-  window['$dialog'].create({
+  window.$dialog.create({
     showIcon: false,
     title: `退出 [${data.name}] 群聊？`,
     content: '退出后不再接收此群的任何消息。',
@@ -211,11 +208,11 @@ const onSignOutGroup = (data: ISessionRecord) => {
       ServeSecedeGroup({
         group_id: data.receiver_id,
       }).then(({ code, message }) => {
-        if (code == 200) {
-          window['$message'].success('已退出群聊')
+        if (code === 200) {
+          window.$message.success('已退出群聊')
           onDeleteTalk(data.index_name)
         } else {
-          window['$message'].error(message)
+          window.$message.error(message)
         }
       })
     },
@@ -224,33 +221,34 @@ const onSignOutGroup = (data: ISessionRecord) => {
 
 const onChangeRemark = (data: ISessionRecord) => {
   let remark = ''
-  window['$dialog'].create({
+  window.$dialog.create({
     showIcon: false,
     title: '修改备注',
-    content: () => {
-      return h(NInput, {
+    content: () => h(NInput, {
         defaultValue: data.remark,
         placeholder: '请输入备注信息',
         style: { marginTop: '20px' },
-        onInput: value => (remark = value),
+        onInput: value => {
+          remark = value
+          return remark
+        },
         autofocus: true,
-      })
-    },
+      }),
     negativeText: '取消',
     positiveText: '修改备注',
     onPositiveClick: () => {
       ServeEditContactRemark({
         friend_id: data.receiver_id,
-        remark: remark,
+        remark,
       }).then(({ code, message }) => {
-        if (code == 200) {
-          window['$message'].success('备注成功')
+        if (code === 200) {
+          window.$message.success('备注成功')
           talkStore.updateItem({
             index_name: data.index_name,
-            remark: remark,
+            remark,
           })
         } else {
-          window['$message'].error(message)
+          window.$message.error(message)
         }
       })
     },
@@ -260,12 +258,12 @@ const onChangeRemark = (data: ISessionRecord) => {
 // 会话列表右键显示菜单
 const onContextMenuTalk = (e: any, item: ISessionRecord) => {
   dropdown.show = false
-  dropdown.item = Object.assign({}, item)
+  dropdown.item = { ...item}
   dropdown.options = []
 
-  let options: any[] = []
+  const options: any[] = []
 
-  if (item.talk_type == 1) {
+  if (item.talk_type === 1) {
     options.push({
       icon: renderIcon(IdCard),
       label: '好友信息',
@@ -297,7 +295,7 @@ const onContextMenuTalk = (e: any, item: ISessionRecord) => {
     key: 'remove',
   })
 
-  if (item.talk_type == 1) {
+  if (item.talk_type === 1) {
     options.push({
       icon: renderIcon(Delete),
       label: '删除好友',
@@ -336,7 +334,7 @@ const onContextMenuTalkHandle = (key: string) => {
   }
 
   dropdown.show = false
-  evnets[key] && evnets[key](dropdown.item)
+  if (evnets[key]) evnets[key](dropdown.item)
 }
 
 const onReload = () => {
@@ -350,9 +348,10 @@ const onGroupCallBack = () => {
 
 // 初始化加载
 const onInitialize = () => {
-  let index_name = getCacheIndexName()
-
-  index_name && onTabTalk(findTalk(index_name), true)
+  const index_name = getCacheIndexName()
+  if (index_name) {
+    onTabTalk(findTalk(index_name), true)
+  }
 }
 
 // 路由更新事件
@@ -405,7 +404,7 @@ onMounted(() => {
     <!-- 置顶栏目 -->
     <header
       class="el-header tops-header"
-      v-show="loadStatus == 3 && topItems.length > 0"
+      v-show="loadStatus === 3 && topItems.length > 0"
     >
       <n-popover
         v-for="item in topItems"
@@ -418,18 +417,18 @@ onMounted(() => {
             class="top-item pointer"
             @click="onTabTalk(item, true)"
             :class="{
-              active: item.index_name == indexName,
+              active: item.index_name === indexName,
             }"
           >
             <im-avatar :src="item.avatar" :size="34" :username="item.name" />
 
-            <span class="icon-mark robot" v-show="item.is_robot == 1">
+            <span class="icon-mark robot" v-show="item.is_robot === 1">
               助
             </span>
 
             <span
               class="icon-mark group"
-              v-show="item.talk_type == 2 && item.is_robot == 0"
+              v-show="item.talk_type === 2 && item.is_robot === 0"
             >
               群
             </span>
@@ -443,7 +442,7 @@ onMounted(() => {
 
     <!-- 标题栏目 -->
     <header
-      v-show="loadStatus == 3 && talkStore.talkItems.length > 0"
+      v-show="loadStatus === 3 && talkStore.talkItems.length > 0"
       class="el-header notify-header"
       :class="{ shadow: false }"
     >
@@ -453,10 +452,10 @@ onMounted(() => {
       </p>
     </header>
 
-    <template v-if="loadStatus == 2">
+    <template v-if="loadStatus === 2">
       <main id="talk-session-list" class="el-main me-scrollbar">
         <!-- 加载中模块 -->
-        <template v-if="loadStatus == 2">
+        <template v-if="loadStatus === 2">
           <div class="skeleton flex-center" v-for="i in 10" :key="i">
             <div class="avatar"><n-skeleton circle size="medium" /></div>
             <div class="content">
@@ -479,7 +478,7 @@ onMounted(() => {
           :data="item"
           :avatar="item.avatar"
           :username="item.remark || item.name"
-          :active="item.index_name == indexName"
+          :active="item.index_name === indexName"
           @tab-talk="onTabTalk"
           @top-talk="onToTopTalk"
           @contextmenu.prevent="onContextMenuTalk($event, item)"

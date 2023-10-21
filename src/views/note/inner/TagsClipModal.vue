@@ -7,15 +7,13 @@ import { Close } from '@icon-park/vue-next'
 const store = useNoteStore()
 let loading = false
 const tags = computed(() => {
-  let ids = store.view.detail.tags.map(item => item.id)
+  const ids = store.view.detail.tags.map(item => item.id)
 
-  return store.tags.map(tag => {
-    return {
+  return store.tags.map(tag => ({
       id: tag.id,
       tag_name: tag.tag_name,
       is_check: ids.includes(tag.id),
-    }
-  })
+    }))
 })
 
 const onSave = (ids = []) => {
@@ -26,10 +24,8 @@ const onSave = (ids = []) => {
     tags: ids,
   })
     .then(res => {
-      if (res.code == 200) {
-        store.view.detail.tags = ids.map(id => {
-          return { id }
-        })
+      if (res.code === 200) {
+        store.view.detail.tags = ids.map(id => ({ id }))
       }
     })
     .finally(() => {
@@ -40,7 +36,7 @@ const onSave = (ids = []) => {
 const onActive = item => {
   if (loading) return
 
-  let items = tags.value.filter(val => {
+  const items = tags.value.filter(val => {
     if (item.id === val.id) {
       return !val.is_check
     }
@@ -49,10 +45,11 @@ const onActive = item => {
   })
 
   if (!item.is_check && items.length > 5) {
-    return window['$message'].info('标签不能超过5个')
+    window.$message.info('标签不能超过5个')
   }
 
   onSave(items.map(v => v.id))
+
 }
 </script>
 

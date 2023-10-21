@@ -23,25 +23,21 @@ const editor = reactive({
   content: '',
 })
 
-const filterCheck = computed(() => {
-  return items.value.filter(item => item.is_delete)
-})
+const filterCheck = computed(() => items.value.filter(item => item.is_delete))
 
 const filterSearch = computed(() => {
   if (!keywords.value.length) {
     return items.value
   }
 
-  return items.value.filter(item => {
-    return item.title.match(keywords.value) != null
-  })
+  return items.value.filter(item => item.title.match(keywords.value) !== null)
 })
 
 const onLoadData = () => {
   ServeGetGroupNotices({
     group_id: props.id,
   }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       items.value = res.data.items || []
     }
   })
@@ -52,11 +48,12 @@ const onBatchDelete = () => {
     return
   }
 
-  let ids = filterCheck.value.map(item => item.user_id).join(',')
+  const ids = filterCheck.value.map(item => item.user_id).join(',')
+  console.debug(ids)
 }
 
 const onRowClick = item => {
-  if (batchDelete.value == true) {
+  if (batchDelete.value === true) {
   } else {
     editor.id = item.id
     editor.gid = props.id
@@ -127,7 +124,8 @@ onLoadData()
     <main v-else class="el-main main me-scrollbar me-scrollbar-thumb">
       <div
         class="member-item bdr-b"
-        v-for="item in filterSearch"
+        v-for="(item,index) in filterSearch"
+        :key="index"
         @click="onRowClick(item)"
       >
         <div class="content pointer o-hidden">

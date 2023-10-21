@@ -27,10 +27,10 @@ defineProps({
 <template>
   <div class="im-message-revoke">
     <div class="content">
-      <span v-if="login_uid == user_id">
+      <span v-if="login_uid === user_id">
         你撤回了一条消息 | {{ formatTime(datetime) }}
       </span>
-      <span v-else-if="talk_type == 1">
+      <span v-else-if="talk_type === 1">
         对方撤回了一条消息 | {{ formatTime(datetime) }}
       </span>
       <span v-else>

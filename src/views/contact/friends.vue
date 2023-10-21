@@ -23,22 +23,20 @@ const index = ref(0)
 const items = ref([])
 const groups: any = ref([])
 
-const filter: any = computed(() => {
-  return items.value.filter((item: any) => {
-    let value = item.remark || item.nickname
+const filter: any = computed(() => items.value.filter((item: any) => {
+    const value = item.remark || item.nickname
 
-    let findIndex = value.toLowerCase().indexOf(keywords.value.toLowerCase())
-    if (index.value == 0) {
-      return findIndex != -1
+    const findIndex = value.toLowerCase().indexOf(keywords.value.toLowerCase())
+    if (index.value === 0) {
+      return findIndex !== -1
     }
 
-    return findIndex != -1 && index.value == item.group_id
-  })
-})
+    return findIndex !== -1 && index.value === item.group_id
+  }))
 
 const loadContactList = () => {
   ServeGetContacts().then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       items.value = res.data.items || []
     }
   })
@@ -46,7 +44,7 @@ const loadContactList = () => {
 
 const loadContactGroupList = () => {
   ServeContactGroupList().then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       groups.value = res.data.items || []
     }
   })
@@ -62,8 +60,8 @@ const onInfo = (item: any) => {
 
 // 移除联系人
 const onDeleteContact = (data: any) => {
-  let name = data.remark || data.nickname
-  window['$dialog'].create({
+  const name = data.remark || data.nickname
+  window.$dialog.create({
     showIcon: false,
     title: `删除 [${name}] 联系人？`,
     content: '删除后不再接收对方任何消息。',
@@ -73,11 +71,11 @@ const onDeleteContact = (data: any) => {
       ServeDeleteContact({
         friend_id: data.id,
       }).then(({ code, message }) => {
-        if (code == 200) {
-          window['$message'].success('删除联系人成功')
+        if (code === 200) {
+          window.$message.success('删除联系人成功')
           loadContactList()
         } else {
-          window['$message'].error(message)
+          window.$message.error(message)
         }
       })
     },
@@ -109,11 +107,13 @@ const onToolsMenu = value => {
     case 'group':
       isShowGroupModal.value = true
       break
+    default:
+      break
   }
 }
 
 const onChangeRemark = (data: any) => {
-  let item: any = items.value.find((item: any) => item.id == data.user_id)
+  const item: any = items.value.find((item: any) => item.id === data.user_id)
   item && (item.remark = data.remark)
 }
 
@@ -186,7 +186,8 @@ onUnmounted(() => {
     >
       <div class="cards">
         <MemberCard
-          v-for="item in filter"
+          v-for="(item,key) in filter"
+          :key="key"
           :avatar="item.avatar"
           :username="item.remark || item.nickname"
           :gender="item.gender"

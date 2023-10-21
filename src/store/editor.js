@@ -6,11 +6,10 @@ import {
 } from '@/api/emoticon'
 import { ServeCollectEmoticon } from '@/api/chat'
 
-const message = window['$message']
+const message = window.$message
 
 export const useEditorStore = defineStore('editor', {
-  state: () => {
-    return {
+  state: () => ({
       // 表包相关
       emoticon: {
         items: [
@@ -25,13 +24,12 @@ export const useEditorStore = defineStore('editor', {
           },
         ],
       },
-    }
-  },
+    }),
   actions: {
     // 加载用户表情包
     loadUserEmoticon() {
       ServeFindUserEmoticon().then(res => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           const { collect_emoticon } = res.data
 
           // 用户收藏的系统表情包
@@ -45,7 +43,7 @@ export const useEditorStore = defineStore('editor', {
       ServeCollectEmoticon({
         record_id: resoure.record_id,
       }).then(res => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           this.loadUserEmoticon()
         } else {
           message.warning(res.message)
@@ -59,7 +57,7 @@ export const useEditorStore = defineStore('editor', {
       data.append('emoticon', file)
 
       ServeUploadEmoticon(data).then(res => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           this.emoticon.items[1].children.unshift(res.data)
         } else {
           message.warning(res.message)
@@ -72,7 +70,7 @@ export const useEditorStore = defineStore('editor', {
       ServeDeleteEmoticon({
         ids: [resoure.id].join(','),
       }).then(res => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           this.emoticon.items[1].children.splice(resoure.index, 1)
           message.success('删除成功')
         } else {

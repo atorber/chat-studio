@@ -12,16 +12,14 @@ const props = defineProps<{
 
 const isShowRecord = ref(false)
 
-const title = computed(() => {
-  return [...new Set(props.extra.records.map(v => v.nickname))].join('、')
-})
+const title = computed(() => [...new Set(props.extra.records.map(v => v.nickname))].join('、'))
 
 const onClick = () => {
   isShowRecord.value = true
 }
 
 let pids = props.pid
-if (pids == '' || pids == undefined) {
+if (pids === '' || pids === undefined) {
   pids = props.data.id
 } else {
   pids = `${pids},${props.data.id}`

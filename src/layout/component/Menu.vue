@@ -10,7 +10,6 @@ import {
   Message,
   NotebookAndPen,
   People,
-  SmartOptimization,
 } from '@icon-park/vue-next'
 
 defineProps({
@@ -26,9 +25,7 @@ const router = useRouter()
 
 const notifyStore = useNotifyStore()
 
-const color = computed(() => {
-  return notifyStore.darkTheme ? '#ffffff' : '#333'
-})
+const color = computed(() => notifyStore.darkTheme ? '#ffffff' : '#333')
 
 const menus = reactive([
   {
@@ -104,7 +101,7 @@ const onClickMenu = menu => {
         v-for="(nav, i) in menus"
         :key="nav.link"
         :class="{
-          active: i == index,
+          active: i === index,
         }"
         @click="onClickMenu(nav)"
       >
@@ -114,8 +111,8 @@ const onClickMenu = menu => {
         <p>
           <component
             :is="nav.icon"
-            :theme="i == index ? 'filled' : 'outline'"
-            :fill="i == index ? '#1890ff' : color"
+            :theme="i === index ? 'filled' : 'outline'"
+            :fill="i === index ? '#1890ff' : color"
             :strokeWidth="2"
             :size="22"
           />

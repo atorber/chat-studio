@@ -20,28 +20,31 @@ function onTriggerUpload() {
 }
 
 async function onUpload(e) {
-  if (e.target.files.length == 0) {
+  if (e.target.files.length === 0) {
     return false
   }
 
-  let file = e.target.files[0]
+  const file = e.target.files[0]
   if (file.size / (1024 * 1024) > 5) {
-    window['$message'].info('笔记附件不能大于5M!')
+    window.$message.info('笔记附件不能大于5M!')
     return false
   }
 
-  let from = new FormData()
+  const from = new FormData()
   from.append('annex', file)
   from.append('article_id', detail.value.id)
 
   loading.value = true
 
-  let res = await ServeUploadArticleAnnex(from).finally(
-    () => (loading.value = false)
+  const res = await ServeUploadArticleAnnex(from).finally(
+    () => {
+      loading.value = false
+      return null
+    }
   )
 
-  if (res && res.code == 200) {
-    let { data } = res
+  if (res && res.code === 200) {
+    const { data } = res
     store.view.detail.files.push({
       id: data.id,
       original_name: data.original_name,
@@ -50,6 +53,7 @@ async function onUpload(e) {
       suffix: data.suffix,
     })
   }
+  return null
 }
 </script>
 
@@ -68,7 +72,7 @@ async function onUpload(e) {
 
     <div class="annex-box">
       <div class="annex-main me-scrollbar me-scrollbar-thumb">
-        <p v-show="detail.files.length == 0" class="empty-text">暂无附件</p>
+        <p v-show="detail.files.length === 0" class="empty-text">暂无附件</p>
 
         <div
           v-for="file in detail.files"

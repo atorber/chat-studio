@@ -23,15 +23,6 @@ const props = defineProps({
     default: 0,
   },
 })
-
-watch(props, () => {
-  loadDetail()
-  loadMembers()
-})
-
-const editCardPopover = ref(false)
-const isShowGroup = ref(false)
-const isShowManage = ref(false)
 const state = reactive({
   keywords: '',
   detail: {
@@ -43,47 +34,15 @@ const state = reactive({
   members: [],
   remark: '',
 })
-
-const search = computed(() => {
-  if (state.keywords) {
-    return state.members.filter((item: any) => {
-      return (
-        item.nickname.match(state.keywords) != null ||
-        item.remark.match(state.keywords) != null
-      )
-    })
-  }
-
-  return state.members
-})
-
-const isLeader = computed(() => {
-  return state.members.some((item: any) => {
-    return item.user_id == userStore.uid && item.leader >= 1
-  })
-})
-
-const isAdmin = computed(() => {
-  return state.members.some((item: any) => {
-    return item.user_id == userStore.uid && item.leader == 2
-  })
-})
-
-const onGroupCallBack = () => {}
-
-const onToInfo = (item: any) => {
-  user(item.user_id)
-}
-
 /**
  * 加载群信息
  */
-function loadDetail() {
+ function loadDetail() {
   ServeGroupDetail({
     group_id: props.gid,
   }).then(res => {
-    if (res.code == 200) {
-      let result = res.data
+    if (res.code === 200) {
+      const result = res.data
       state.detail.avatar = result.avatar
       state.detail.name = result.group_name
       state.detail.profile = result.profile
@@ -96,18 +55,46 @@ function loadDetail() {
     }
   })
 }
-
 /**
  * 加载成员列表
  */
-function loadMembers() {
+ function loadMembers() {
   ServeGetGroupMembers({
     group_id: props.gid,
   }).then(res => {
-    if (res.code == 200) {
+    if (res.code === 200) {
       state.members = res.data.items || []
     }
   })
+}
+watch(props, () => {
+  loadDetail()
+  loadMembers()
+})
+
+const editCardPopover = ref(false)
+const isShowGroup = ref(false)
+const isShowManage = ref(false)
+
+const search = computed(() => {
+  if (state.keywords) {
+    return state.members.filter((item: any) => (
+        item.nickname.match(state.keywords) !== null ||
+        item.remark.match(state.keywords) !== null
+      ))
+  }
+
+  return state.members
+})
+
+const isLeader = computed(() => state.members.some((item: any) => item.user_id === userStore.uid && item.leader >= 1))
+
+const isAdmin = computed(() => state.members.some((item: any) => item.user_id === userStore.uid && item.leader === 2))
+
+const onGroupCallBack = () => {}
+
+const onToInfo = (item: any) => {
+  user(item.user_id)
 }
 
 const onClose = () => {
@@ -118,11 +105,11 @@ const onSignOut = () => {
   ServeSecedeGroup({
     group_id: props.gid,
   }).then(res => {
-    if (res.code == 200) {
-      window['$message'].success('已退出群聊')
+    if (res.code === 200) {
+      window.$message.success('已退出群聊')
       onClose()
     } else {
-      window['$message'].error(res.message)
+      window.$message.error(res.message)
     }
   })
 }
@@ -132,14 +119,14 @@ const onChangeRemark = () => {
     group_id: props.gid,
     visit_card: state.remark,
   }).then(({ code, message }) => {
-    if (code == 200) {
+    if (code === 200) {
       editCardPopover.value.setShow(false)
       state.detail.visit_card = state.remark
-      window['$message'].success('已更新群名片')
+      window.$message.success('已更新群名片')
 
       loadMembers()
     } else {
-      window['$message'].error(message)
+      window.$message.error(message)
     }
   })
 }
@@ -188,7 +175,7 @@ loadMembers()
                     :autofocus="true"
                     maxlength="10"
                     v-model:value="state.remark"
-                    @keydown.enter.native="onChangeRemark"
+                    @keydown.enter="onChangeRemark"
                   />
                   <n-button
                     type="primary"
@@ -284,7 +271,7 @@ loadMembers()
             </div>
           </div>
 
-          <div class="mt-t20 pd-t20" v-if="search.length == 0">
+          <div class="mt-t20 pd-t20" v-if="search.length === 0">
             <n-empty size="200" description="暂无相关数据">
               <template #icon>
                 <img src="@/assets/image/no-data.svg" alt="" />

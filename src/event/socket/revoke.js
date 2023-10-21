@@ -46,7 +46,7 @@ class Revoke extends Base {
    * @returns
    */
   isCurrSender() {
-    return this.sender_id == this.getAccountId()
+    return this.sender_id === this.getAccountId()
   }
 
   /**
@@ -55,11 +55,11 @@ class Revoke extends Base {
    * @return String
    */
   getIndexName() {
-    if (this.talk_type == 2) {
+    if (this.talk_type === 2) {
       return `${this.talk_type}_${this.receiver_id}`
     }
 
-    let receiver_id = this.isCurrSender() ? this.receiver_id : this.sender_id
+    const receiver_id = this.isCurrSender() ? this.receiver_id : this.sender_id
 
     return `${this.talk_type}_${receiver_id}`
   }

@@ -1,5 +1,7 @@
 import { reactive, h } from 'vue'
 
+import { DropdownOption, NAvatar, NText } from "naive-ui";
+
 interface IDropdown {
     options: DropdownOption[]
     show: boolean
@@ -8,9 +10,7 @@ interface IDropdown {
     item: any
 }
 
-import { useMessage, NAvatar, NText } from "naive-ui";
-
-function renderCustomHeader() {
+export function renderCustomHeader() {
     return h(
         "div",
         {
@@ -46,7 +46,7 @@ export function useFriendsMenu() {
     })
 
     const showDropdownMenu = (e: any, item: any) => {
-        dropdown.item = Object.assign({}, item)
+        dropdown.item = { ...item}
 
         dropdown.options = []
 

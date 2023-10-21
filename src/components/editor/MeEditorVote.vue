@@ -25,7 +25,7 @@ const onMaskClick = () => {
 }
 
 const onSubmit = () => {
-  let data = {
+  const data = {
     title: model.title,
     mode: model.mode,
     anonymous: model.anonymous,
@@ -44,12 +44,10 @@ const delOption = index => {
 }
 
 // 是否可提交
-const isCanSubmit = computed(() => {
-  return (
-    model.title.trim().length == 0 ||
+const isCanSubmit = computed(() => (
+    model.title.trim().length === 0 ||
     model.options.some(item => item.value.trim().length === 0)
-  )
-})
+  ))
 </script>
 
 <template>
@@ -89,7 +87,7 @@ const isCanSubmit = computed(() => {
 
       <n-form-item label="投票选项" :required="true">
         <div class="options">
-          <div v-for="(option, i) in model.options" class="option">
+          <div v-for="(option, i) in model.options" :key="i" class="option">
             <n-input
               placeholder="&nbsp;请输入选项内容"
               v-model:value="option.value"

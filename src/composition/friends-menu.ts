@@ -18,7 +18,7 @@ export function useFriendsMenu() {
   })
 
   const showDropdownMenu = (e: any, item: any) => {
-    dropdown.item = Object.assign({}, item)
+    dropdown.item = { ...item}
 
     dropdown.options = []
     dropdown.options.push({ label: '删除好友', key: 'delete' })

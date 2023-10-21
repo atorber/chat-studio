@@ -7,11 +7,13 @@ export default defineComponent({
     const ctx = getCurrentInstance()
     if (ctx) {
       const message = useMessage()
-      window['$message'] = message
+      window.$message = message
 
       ctx.appContext.config.globalProperties.$message = message
     }
   },
-  render() {},
+  render() {
+    return null
+  },
 })
 </script>

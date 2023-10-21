@@ -26,9 +26,9 @@ import { QuillEditor, Quill } from '@vueup/vue-quill'
 import ImageUploader from 'quill-image-uploader'
 import 'quill-mention'
 import { useDialogueStore, useEditorDraftStore } from '@/store'
-import { deltaToMessage, deltaToString } from './util.ts'
+import { deltaToMessage, deltaToString } from './util'
 import { getImageInfo } from '@/utils/functions'
-import { publisher } from '@/utils/publisher.ts'
+import { publisher } from '@/utils/publisher'
 import { emitCall } from '@/utils/common'
 import { defAvatar } from '@/constant/default'
 import MeEditorVote from './MeEditorVote.vue'
@@ -37,8 +37,8 @@ import MeEditorCode from './MeEditorCode.vue'
 import MeEditorRecorder from './MeEditorRecorder.vue'
 import { ServeUploadImage } from '@/api/upload'
 
-import EmojiBlot from './formats/emoji.ts'
-import QuoteBlot from './formats/quote.ts'
+import EmojiBlot from './formats/emoji'
+import QuoteBlot from './formats/quote'
 
 Quill.register('formats/emoji', EmojiBlot)
 Quill.register('formats/quote', QuoteBlot)
@@ -59,12 +59,10 @@ const props = defineProps({
 
 const editor = ref()
 
-const getQuill = () => {
-  return editor.value?.getQuill()
-}
+const getQuill = () => editor.value?.getQuill()
 
 const getQuillSelectionIndex = () => {
-  let quill = getQuill()
+  const quill = getQuill()
 
   return (quill.getSelection() || {}).index || quill.getLength()
 }
@@ -76,6 +74,116 @@ const isShowEditorRecorder = ref(false)
 const fileImageRef = ref()
 const uploadFileRef = ref()
 const emoticonRef = ref()
+function onUploadImage(file: File) {
+  return new Promise(resolve => {
+    const image = new Image()
+    image.src = URL.createObjectURL(file)
+    image.onload = () => {
+      const form = new FormData()
+      form.append('file', file)
+      form.append('width', image.width.toString())
+      form.append('height', image.height.toString())
+
+      ServeUploadImage(form).then(({ code, data, message }) => {
+        if (code === 200) {
+          resolve(data.src)
+        } else {
+          resolve('')
+          window.$message.error(message)
+        }
+      })
+    }
+  })
+}
+function onEditorUpload(file: File) {
+  return new Promise((resolve, reject) => {
+    if (file.type.indexOf('image/') === 0) {
+      // 在执行函数内部使用 await
+      onUploadImage(file)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    } else if (file.type.indexOf('video/') === 0) {
+      const fn = emitCall('video_event', file, () => {});
+      emit('editor-event', fn);
+      resolve();
+    } else {
+      const fn = emitCall('file_event', file, () => {});
+      emit('editor-event', fn);
+      resolve();
+    }
+  });
+}
+function onClipboardMatcher(node: any, Delta) {
+  const ops: any[] = []
+
+  Delta.ops.forEach(op => {
+    // 如果粘贴了图片，这里会是一个对象，所以可以这样处理
+    if (op.insert && typeof op.insert === 'string') {
+      ops.push({
+        insert: op.insert, // 文字内容
+        attributes: {}, //文字样式（包括背景色和文字颜色等）
+      })
+    } else {
+      ops.push(op)
+    }
+  })
+
+  Delta.ops = ops
+  return Delta
+}
+function onSendMessage() {
+  const delta = getQuill().getContents()
+  const data = deltaToMessage(delta)
+
+  if (data.items.length === 0) {
+    return
+  }
+
+  switch (data.msgType) {
+    case 1: {// 文字消息
+      if (data.items[0].content.length > 1024) {
+        window.$message.info('发送内容超长，请分条发送')
+      }
+
+      const event = emitCall('text_event', data, (ok: any) => {
+        ok && getQuill().setContents([], Quill.sources.USER)
+      })
+
+      emit('editor-event', event)
+      break
+    } 
+    case 3: { // 图片消息
+      const detail = getImageInfo(data.items[0].content)
+      emit(
+        'editor-event',
+        emitCall(
+          'image_event',
+          { ...detail, url: data.items[0].content, size: 10000 },
+          (ok: any) => {
+            ok && getQuill().setContents([])
+          }
+        )
+      )
+      break
+    }
+
+    case 12: // 图文消息
+      emit(
+        'editor-event',
+        emitCall('mixed_event', data, (ok: any) => {
+          ok && getQuill().setContents([])
+        })
+      )
+      break
+    default:
+       // 添加这个返回语句
+      
+  }
+}
 
 const editorOption = {
   debug: false,
@@ -103,20 +211,18 @@ const editorOption = {
       allowedChars: /^[\u4e00-\u9fa5]*$/,
       mentionDenotationChars: ['@'],
       positioningStrategy: 'fixed',
-      renderItem: (data: any) => {
-        return `
+      renderItem: (data: any) => `
               <div class="ed-member-item">
                   <img src="${data.avatar}" class="avator"/>
                   <span class="nickname">${data.nickname}</span>
               </div>
-            `
-      },
-      source: function (searchTerm: string, renderList: any) {
+            `,
+      source (searchTerm: string, renderList: any) {
         if (!props.members.length) {
           return renderList([])
         }
 
-        let list = [
+        const list = [
           { id: 0, nickname: '所有人', avatar: defAvatar, value: '所有人' },
           ...props.members,
         ]
@@ -126,6 +232,7 @@ const editorOption = {
         )
 
         renderList(items)
+        return null
       },
       mentionContainerClass:
         'ql-mention-list-container me-scrollbar me-scrollbar-thumb',
@@ -192,47 +299,6 @@ const navs = reactive([
   },
 ])
 
-function onUploadImage(file: File) {
-  return new Promise(resolve => {
-    let image = new Image()
-    image.src = URL.createObjectURL(file)
-    image.onload = () => {
-      const form = new FormData()
-      form.append('file', file)
-      form.append('width', image.width.toString())
-      form.append('height', image.height.toString())
-
-      ServeUploadImage(form).then(({ code, data, message }) => {
-        if (code == 200) {
-          resolve(data.src)
-        } else {
-          resolve('')
-          window['$message'].error(message)
-        }
-      })
-    }
-  })
-}
-
-function onEditorUpload(file: File) {
-  return new Promise(async (resolve, reject) => {
-    if (file.type.indexOf('image/') === 0) {
-      resolve(await onUploadImage(file))
-      return
-    }
-
-    reject()
-
-    if (file.type.indexOf('video/') === 0) {
-      let fn = emitCall('video_event', file, () => {})
-      emit('editor-event', fn)
-    } else {
-      let fn = emitCall('file_event', file, () => {})
-      emit('editor-event', fn)
-    }
-  })
-}
-
 function onVoteEvent(data: any) {
   const msg = emitCall('vote_event', data, (ok: boolean) => {
     if (ok) {
@@ -246,11 +312,11 @@ function onVoteEvent(data: any) {
 function onEmoticonEvent(data: any) {
   emoticonRef.value.setShow(false)
 
-  if (data.type == 1) {
+  if (data.type === 1) {
     const quill = getQuill()
     let index = getQuillSelectionIndex()
 
-    if (index == 1 && quill.getLength() == 1 && quill.getText(0, 1) == '\n') {
+    if (index === 1 && quill.getLength() === 1 && quill.getText(0, 1) === '\n') {
       quill.deleteText(0, 1)
       index = 0
     }
@@ -268,13 +334,13 @@ function onEmoticonEvent(data: any) {
 
     quill.setSelection(index + 1, 0, 'user')
   } else {
-    let fn = emitCall('emoticon_event', data.value, () => {})
+    const fn = emitCall('emoticon_event', data.value, () => {})
     emit('editor-event', fn)
   }
 }
 
 function onCodeEvent(data: any) {
-  const msg = emitCall('code_event', data, (ok: boolean) => {
+  const msg = emitCall('code_event', data, (_ok: boolean) => {
     isShowEditorCode.value = false
   })
 
@@ -282,7 +348,7 @@ function onCodeEvent(data: any) {
 }
 
 async function onUploadFile(e: any) {
-  let file = e.target.files[0]
+  const file = e.target.files[0]
 
   e.target.value = null
 
@@ -290,12 +356,12 @@ async function onUploadFile(e: any) {
     const quill = getQuill()
     let index = getQuillSelectionIndex()
 
-    if (index == 1 && quill.getLength() == 1 && quill.getText(0, 1) == '\n') {
+    if (index === 1 && quill.getLength() === 1 && quill.getText(0, 1) === '\n') {
       quill.deleteText(0, 1)
       index = 0
     }
 
-    let src = await onUploadImage(file)
+    const src = await onUploadImage(file)
     if (src) {
       quill.insertEmbed(index, 'image', src)
       quill.setSelection(index + 1)
@@ -305,10 +371,10 @@ async function onUploadFile(e: any) {
   }
 
   if (file.type.indexOf('video/') === 0) {
-    let fn = emitCall('video_event', file, () => {})
+    const fn = emitCall('video_event', file, () => {})
     emit('editor-event', fn)
   } else {
-    let fn = emitCall('file_event', file, () => {})
+    const fn = emitCall('file_event', file, () => {})
     emit('editor-event', fn)
   }
 }
@@ -318,81 +384,24 @@ function onRecorderEvent(file: any) {
   isShowEditorRecorder.value = false
 }
 
-function onClipboardMatcher(node: any, Delta) {
-  const ops: any[] = []
-
-  Delta.ops.forEach(op => {
-    // 如果粘贴了图片，这里会是一个对象，所以可以这样处理
-    if (op.insert && typeof op.insert === 'string') {
-      ops.push({
-        insert: op.insert, // 文字内容
-        attributes: {}, //文字样式（包括背景色和文字颜色等）
-      })
-    } else {
-      ops.push(op)
-    }
-  })
-
-  Delta.ops = ops
-  return Delta
-}
-
-function onSendMessage() {
-  var delta = getQuill().getContents()
-  let data = deltaToMessage(delta)
-
-  if (data.items.length === 0) {
-    return
-  }
-
-  switch (data.msgType) {
-    case 1: // 文字消息
-      if (data.items[0].content.length > 1024) {
-        return window['$message'].info('发送内容超长，请分条发送')
-      }
-
-      let event = emitCall('text_event', data, (ok: any) => {
-        ok && getQuill().setContents([], Quill.sources.USER)
-      })
-
-      emit('editor-event', event)
-      break
-    case 3: // 图片消息
-      let detail = getImageInfo(data.items[0].content)
-
-      emit(
-        'editor-event',
-        emitCall(
-          'image_event',
-          { ...detail, url: data.items[0].content, size: 10000 },
-          (ok: any) => {
-            ok && getQuill().setContents([])
-          }
-        )
-      )
-      break
-    case 12: // 图文消息
-      emit(
-        'editor-event',
-        emitCall('mixed_event', data, (ok: any) => {
-          ok && getQuill().setContents([])
-        })
-      )
-      break
-  }
-}
-
 function onEditorChange() {
-  let delta = getQuill().getContents()
+  const delta = getQuill().getContents()
 
-  let text = deltaToString(delta)
+  const text = deltaToString(delta)
 
   editorDraftStore.items[indexName.value || ''] = JSON.stringify({
-    text: text,
+    text,
     ops: delta.ops,
   })
 
   emit('editor-event', emitCall('input_event', text))
+}
+
+function hideMentionDom() {
+  const el = document.querySelector('.ql-mention-list-container')
+  if (el) {
+    document.querySelector('body')?.removeChild(el)
+  }
 }
 
 function loadEditorDraftText() {
@@ -407,7 +416,7 @@ function loadEditorDraftText() {
     if (!quill) return
 
     // 从缓存中加载编辑器草稿
-    let draft = editorDraftStore.items[indexName.value || '']
+    const draft = editorDraftStore.items[indexName.value || '']
     if (draft) {
       quill.setContents(JSON.parse(draft)?.ops || [])
     } else {
@@ -439,13 +448,6 @@ function onSubscribeQuote(data: any) {
 
   quill.insertEmbed(0, 'quote', data)
   quill.setSelection(index + 1, 0, 'user')
-}
-
-function hideMentionDom() {
-  let el = document.querySelector('.ql-mention-list-container')
-  if (el) {
-    document.querySelector('body')?.removeChild(el)
-  }
 }
 
 watch(indexName, loadEditorDraftText, { immediate: true })

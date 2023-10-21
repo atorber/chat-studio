@@ -8,11 +8,13 @@ export default defineComponent({
     if (ctx) {
       const dialog = useDialog()
 
-      window['$dialog'] = dialog
+      window.$dialog = dialog
 
       ctx.appContext.config.globalProperties.$dialog = dialog
     }
   },
-  render() {},
+  render() {
+    return null
+  },
 })
 </script>

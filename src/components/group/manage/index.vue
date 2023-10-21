@@ -9,12 +9,12 @@ import ConfigTab from './ConfigTab.vue'
 
 const emit = defineEmits(['close'])
 
-const props = defineProps({
-  gid: {
-    type: Number,
-    default: 0,
-  },
-})
+// const props = defineProps({
+//   gid: {
+//     type: Number,
+//     default: 0,
+//   },
+// })
 
 const isShowBox = ref(true)
 const tabIndex = ref(0)
@@ -52,7 +52,7 @@ const onMaskClick = () => {
           v-for="(menu, index) in menus"
           :key="menu.name"
           class="menu-list pointer"
-          :class="{ selectd: tabIndex == index }"
+          :class="{ selectd: tabIndex === index }"
           v-text="menu.name"
           @click="tabIndex = index"
         />

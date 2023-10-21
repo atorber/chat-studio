@@ -35,7 +35,7 @@ const statusItem = {
         </div>
         <div class="filename">{{ item.username }}</div>
         <div class="status">
-          <span :class="{ success: item.status == 2 }">
+          <span :class="{ success: item.status === 2 }">
             {{ statusItem[item.status] }}
           </span>
         </div>

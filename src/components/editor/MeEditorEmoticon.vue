@@ -17,7 +17,7 @@ const onTriggerUpload = () => {
 
 // 上传表情包
 const onUpload = e => {
-  let file = e.target.files[0]
+  const file = e.target.files[0]
 
   editorStore.uploadUserEmoticon(file)
 }
@@ -34,7 +34,7 @@ const onTabs = index => {
 const onSendEmoticon = (type, value, img = '') => {
   if (img) {
     const imgSrcReg = /<img.*?src='(.*?)'/g
-    let match = imgSrcReg.exec(img)
+    const match = imgSrcReg.exec(img)
     if (match) {
       emit('on-select', { type, value, img: match[1] })
     }
@@ -54,10 +54,11 @@ const onSendEmoticon = (type, value, img = '') => {
     </header>
 
     <main class="el-main em-main me-scrollbar me-scrollbar-thumb">
-      <div class="symbol-box" v-if="tabIndex == 0">
+      <div class="symbol-box" v-if="tabIndex === 0">
         <div class="options">
           <div
             v-for="(img, key) in emoji.emojis"
+            :key="key"
             v-html="img"
             @click="onSendEmoticon(1, key, img)"
             class="option pointer flex-center"
@@ -67,7 +68,7 @@ const onSendEmoticon = (type, value, img = '') => {
 
       <div class="collect-box" v-else>
         <div
-          v-if="tabIndex == 1"
+          v-if="tabIndex === 1"
           class="item pointer upload-btn"
           @click="onTriggerUpload"
         >
@@ -83,7 +84,7 @@ const onSendEmoticon = (type, value, img = '') => {
           <img :src="item.src" @click="onSendEmoticon(2, item.media_id)" />
 
           <div
-            v-if="tabIndex == 1"
+            v-if="tabIndex === 1"
             class="mask"
             @click="onDelete(index, item.media_id)"
           >
@@ -104,7 +105,7 @@ const onSendEmoticon = (type, value, img = '') => {
         v-for="(item, index) in items"
         :key="index"
         @click="onTabs(index)"
-        :class="{ active: index == tabIndex }"
+        :class="{ active: index === tabIndex }"
       >
         <p class="tip">{{ item.name }}</p>
         <img width="20" height="20" :src="item.icon" />

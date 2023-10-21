@@ -4,7 +4,7 @@ import { formatTalkItem } from '@/utils/talk'
 import { useEditorDraftStore } from './index'
 
 const ttime = datetime => {
-  if (datetime == undefined || datetime == '') {
+  if (datetime === undefined || datetime === '') {
     return new Date().getTime()
   }
 
@@ -12,34 +12,22 @@ const ttime = datetime => {
 }
 
 export const useTalkStore = defineStore('talk', {
-  state: () => {
-    return {
+  state: () => ({
       // 加载状态[1:未加载;2:加载中;3:加载完成;4:加载失败;]
       loadStatus: 2,
 
       // 会话列表
       items: [],
-    }
-  },
+    }),
   getters: {
     // 过滤所有置顶对话列表
-    topItems: state => {
-      return state.items.filter(item => item.is_top == 1)
-    },
+    topItems: state => state.items.filter(item => item.is_top === 1),
 
     // 对话列表
-    talkItems: state => {
-      return state.items.sort((a, b) => {
-        return ttime(b.updated_at) - ttime(a.updated_at)
-      })
-    },
+    talkItems: state => state.items.sort((a, b) => ttime(b.updated_at) - ttime(a.updated_at)),
 
     // 消息未读数总计
-    talkUnreadNum: state => {
-      return state.items.reduce((total, item) => {
-        return total + parseInt(item.unread_num)
-      }, 0)
-    },
+    talkUnreadNum: state => state.items.reduce((total, item) => total + parseInt(item.unread_num), 0),
   },
   actions: {
     findItem(index_name) {
@@ -102,16 +90,16 @@ export const useTalkStore = defineStore('talk', {
       const editorDraftStore = useEditorDraftStore()
 
       response.then(({ code, data }) => {
-        if (code == 200) {
+        if (code === 200) {
           this.items = data.items.map(item => {
-            let value = formatTalkItem(item)
+            const value = formatTalkItem(item)
 
-            let draft = editorDraftStore.items[value.index_name]
+            const draft = editorDraftStore.items[value.index_name]
             if (draft) {
               value.draft_text = JSON.parse(draft).text || ''
             }
 
-            if (value.is_robot == 1) {
+            if (value.is_robot === 1) {
               value.is_online = 1
             }
 

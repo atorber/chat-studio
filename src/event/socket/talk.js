@@ -60,7 +60,7 @@ class Talk extends Base {
    * @returns
    */
   isCurrSender() {
-    return this.sender_id == this.getAccountId()
+    return this.sender_id === this.getAccountId()
   }
 
   /**
@@ -69,11 +69,11 @@ class Talk extends Base {
    * @return String
    */
   getIndexName() {
-    if (this.talk_type == 2) {
+    if (this.talk_type === 2) {
       return `${this.talk_type}_${this.receiver_id}`
     }
 
-    let receiver_id = this.isCurrSender() ? this.receiver_id : this.sender_id
+    const receiver_id = this.isCurrSender() ? this.receiver_id : this.sender_id
 
     return `${this.talk_type}_${receiver_id}`
   }
@@ -84,7 +84,7 @@ class Talk extends Base {
   getTalkText() {
     let text = this.resource.content.replace(/<img .*?>/g, '')
 
-    if (this.resource.msg_type != message.ChatMsgTypeText) {
+    if (this.resource.msg_type !== message.ChatMsgTypeText) {
       text = message.ChatMsgTypeMapping[this.resource.msg_type]
     }
 
@@ -93,11 +93,11 @@ class Talk extends Base {
 
   // 播放提示音
   play() {
+    console.debug(this.talk_type)
     // 客户端有消息提示
     if (window.electron) {
       return
     }
-
     useNotifyStore().isPromptTone && palyMusic()
   }
 
@@ -110,7 +110,7 @@ class Talk extends Base {
     }
 
     // 判断会话列表是否存在，不存在则创建
-    if (findTalkIndex(this.getIndexName()) == -1) {
+    if (findTalkIndex(this.getIndexName()) === -1) {
       return this.addTalkItem()
     }
 
@@ -121,13 +121,14 @@ class Talk extends Base {
       this.play()
       this.updateTalkItem()
     }
+    return null
   }
 
   /**
    * 显示消息提示
    * @returns
    */
-  showMessageNocice() {
+  static showMessageNocice() {
     if (useNotifyStore().isLeaveWeb) {
       if (useNotifyStore().isWebNotify) {
         WebNotify('LumenIM 在线聊天', {
@@ -137,7 +138,7 @@ class Talk extends Base {
         })
       }
     } else {
-      window['$notification'].create({
+      window.$notification.create({
         title: '消息通知',
         content: '您有新的消息请注意查收',
         duration: 3000,
@@ -150,11 +151,11 @@ class Talk extends Base {
    */
   addTalkItem() {
     let receiver_id = this.sender_id
-    let talk_type = this.talk_type
+    const {talk_type} = this
 
-    if (talk_type == 1 && this.receiver_id != this.getAccountId()) {
+    if (talk_type === 1 && this.receiver_id !== this.getAccountId()) {
       receiver_id = this.receiver_id
-    } else if (talk_type == 2) {
+    } else if (talk_type === 2) {
       receiver_id = this.receiver_id
     }
 
@@ -162,7 +163,7 @@ class Talk extends Base {
       talk_type,
       receiver_id,
     }).then(({ code, data }) => {
-      if (code == 200) {
+      if (code === 200) {
         useTalkStore().addItem(formatTalkItem(data))
         this.play()
       }
@@ -173,7 +174,7 @@ class Talk extends Base {
    * 插入对话记录
    */
   insertTalkRecord() {
-    let record = this.resource
+    const record = this.resource
 
     if ([1102, 1103, 1104].includes(record.msg_type)) {
       useDialogueStore().updateGroupMembers()
@@ -194,15 +195,15 @@ class Talk extends Base {
     }
 
     // 获取聊天面板元素节点
-    let el = document.getElementById('imChatPanel')
+    const el = document.getElementById('imChatPanel')
     if (!el) {
       return
     }
 
     // 判断的滚动条是否在底部
-    let isBottom = Math.ceil(el.scrollTop) + el.clientHeight >= el.scrollHeight
+    const isBottom = Math.ceil(el.scrollTop) + el.clientHeight >= el.scrollHeight
 
-    if (isBottom || record.user_id == this.getAccountId()) {
+    if (isBottom || record.user_id === this.getAccountId()) {
       nextTick(() => {
         el.scrollTop = el.scrollHeight + 1000
       })
@@ -216,7 +217,7 @@ class Talk extends Base {
       updated_at: parseTime(new Date()),
     })
 
-    if (this.talk_type == 1 && this.getAccountId() !== this.sender_id) {
+    if (this.talk_type === 1 && this.getAccountId() !== this.sender_id) {
       ServeClearTalkUnreadNum({
         talk_type: 1,
         receiver_id: this.sender_id,

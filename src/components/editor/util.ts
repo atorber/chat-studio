@@ -23,7 +23,7 @@ function removeTrailingNewlines(str) {
 }
 
 export function deltaToMessage(delta: Delta): AnalysisResp {
-    let resp: AnalysisResp = {
+    const resp: AnalysisResp = {
         items: [],
         mentions: [],
         mentionUids: [],
@@ -38,10 +38,10 @@ export function deltaToMessage(delta: Delta): AnalysisResp {
         }
 
         if (typeof (iterator.insert) === "string") {
-            if (!iterator.insert || iterator.insert == "\n") continue
+            if (!iterator.insert || iterator.insert === "\n") continue
 
-            if (node && node.type == 1) {
-                node.content = node.content + iterator.insert
+            if (node && node.type === 1) {
+                node.content += iterator.insert
                 continue
             }
 
@@ -55,15 +55,15 @@ export function deltaToMessage(delta: Delta): AnalysisResp {
 
         // @好友
         if (iterator.insert.mention) {
-            let mention = iterator.insert.mention
+            const {mention} = iterator.insert
 
             resp.mentions.push({
                 "name": `${mention.denotationChar}${mention.value}`,
                 "atid": parseInt(mention.id),
             })
 
-            if (node && node.type == 1) {
-                node.content = node.content + ` ${mention.denotationChar}${mention.value}`
+            if (node && node.type === 1) {
+                node.content += ` ${mention.denotationChar}${mention.value}`
                 continue
             }
 
@@ -86,10 +86,10 @@ export function deltaToMessage(delta: Delta): AnalysisResp {
 
         // 表情
         if (iterator.insert.emoji) {
-            let emoji = iterator.insert.emoji
+            const {emoji} = iterator.insert
 
-            if (node && node.type == 1) {
-                node.content = node.content + emoji.alt
+            if (node && node.type === 1) {
+                node.content += emoji.alt
                 continue
             }
 
@@ -109,11 +109,11 @@ export function deltaToMessage(delta: Delta): AnalysisResp {
 
     // 去除前后多余空格
     if (resp.items.length) {
-        if (resp.items[0].type == 1) {
+        if (resp.items[0].type === 1) {
             resp.items[0].content = removeLeadingNewlines(resp.items[0].content)
         }
 
-        if (resp.items[resp.items.length - 1].type == 1) {
+        if (resp.items[resp.items.length - 1].type === 1) {
             resp.items[resp.items.length - 1].content = removeTrailingNewlines(resp.items[resp.items.length - 1].content)
         }
     }
@@ -122,7 +122,7 @@ export function deltaToMessage(delta: Delta): AnalysisResp {
         resp.msgType = 12
     }
 
-    if (resp.items.length == 1) {
+    if (resp.items.length === 1) {
         resp.msgType = resp.items[0].type
     }
 
@@ -137,7 +137,7 @@ export function deltaToString(delta: Delta): string {
 
     for (const o of delta.ops) {
         if (typeof (o.insert) === "string") {
-            if (!o.insert || o.insert == "\n") continue
+            if (!o.insert || o.insert === "\n") continue
 
             content += o.insert
             continue
@@ -145,7 +145,7 @@ export function deltaToString(delta: Delta): string {
 
         // @好友
         if (o.insert.mention) {
-            let mention = o.insert.mention
+            const {mention} = o.insert
             content += ` ${mention.denotationChar}${mention.value} `
             continue
         }

@@ -1,5 +1,5 @@
 <script setup>
-import { SendOne, AddOne, PeoplePlusOne } from '@icon-park/vue-next'
+import { SendOne, PeoplePlusOne } from '@icon-park/vue-next'
 
 const emit = defineEmits(['talk', 'join'])
 defineProps({

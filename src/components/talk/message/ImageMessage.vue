@@ -3,14 +3,20 @@ import { NImage } from 'naive-ui'
 import { getImageInfo } from '@/utils/functions'
 
 defineProps({
-  extra: Object,
-  data: Object,
+  extra: {
+    type: Object,
+    default: () => ({}),  // 设置默认值为一个空对象
+  },
+  data: {
+    type: Object,
+    default: () => ({}),  // 设置默认值为一个空对象
+  },
 })
 
 const img = (src, width = 200) => {
   const info = getImageInfo(src)
 
-  if (info.width == 0 || info.height == 0) {
+  if (info.width === 0 || info.height === 0) {
     return {}
   }
 
@@ -22,8 +28,8 @@ const img = (src, width = 200) => {
   }
 
   return {
-    width: width + 'px',
-    height: parseInt(info.height / (info.width / width)) + 'px',
+    width: `${width  }px`,
+    height: `${parseInt(info.height / (info.width / width))  }px`,
   }
 }
 </script>

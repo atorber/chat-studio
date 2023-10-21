@@ -7,8 +7,7 @@ import { storage } from '@/utils/storage'
 
 export const useUserStore = defineStore('user', {
   persist: true,
-  state: () => {
-    return {
+  state: () => ({
       uid: 0, // 用户ID
       nickname: '', // 用户昵称
       gender: 0, // 性别
@@ -19,8 +18,7 @@ export const useUserStore = defineStore('user', {
       isQiye: false,
       isContactApply: false,
       isGroupApply: false,
-    }
-  },
+    }),
   getters: {},
   actions: {
     // 设置用户登录状态
@@ -32,12 +30,12 @@ export const useUserStore = defineStore('user', {
       this.$reset()
       storage.remove('user_info')
       delAccessToken()
-      location.reload()
+      window.location.reload()
     },
 
     loadSetting() {
       ServeGetUserSetting().then(({ code, data }) => {
-        if (code == 200) {
+        if (code === 200) {
           this.nickname = data.user_info.nickname
           this.uid = data.user_info.uid
           this.avatar = data.user_info.avatar
@@ -53,13 +51,13 @@ export const useUserStore = defineStore('user', {
       })
 
       ServeFindFriendApplyNum().then(({ code, data }) => {
-        if (code == 200) {
+        if (code === 200) {
           this.isContactApply = data.unread_num > 0
         }
       })
 
       ServeGroupApplyUnread().then(({ code, data }) => {
-        if (code == 200) {
+        if (code === 200) {
           this.isGroupApply = data.unread_num > 0
         }
       })

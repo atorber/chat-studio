@@ -40,11 +40,11 @@ function onTriggerUpload() {
 }
 
 const onUpload = e => {
-  let file = e.target.files[0]
+  const file = e.target.files[0]
 
   console.log(file)
 
-  let reader = new FileReader()
+  const reader = new FileReader()
   reader.onload = e => {
     let data
     if (typeof e.target.result === 'object') {
@@ -62,7 +62,7 @@ const onUpload = e => {
   reader.readAsArrayBuffer(file)
 }
 
-const realTime = data => {
+const realTime = _data => {
   cropper.value.getCropData(img => {
     option.preview = img
   })
@@ -81,7 +81,7 @@ const refreshCrop = () => {
 
 const onSubmit = () => {
   cropper.value.getCropBlob(blob => {
-    let file = new File([blob], 'avatar.png', {
+    const file = new File([blob], 'avatar.png', {
       type: blob.type,
       lastModified: Date.now(),
     })
@@ -90,10 +90,10 @@ const onSubmit = () => {
     form.append('file', file)
 
     ServeUploadAvatar(form).then(res => {
-      if (res.code == 200) {
+      if (res.code === 200) {
         emit('success', res.data.avatar)
       } else {
-        window['$message'].info(res.message)
+        window.$message.info(res.message)
       }
     })
   })

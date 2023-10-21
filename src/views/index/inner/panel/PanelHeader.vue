@@ -50,14 +50,14 @@ const onSetMenu = () => {
     </div>
 
     <div class="module left-module">
-      <span class="tag" :class="{ red: type == 1 }">
-        {{ type == 1 ? '好友' : '群聊' }}
+      <span class="tag" :class="{ red: type === 1 }">
+        {{ type === 1 ? '好友' : '群聊' }}
       </span>
       <span class="nickname">{{ username }}</span>
-      <span class="num" v-show="type == 2 && num">({{ num }})</span>
+      <span class="num" v-show="type === 2 && num">({{ num }})</span>
     </div>
 
-    <div class="module center-module" v-if="type == 1">
+    <div class="module center-module" v-if="type === 1">
       <p class="online">
         <span class="online-status" v-show="online"></span>
         <span>{{ online ? '在线' : '离线' }}</span>
@@ -67,14 +67,14 @@ const onSetMenu = () => {
 
     <div class="module right-module">
       <n-icon
-        v-show="type == 2"
+        v-show="type === 2"
         :size="18"
         class="icon"
         @click="emit('evnet', 'notice')"
         :component="Announcement"
       />
       <n-icon
-        v-show="type == 2"
+        v-show="type === 2"
         :size="18"
         class="icon"
         @click="emit('evnet', 'group')"

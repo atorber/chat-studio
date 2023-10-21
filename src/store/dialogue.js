@@ -10,8 +10,7 @@ import { ServeGetGroupMembers } from '@/api/group'
 let keyboardTimeout = null
 
 export const useDialogueStore = defineStore('dialogue', {
-  state: () => {
-    return {
+  state: () => ({
       // 对话索引（聊天对话的唯一索引）
       index_name: null,
 
@@ -55,8 +54,7 @@ export const useDialogueStore = defineStore('dialogue', {
           records: [],
         },
       },
-    }
-  },
+    }),
   getters: {
     // 多选列表
     selectItems: state => state.records.filter(item => item.isCheck),
@@ -71,31 +69,31 @@ export const useDialogueStore = defineStore('dialogue', {
 
     // 更新对话信息
     setDialogue(data = {}) {
-      this.online = data.is_online == 1
+      this.online = data.is_online === 1
       this.talk = {
         username: data.remark || data.name,
         talk_type: data.talk_type,
         receiver_id: data.receiver_id,
       }
 
-      this.index_name = data.talk_type + '_' + data.receiver_id
+      this.index_name = `${data.talk_type  }_${  data.receiver_id}`
       this.records = []
       this.unreadBubble = 0
       this.isShowEditor = data.is_robot === 0
 
       this.members = []
-      if (data.talk_type == 2) {
+      if (data.talk_type === 2) {
         this.updateGroupMembers()
       }
     },
 
     // 更新提及列表
     async updateGroupMembers() {
-      let { code, data } = await ServeGetGroupMembers({
+      const { code, data } = await ServeGetGroupMembers({
         group_id: this.talk.receiver_id,
       })
 
-      if (code != 200) return
+      if (code !== 200) return
 
       this.members = data.items.map(o => ({
         id: o.user_id,
@@ -153,7 +151,7 @@ export const useDialogueStore = defineStore('dialogue', {
     },
 
     setUnreadBubble(value) {
-      if (value == 0) {
+      if (value === 0) {
         this.unreadBubble = 0
       } else {
         this.unreadBubble++
@@ -178,10 +176,10 @@ export const useDialogueStore = defineStore('dialogue', {
         receiver_id: this.talk.receiver_id,
         record_id: ids.join(','),
       }).then(res => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           this.batchDelDialogueRecord(ids)
         } else {
-          window['$message'].warning(res.message)
+          window.$message.warning(res.message)
         }
       })
     },
@@ -189,17 +187,17 @@ export const useDialogueStore = defineStore('dialogue', {
     // 撤销聊天记录
     ApiRevokeRecord(record_id) {
       ServeRevokeRecords({ record_id }).then(res => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           this.updateDialogueRecord({ id: record_id, is_revoke: 1 })
         } else {
-          window['$message'].warning(res.message)
+          window.$message.warning(res.message)
         }
       })
     },
 
     // 转发聊天记录
     ApiForwardRecord(options) {
-      let data = {
+      const data = {
         type: 'forward',
         receiver: {
           talk_type: this.talk.talk_type,
@@ -209,12 +207,12 @@ export const useDialogueStore = defineStore('dialogue', {
       }
 
       ServePublishMessage(data).then(res => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           this.closeMultiSelect()
         }
       })
     },
 
-    ApiSendTextMessage(options) {},
+    ApiSendTextMessage(_options) {},
   },
 })

@@ -8,11 +8,13 @@ export default defineComponent({
     if (ctx) {
       const notification = useNotification()
 
-      window['$notification'] = notification
+      window.$notification = notification
 
       ctx.appContext.config.globalProperties.$notification = notification
     }
   },
-  render() {},
+  render() {
+    return null
+  },
 })
 </script>

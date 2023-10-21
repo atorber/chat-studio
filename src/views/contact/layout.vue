@@ -6,11 +6,8 @@ import { useUserStore } from '@/store/user'
 import {
   PeoplesTwo,
   ChartGraph,
-  ShareThree,
-  PersonalCollection,
   Peoples,
   People,
-  AddUser,
   Permissions,
 } from '@icon-park/vue-next'
 

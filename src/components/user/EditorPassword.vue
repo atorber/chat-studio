@@ -31,7 +31,7 @@ const rules = {
     validator(rule, value) {
       if (!value) {
         return new Error('确认密码不能为空！')
-      } else if (model.newPassword != model.newPassword2) {
+      } if (model.newPassword !== model.newPassword2) {
         return new Error('两次密码填写不一致！')
       }
 
@@ -45,17 +45,17 @@ const loading = ref(false)
 const onSubmit = () => {
   loading.value = true
 
-  let response = ServeUpdatePassword({
+  const response = ServeUpdatePassword({
     old_password: model.oldPassword,
     new_password: model.newPassword,
   })
 
   response.then(res => {
-    if (res.code == 200) {
-      window['$message'].success('密码修改成功')
+    if (res.code === 200) {
+      window.$message.success('密码修改成功')
       emit('update:modelValue', false)
     } else {
-      window['$message'].warning(res.message)
+      window.$message.warning(res.message)
     }
   })
 

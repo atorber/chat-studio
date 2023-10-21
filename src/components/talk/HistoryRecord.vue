@@ -39,7 +39,7 @@ const tabs = [
   { name: '会话', type: message.ChatMsgTypeForward, show: true },
   { name: '代码', type: message.ChatMsgTypeCode, show: true },
   { name: '位置', type: message.ChatMsgTypeLocation, show: true },
-  { name: '群投票', type: message.ChatMsgTypeVote, show: props.talkType == 2 },
+  { name: '群投票', type: message.ChatMsgTypeVote, show: props.talkType === 2 },
 ]
 
 const onMaskClick = () => {
@@ -47,7 +47,7 @@ const onMaskClick = () => {
 }
 
 const loadChatRecord = () => {
-  let data = {
+  const data = {
     talk_type: props.talkType,
     receiver_id: props.receiverId,
     record_id: model.recordId,
@@ -62,13 +62,13 @@ const loadChatRecord = () => {
   }
 
   ServeFindTalkRecords(data).then(res => {
-    if (res.code != 200) return
+    if (res.code !== 200) return
 
     if (data.record_id === 0) {
       records.value = []
     }
 
-    let items = res.data.items || []
+    const items = res.data.items || []
 
     records.value.push(...items)
 
@@ -113,9 +113,10 @@ loadChatRecord()
       <header class="el-header bdr-b search" style="height: 50px">
         <div class="type-items">
           <span
-            v-for="tab in tabs"
+            v-for="(tab,index) in tabs"
+            :key="index"
             class="pointer"
-            :class="{ active: model.msgType == tab.type }"
+            :class="{ active: model.msgType === tab.type }"
             @click="triggerType(tab.type)"
             v-show="tab.show"
           >

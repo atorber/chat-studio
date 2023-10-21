@@ -14,8 +14,8 @@ const store = useUserStore()
       </div>
 
       <div class="gender" v-show="store.gender > 0">
-        <n-icon v-if="store.gender == 1" :component="Male" color="#508afe" />
-        <n-icon v-if="store.gender == 2" :component="Female" color="#ff5722" />
+        <n-icon v-if="store.gender === 1" :component="Male" color="#508afe" />
+        <n-icon v-if="store.gender === 2" :component="Female" color="#ff5722" />
       </div>
     </div>
 

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, h } from 'vue'
-import { NSpace, NPopconfirm, NInput } from 'naive-ui'
+import { NSpace, NInput } from 'naive-ui'
 import { Search, RefreshOne, CheckSmall, Close } from '@icon-park/vue-next'
 import {
   ServeGetGroupApplyList,
@@ -25,38 +25,36 @@ const filterSearch = computed(() => {
     return items.value
   }
 
-  return items.value.filter(item => {
-    return item.nickname.match(keywords.value) != null
-  })
+  return items.value.filter(item => item.nickname.match(keywords.value) !== null)
 })
 
 const onLoadData = () => {
   ServeGetGroupApplyList({
     group_id: props.id,
   }).then(res => {
-    if (res.code == 200) {
-      let data = res.data.items || []
+    if (res.code === 200) {
+      const data = res.data.items || []
       items.value = data
     }
   })
 }
 
-const onRowClick = item => {
-  if (batchDelete.value == true) {
+const onRowClick = _item => {
+  if (batchDelete.value === true) {
   }
 }
 
 const onAgree = throttle(item => {
-  let loading = window['$message'].loading('请稍等，正在处理')
+  const loading = window.$message.loading('请稍等，正在处理')
 
   ServeAgreeGroupApply({
     apply_id: item.id,
   }).then(res => {
     loading.destroy()
-    if (res.code == 200) {
-      window['$message'].success('已同意')
+    if (res.code === 200) {
+      window.$message.success('已同意')
     } else {
-      window['$message'].info(res.message)
+      window.$message.info(res.message)
     }
 
     onLoadData()
@@ -65,17 +63,15 @@ const onAgree = throttle(item => {
 
 const onDelete = item => {
   let remark = ''
-  let dialog = window['$dialog'].create({
+  const dialog = window.$dialog.create({
     title: '拒绝入群申请',
-    content: () => {
-      return h(NInput, {
+    content: () => h(NInput, {
         defaultValue: '',
         placeholder: '请填写拒绝原因',
         style: { marginTop: '20px' },
         onInput: value => (remark = value),
         autofocus: true,
-      })
-    },
+      }),
     negativeText: '取消',
     positiveText: '提交',
     onPositiveClick: () => {
@@ -85,14 +81,14 @@ const onDelete = item => {
 
       ServeDeleteGroupApply({
         apply_id: item.id,
-        remark: remark,
+        remark,
       }).then(res => {
         dialog.destroy()
 
-        if (res.code == 200) {
-          window['$message'].success('已拒绝')
+        if (res.code === 200) {
+          window.$message.success('已拒绝')
         } else {
-          window['$message'].info(res.message)
+          window.$message.info(res.message)
         }
 
         onLoadData()
@@ -141,7 +137,8 @@ onLoadData()
     <main v-else class="el-main main me-scrollbar me-scrollbar-thumb">
       <div
         class="member-item"
-        v-for="item in filterSearch"
+        v-for="(item,index) in filterSearch"
+        :key="index"
         @click="onRowClick(item)"
       >
         <div class="avatar pointer" @click="onUserInfo(member)">

@@ -2,12 +2,12 @@
 import { ref, reactive, watch, nextTick } from 'vue'
 import { NScrollbar, NDropdown } from 'naive-ui'
 import RecycleModal from './RecycleModal.vue'
-import { Down, AddOne, Plus } from '@icon-park/vue-next'
+import { Down, Plus } from '@icon-park/vue-next'
 import { useNoteStore } from '@/store/note'
 
 const store = useNoteStore()
 
-let activedMenu = ref('0-0')
+const activedMenu = ref('0-0')
 
 const menus = reactive([
   {
@@ -51,14 +51,14 @@ const loadWatchClassMenu = () => {
   watch(
     () => store.class,
     () => {
-      let items = []
+      const items = []
       for (const item of store.class) {
         items.push({
           id: item.id,
           name: item.class_name,
           count: item.count,
           isEdit: false,
-          indexName: '2-' + item.id,
+          indexName: `2-${  item.id}`,
         })
       }
 
@@ -74,7 +74,7 @@ const loadWatchTagsMenu = () => {
   watch(
     () => store.tags,
     () => {
-      let items = []
+      const items = []
 
       for (const item of store.tags) {
         items.push({
@@ -82,7 +82,7 @@ const loadWatchTagsMenu = () => {
           name: item.tag_name,
           count: item.count,
           isEdit: false,
-          indexName: '3-' + item.id,
+          indexName: `3-${  item.id}`,
         })
       }
 
@@ -95,13 +95,13 @@ const loadWatchTagsMenu = () => {
 }
 
 const getCalssId = () => {
-  let str = activedMenu.value
+  const str = activedMenu.value
 
-  if (str.substring(0, 1) != '2') {
+  if (str.substring(0, 1) !== '2') {
     return 0
   }
 
-  return parseInt(str.substring(2))
+  return parseInt(str.substring(2), 10)
 }
 
 // 一级菜单点击事件
@@ -117,6 +117,8 @@ const onMenuLevel1Event = (menu, index) => {
         break
       case 1:
         store.loadNoteList({ page: 1, find_type: 2 })
+        break
+      default:
         break
     }
   }
@@ -140,7 +142,7 @@ const onMenuLevel2Event = (submenu, index) => {
 }
 
 const onToolsMenu = value => {
-  if (value == 'class') {
+  if (value === 'class') {
     menus[2].isShowSub = true
     menus[2].submenus.unshift({
       id: -1,
@@ -148,7 +150,7 @@ const onToolsMenu = value => {
       isEdit: true,
       indexName: '2--1',
     })
-  } else if (value == 'tag') {
+  } else if (value === 'tag') {
     menus[3].isShowSub = true
     menus[3].submenus.unshift({
       id: -1,
@@ -160,23 +162,25 @@ const onToolsMenu = value => {
 }
 
 const onEditNoteMenu = (e, i, i2, submenu) => {
-  let name = e.target.value.trim()
-  let id = submenu.id == -1 ? 0 : submenu.id
+  const name = e.target.value.trim()
+  const id = submenu.id === -1 ? 0 : submenu.id
 
   // 删除
-  if (name == '' && submenu.id == -1) {
+  if (name === '' && submenu.id === -1) {
     return menus[i].submenus.splice(i2, 1)
   }
 
-  if (name == '' && submenu.id > 0) {
-    return (submenu.isEdit = false)
+  if (name === '' && submenu.id > 0) {
+    submenu.isEdit = false
+    return submenu.isEdit
   }
 
-  if (i == 2) {
+  if (i === 2) {
     store.editClass(id, name)
-  } else if (i == 3) {
+  } else if (i === 3) {
     store.editTag(id, name)
   }
+  return null
 }
 
 // 会话列表右键显示菜单
@@ -185,7 +189,7 @@ const onContextMenu = (e, i, i2, submenu) => {
   dropdownMenu.item = {
     index: i,
     index2: i2,
-    submenu: submenu,
+    submenu,
   }
 
   dropdownMenu.options = [
@@ -209,15 +213,15 @@ const onContextMenu = (e, i, i2, submenu) => {
 }
 
 const onContextMenuHandle = value => {
-  let submenu =
+  const submenu =
     menus[dropdownMenu.item.index].submenus[dropdownMenu.item.index2]
 
-  if (value == 'rename') {
+  if (value === 'rename') {
     submenu.isEdit = true
-  } else if (value == 'delete') {
-    if (dropdownMenu.item.index == 2) {
+  } else if (value === 'delete') {
+    if (dropdownMenu.item.index === 2) {
       store.deleteClass(submenu.id)
-    } else if (dropdownMenu.item.index == 3) {
+    } else if (dropdownMenu.item.index === 3) {
       store.deleteTag(submenu.id)
     }
   }
@@ -296,7 +300,7 @@ loadWatchTagsMenu()
         <div v-for="(menu, i) in menus" :key="i" class="menu">
           <div
             class="menu-level1 pointer"
-            :class="{ actived: menu.indexName == activedMenu }"
+            :class="{ actived: menu.indexName === activedMenu }"
             @click="onMenuLevel1Event(menu, i)"
           >
             <span class="dot">●</span>
@@ -321,7 +325,7 @@ loadWatchTagsMenu()
             v-show="menu.isShowSub"
             :key="i2"
             class="menu-level2 pointer"
-            :class="{ actived: submenu.indexName == activedMenu }"
+            :class="{ actived: submenu.indexName === activedMenu }"
             @click="onMenuLevel2Event(submenu, i)"
           >
             <p v-if="submenu.isEdit">

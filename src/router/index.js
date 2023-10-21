@@ -43,11 +43,9 @@ const routes = [
   },
 ]
 
-const getHistoryMode = () => {
-  return import.meta.env.VITE_ROUTER_MODE == 'hash'
+const getHistoryMode = () => import.meta.env.VITE_ROUTER_MODE === 'hash'
     ? createWebHashHistory()
     : createWebHistory()
-}
 
 const router = createRouter({
   history: getHistoryMode(),
@@ -55,13 +53,14 @@ const router = createRouter({
 })
 
 // 设置中间件，权限验证
-router.beforeEach((to, from) => {
+router.beforeEach((to, _from) => {
   if (to.meta.requiresAuth && !isLoggedIn()) {
     return {
       path: '/auth/login',
       query: { redirect: to.fullPath },
     }
-  }
+  }  
+  return null
 })
 
 export default router
