@@ -25,3 +25,4 @@ makefile
 *.sln
 *.sw?
 files
+package-lock.json
