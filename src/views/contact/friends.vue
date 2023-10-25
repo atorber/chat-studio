@@ -9,10 +9,15 @@ import { publisher } from '@/utils/publisher.ts'
 import { toTalk } from '@/utils/talk'
 import {
   ServeGetContacts,
+  ServeGetContactsVika,
   ServeDeleteContact,
   ServeContactGroupList,
 } from '@/api/contact'
 import { useFriendsMenu } from '@/composition/friends-menu'
+// import { 
+//   getContacts, 
+//   getContactDetail 
+// } from '@/api/contactNew'
 
 const { dropdown, showDropdownMenu, closeDropdownMenu } = useFriendsMenu()
 const user: any = inject('$user')
@@ -34,12 +39,21 @@ const filter: any = computed(() => items.value.filter((item: any) => {
     return findIndex !== -1 && index.value === item.group_id
   }))
 
-const loadContactList = () => {
+const loadContactList = async () => {
+
   ServeGetContacts().then(res => {
+    console.debug(JSON.stringify(res))
     if (res.code === 200) {
       items.value = res.data.items || []
     }
   })
+  
+const res = await ServeGetContactsVika()
+console.debug(res)
+  if (res.code === 200) {
+      items.value = res.data.items || []
+    }
+
 }
 
 const loadContactGroupList = () => {
@@ -54,7 +68,7 @@ const onToTalk = (item: any) => {
   toTalk(1, item.id)
 }
 
-const onInfo = (item: any) => {
+const onInfo = async (item: any) => {
   user(item.id)
 }
 
@@ -68,6 +82,7 @@ const onDeleteContact = (data: any) => {
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: () => {
+
       ServeDeleteContact({
         friend_id: data.id,
       }).then(({ code, message }) => {

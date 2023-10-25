@@ -15,6 +15,7 @@ import { useTalkStore } from '@/store'
 import { useDialogueStore } from '@/store/dialogue'
 import { useNotifyStore } from '@/store/notify'
 
+
 /**
  * 好友状态事件
  */
@@ -51,7 +52,7 @@ class Talk extends Base {
     this.receiver_id = resource.receiver_id
     this.talk_type = resource.talk_type
     this.resource = resource.data
-
+    this.palyMusic = palyMusic
     this.handle()
   }
 
@@ -93,12 +94,14 @@ class Talk extends Base {
 
   // 播放提示音
   play() {
-    console.debug(this.talk_type)
+    // console.debug(this.talk_type)
     // 客户端有消息提示
     if (window.electron) {
       return
     }
-    useNotifyStore().isPromptTone && palyMusic()
+    if (useNotifyStore().isPromptTone) {
+      this.palyMusic()
+    }
   }
 
   handle() {

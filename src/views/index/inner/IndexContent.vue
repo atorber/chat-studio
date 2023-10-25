@@ -9,8 +9,9 @@ import GroupPanel from '@/components/group/GroupPanel.vue'
 import GroupNotice from '@/components/group/GroupNotice.vue'
 import UploadsModal from '@/components/base/UploadsModal.vue'
 
-const user = inject('$user')
-console.debug(user)
+inject('$user')
+// const user = inject('$user')
+// console.debug(user)
 const userStore = useUserStore()
 const dialogueStore = useDialogueStore()
 const uploadsStore = useUploadsStore()

@@ -2,7 +2,7 @@
 import { ref, computed, reactive } from 'vue'
 import { NIcon, NModal, NButton, NInput, NDropdown, NPopover } from 'naive-ui'
 import { CloseOne, Male, Female, SendOne } from '@icon-park/vue-next'
-import { ServeSearchUser } from '@/api/contact'
+import { ServeSearchUser, ServeSearchUserVika } from '@/api/contact'
 import { toTalk } from '@/utils/talk'
 import { ServeCreateContact } from '@/api/contact'
 import {
@@ -50,7 +50,7 @@ const groupName = computed(() => {
   return '未设置分组'
 })
 
-const onLoadData = () => {
+const onLoadData = async () => {
   ServeSearchUser({
     user_id: props.uid,
   }).then(({ code, data }) => {
@@ -64,6 +64,17 @@ const onLoadData = () => {
       window.$message.info('用户信息不存在', { showIcon: false })
     }
   })
+
+  const res = await ServeSearchUserVika(props.uid)
+  if (res.code === 200) {
+      Object.assign(state, res.data)
+
+      modelRemark.value = state.remark
+
+      loading.value = false
+    } else {
+      window.$message.info('用户信息不存在', { showIcon: false })
+    }
 
   ServeContactGroupList().then(res => {
     if (res.code === 200) {

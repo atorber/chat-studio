@@ -15,4 +15,5 @@ export const ServeDelCollectEmoticon = data => post('/api/v1/emoticon/del-collec
 // 上传表情包服务接口
 export const ServeUploadEmoticon = data => upload('/api/v1/emoticon/customize/create', data)
 
+// 删除表情包服务接口
 export const ServeDeleteEmoticon = data => upload('/api/v1/emoticon/customize/delete', data)

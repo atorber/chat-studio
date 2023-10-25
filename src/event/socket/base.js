@@ -14,16 +14,17 @@ class Base {
   }
 
   getTalkParams() {
-    const dialogueStore = useDialogueStore()
+    this.dialogueStore = useDialogueStore()
 
-    const { talk_type, receiver_id } = dialogueStore.talk
-    console.debug(this.uid)
+    const { talk_type, receiver_id } = this.dialogueStore.talk
+
     return {
       talk_type,
       receiver_id,
-      index_name: dialogueStore.index_name,
+      index_name: this.dialogueStore.index_name,
     }
   }
+
 
   /**
    * 判断消息是否来自当前对话

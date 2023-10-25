@@ -1,72 +1,82 @@
 <script setup lang="ts">
-import { ref, computed, reactive, onMounted } from 'vue'
-import { NSpace, NDrawer, NTabs, NTab } from 'naive-ui'
-import { ServeGetGroups } from '@/api/group'
-import { Search, Plus } from '@icon-park/vue-next'
-import { useUserStore } from '@/store'
-import { useTalkStore } from '@/store/talk'
-import GroupPanel from '@/components/group/GroupPanel.vue'
-import GroupLaunch from '@/components/group/GroupLaunch.vue'
-import GroupCard from './inner/GroupCard.vue'
-import { toTalk } from '@/utils/talk'
+import { ref, computed, reactive, onMounted } from "vue";
+import { NSpace, NDrawer, NTabs, NTab } from "naive-ui";
+import { ServeGetGroups, ServeGetGroupsVika } from "@/api/group";
+import { Search, Plus } from "@icon-park/vue-next";
+import { useUserStore } from "@/store";
+import { useTalkStore } from "@/store/talk";
+import GroupPanel from "@/components/group/GroupPanel.vue";
+import GroupLaunch from "@/components/group/GroupLaunch.vue";
+import GroupCard from "./inner/GroupCard.vue";
+import { toTalk } from "@/utils/talk";
 
-const userStore = useUserStore()
-const talkStore = useTalkStore()
-const isShowCreateGroupBox = ref(false)
-const keywords = ref('')
-const items = ref([])
+const userStore = useUserStore();
+const talkStore = useTalkStore();
+const isShowCreateGroupBox = ref(false);
+const keywords = ref("");
+const items = ref([]);
 
 const params = reactive({
   isShow: false,
   id: 0,
-})
+});
 
-const tabIndex = ref('all')
+const tabIndex = ref("all");
 
-const {uid} = userStore
+const { uid } = userStore;
 
-const filterCreator = computed(() => items.value.filter((item: any) => item.creator_id === uid))
+const filterCreator = computed(() =>
+  items.value.filter((item: any) => item.creator_id === uid)
+);
 
-const filter = computed(() => items.value.filter((item: any) => {
-    if (tabIndex.value === 'create' && item.creator_id !== uid) {
-      return false
+const filter = computed(() =>
+  items.value.filter((item: any) => {
+    if (tabIndex.value === "create" && item.creator_id !== uid) {
+      return false;
     }
 
-    if (tabIndex.value === 'join' && item.creator_id === uid) {
-      return false
+    if (tabIndex.value === "join" && item.creator_id === uid) {
+      return false;
     }
 
     return (
       item.group_name.toLowerCase().indexOf(keywords.value.toLowerCase()) !== -1
-    )
-  }))
-
-const onLoadData = () => {
-  ServeGetGroups().then(res => {
-    if (res.code === 200) {
-      items.value = res.data.items || []
-    }
+    );
   })
-}
+);
 
-const onShowGroup = item => {
-  params.isShow = true
-  params.id = item.id
-}
+const onLoadData = async () => {
+  ServeGetGroups().then((res) => {
+    if (res.code === 200) {
+      items.value = res.data.items || [];
+    }
+  });
 
-const onToTalk = item => {
-  toTalk(2, item.id)
-}
+  const res = await ServeGetGroupsVika();
+  console.debug(res);
+  if (res.code === 200) {
+    items.value = res.data.items || [];
+  }
+};
 
-const onGroupCallBack = _data => {
-  isShowCreateGroupBox.value = false
-  onLoadData()
-  talkStore.loadTalkList()
-}
+const onShowGroup = (item) => {
+  params.isShow = true;
+  params.id = item.id;
+};
+
+const onToTalk = (item) => {
+  toTalk(2, item.id);
+};
+
+const onGroupCallBack = (_data) => {
+  isShowCreateGroupBox.value = false;
+  onLoadData();
+  talkStore.loadTalkList();
+};
 
 onMounted(() => {
-  onLoadData()
-})
+  onLoadData();
+});
 </script>
 
 <template>

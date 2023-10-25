@@ -86,10 +86,11 @@ export const useTalkStore = defineStore('talk', {
       this.loadStatus = 2
 
       const response = ServeGetTalkList()
-
       const editorDraftStore = useEditorDraftStore()
 
       response.then(({ code, data }) => {
+      console.debug('对话列表：', JSON.stringify(data))
+
         if (code === 200) {
           this.items = data.items.map(item => {
             const value = formatTalkItem(item)

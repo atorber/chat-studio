@@ -32,10 +32,10 @@ export const ServeSearchTalkRecords = (data = {}) => get('/api/v1/talk/search-ch
 
 export const ServeGetRecordsContext = (data = {}) => get('/api/v1/talk/get-records-context', data)
 
-// 发送代码块消息服务接口
+// 发送消息服务接口
 export const ServePublishMessage = (data = {}) => post('/api/v1/talk/message/publish', data)
 
-// 发送代码块消息服务接口
+// 发送文本消息服务接口
 export const ServeSendTalkText = (data = {}) => post('/api/v1/talk/message/text', data)
 
 // 发送代码块消息服务接口
@@ -62,6 +62,8 @@ export const ServeRemoveRecords = (data = {}) => post('/api/v1/talk/message/dele
 // 收藏表情包服务接口
 export const ServeCollectEmoticon = (data = {}) => post('/api/v1/talk/message/collect', data)
 
+// 发送投票消息服务接口
 export const ServeSendVote = (data = {}) => post('/api/v1/talk/message/vote', data)
 
+// 投票消息处理服务接口
 export const ServeConfirmVoteHandle = (data = {}) => post('/api/v1/talk/message/vote/handle', data)

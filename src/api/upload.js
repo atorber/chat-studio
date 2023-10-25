@@ -3,7 +3,7 @@ import { post, upload } from '@/utils/request'
 // 上传头像裁剪图片服务接口
 export const ServeUploadAvatar = data => post('/api/v1/upload/avatar', data)
 
-// 上传头像裁剪图片服务接口
+// 上传图片服务接口
 export const ServeUploadImage = data => post('/api/v1/upload/image', data)
 
 // 查询大文件拆分信息服务接口
