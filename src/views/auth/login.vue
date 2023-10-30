@@ -37,22 +37,35 @@ const onLogin = () => {
   const response = ServeLogin({
     mobile: model.username,
     password: model.password,
+    token: model.token,
+    spacename: model.spacename,
     platform: 'web',
   })
 
-  response.then(async res => {
+  console.debug('请求登录onLogin', response)
+
+  response.then(res => {
+    console.debug('请求登录：', res)
     if (res.code === 200) {
       window.$message.success('登录成功')
+      console.debug('设置access_token缓存...\n')
       setAccessToken(res.data.access_token, res.data.expires_in)
+      console.debug('连接ws...\n')
       socket.connect()
+      console.debug('载入用户设置...\n')
       userStore.loadSetting()
-      router.push(route.query.redirect || '/')
+      console.debug('跳转到控制台...\n')
+      console.debug('跳转到', route.query.redirect || '/')
+      router.push(route.query.redirect || '/').catch(error => {
+  console.error(error)
+})
     } else {
       window.$message.warning(res.message)
     }
   })
 
   response.finally(() => {
+    console.debug('登录请求结束')
     model.loading = false
   })
 }
@@ -72,12 +85,16 @@ const onClickAccount = type => {
   if (type === 1) {
     model.username = '18798272054'
     model.password = 'admin123'
+    model.spacename = '瓦力'
+    model.token = ''
   } else {
     model.username = '18798272055'
     model.password = 'admin123'
+    model.spacename = '大师'
+    model.token = ''
   }
 
-  onLogin()
+  // onLogin()
 }
 </script>
 
@@ -89,7 +106,7 @@ const onClickAccount = type => {
 
     <main class="el-main" style="padding: 3px">
       <n-form ref="formRef" size="large" :model="model" :rules="rules">
-        <n-form-item path="username" :show-label="false">
+        <!-- <n-form-item path="username" :show-label="false">
           <n-input
             placeholder="请输入手机号"
             v-model:value="model.username"
@@ -105,6 +122,26 @@ const onClickAccount = type => {
             show-password-on="click"
             v-model:value="model.password"
             @keydown.enter="onValidate"
+          />
+        </n-form-item> -->
+
+        <n-form-item path="spacename" :show-label="false">
+          <n-input
+            placeholder="请输入维格表spacename"
+            show-password-on="click"
+            v-model:value="model.spacename"
+            @keydown.enter="onValidate"
+          />
+        </n-form-item>
+
+        <n-form-item path="token" :show-label="false">
+          <n-input
+            placeholder="请输入维格表token"
+            type="password"
+            show-password-on="click"
+            v-model:value="model.token"
+            @keydown.enter="onValidate"
+            autocomplete="current-password"
           />
         </n-form-item>
 

@@ -59,17 +59,21 @@ const onSendMessage = (data, callBack: any) => {
     },
   }
 
+  console.debug('onSendMessage message', JSON.stringify(message))
+
   ServePublishMessage(message)
-    .then(({ code, message }) => {
-      if (code === 200) {
-        callBack(true)
-      } else {
-        window.$message.warning(message)
-      }
-    })
-    .catch(() => {
-      window.$message.warning('网络繁忙,请稍后重试!')
-    })
+  callBack(true)
+
+    // .then(({ code, message }) => {
+    //   if (code === 200) {
+    //     callBack(true)
+    //   } else {
+    //     window.$message.warning(message)
+    //   }
+    // })
+    // .catch(() => {
+    //   window.$message.warning('网络繁忙,请稍后重试!')
+    // })
 }
 
 // 发送文本消息

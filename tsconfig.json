@@ -46,7 +46,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "vite.config.ts",
-    "assets/**/*.jpg"
+    "assets/**/*.jpg", 
+    "src/utils/crypto-use-crypto-js.mjs"  
   ],
   "exclude": [
     "node_modules",

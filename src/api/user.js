@@ -1,4 +1,5 @@
 import { post, get } from '@/utils/request'
+import { ServeGetUserSettingVika } from './user-service'
 
 // 修改密码服务接口
 export const ServeUpdatePassword = data => post('/api/v1/users/change/password', data)
@@ -16,4 +17,6 @@ export const ServeUpdateUserDetail = data => post('/api/v1/users/change/detail',
 export const ServeGetUserDetail = () => get('/api/v1/users/detail')
 
 // 获取用户相关设置信息
-export const ServeGetUserSetting = () => get('/api/v1/users/setting')
+export const ServeGetUserSetting1 = () => get('/api/v1/users/setting')
+
+export const ServeGetUserSetting = () => ServeGetUserSettingVika()

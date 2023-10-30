@@ -29,9 +29,24 @@ export function setAccessToken(token = '', expire = 60 * 60 * 2) {
   return storage.set(AccessToken, token, expire) || ''
 }
 
+
 /**
  * 删除登录授权 Token
  */
 export function delAccessToken() {
   storage.remove(AccessToken)
+}
+
+/**
+ * 设维格表授权 token 和 namespace
+ *
+ * @returns token
+ */
+export function setVikaToken(token = {}, expire = 60 * 60 * 2) {
+  console.debug('setVikaToken', token)
+  return storage.set('VikaToken', token, expire) || ''
+}
+
+export function getVikaToken() {
+  return storage.get('VikaToken') || ''
 }

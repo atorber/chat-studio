@@ -67,6 +67,7 @@ export abstract class BaseEntity {
    */
 
   static setVikaOptions (options: VikaOptions) {
+    console.debug('setVikaOptions:', options)
     if (!options.apiKey || !options.baseId) {
       throw Error('loss apiKey or baseId')
     } else {
@@ -249,12 +250,32 @@ export abstract class BaseEntity {
     
   }
 
+    /**
+   * 根据字段查询多条记录
+   */
+    static async findByQuery (filterByFormula: string): Promise<IRecord[]|undefined[]> {  
+      const query = {
+        filterByFormula,
+        pageSize:1000,
+      }
+      console.debug('query:', JSON.stringify(query))
+      // 分页获取记录，默认返回第一页
+      const response = await this.datasheet.records.query(query)
+      if (response.success) {
+        const {records} = response.data
+        // console.debug(records)
+        return records.map((r: any) => this.createFromRecord(r)) as IRecord[]
+      } 
+        console.error('获取数据记录失败：', JSON.stringify(response))
+        return response
+      
+    }
+
   /**
    * 查询所有记录
    */
   static async findAll (): Promise<IRecord[]|unknown[]> {
     const records:IRecord[] = []
-
     try {
       // Automatically handle pagination and iterate through all records.
       const recordsIter = this.datasheet.records.queryAll()

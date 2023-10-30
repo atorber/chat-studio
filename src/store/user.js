@@ -34,7 +34,9 @@ export const useUserStore = defineStore('user', {
     },
 
     loadSetting() {
+      console.debug('loadSetting...')
       ServeGetUserSetting().then(({ code, data }) => {
+      console.debug('loadSetting...', data)
         if (code === 200) {
           this.nickname = data.user_info.nickname
           this.uid = data.user_info.uid

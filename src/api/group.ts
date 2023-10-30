@@ -1,13 +1,7 @@
 import { post, get } from '@/utils/request'
-import { BaseEntity, VikaOptions, MappingOptions } from '@/utils/vika-orm' // 导入 BaseEntity, VikaOptions, 和 MappingOptions 类型/类
-
-// 查询用户群聊服务接口
-export const ServeGetGroups = () => get('/api/v1/group/list')
+import { ServeGetGroupsVika, ServeGroupDetailVika } from './group-service'
 
 export const ServeGroupOvertList = data => get('/api/v1/group/overt/list', data)
-
-// 获取群信息服务接口
-export const ServeGroupDetail = data => get('/api/v1/group/detail', data)
 
 // 创建群聊服务接口
 export const ServeCreateGroup = data => post('/api/v1/group/create', data)
@@ -66,145 +60,14 @@ export const ServeGroupAssignAdmin = data => post('/api/v1/group/assign-admin', 
 
 export const ServeGroupNoSpeak = data => post('/api/v1/group/no-speak', data)
 
-// // 定义一个延时方法
-// const wait = (ms: number) => new Promise(resolve => {
-//   setTimeout(resolve, ms);
-// });
-
-const mappingOptions: MappingOptions = {  // 定义字段映射选项
-  fieldMapping: {  // 字段映射
-    id: '群ID|id',
-    topic: '群名称|topic',
-    ownerId: '群主ID|ownerId',
-    updated: '更新时间|updated',
-    avatar: '头像|avatar',
-    file: '头像图片|file',
-
-  },
-  tableName: '群列表|Room',  // 表名
-}
-
-/**
- * 用户实体
- */
-export class Group extends BaseEntity {  // 用户类继承 BaseEntity
-
-  topic?: string  // 定义名字属性，可选
-
-  id?: string
-
-  alias?: string
-
-  updated?: string
-
-  avatar?: string
-
-  file?: string
-
-  // protected static override recordId: string = ''  // 定义记录ID，初始为空字符串
-
-  protected static override mappingOptions: MappingOptions = mappingOptions  // 设置映射选项为上面定义的 mappingOptions
-
-  protected static override getMappingOptions(): MappingOptions {  // 获取映射选项的方法
-    return this.mappingOptions  // 返回当前类的映射选项
-  }
-
-  static override setMappingOptions(options: MappingOptions) {  // 设置映射选项的方法
-    this.mappingOptions = options  // 更新当前类的映射选项
-  }
-
-}
-
-const vikaOptions: VikaOptions = {  // 定义 Vika API 的选项
-  apiKey: `${(import.meta as any).env.VITE_VIKA_TOKEN}`,  // 从环境变量获取 API 密钥
-  baseId: 'dst8RVi2LR15PkCC0q',  // 设置 base ID
-}
-
-Group.setVikaOptions(vikaOptions)  // 设置 Vika API 选项
+// 查询用户群聊服务接口
+// export const ServeGetGroups = () => get('/api/v1/group/list')
 
 // 查询用户群聊服务接口
-export const ServeGetGroupsVika = async () => {
-  const res = await Group.findAll()
-  console.debug(res)
-  const groups: any = {
-    "code": 200,
-    "message": "success",
-    "data": {
-      "items": [
-        {
-          "avatar": "http://localhost:5173/files/public/media/image/avatar/20231022/4f67de6461b9e930be9ac97b3a6cee4c_200x200.png",
-          "creator_id": 2055,
-          "group_name": "抖聊开发群",
-          "id": 1026,
-          "is_disturb": 0,
-          "leader": 2,
-          "profile": ""
-        },
-      ]
-    }
-  }
-
-  const items = res.map((value) => {
-    if (value.fields.topic) {
-      return {
-        "avatar": "http://localhost:5173/files/public/media/image/avatar/20231022/4f67de6461b9e930be9ac97b3a6cee4c_200x200.png",
-        "creator_id": value.fields.ownerId,
-        "group_name": value.fields.topic,
-        "id": value.fields.id,
-        "is_disturb": 0,
-        "leader": 2,
-        "profile": "",
-        "recordId": value.recordId
-      }
-    }
-    return false
-  }).filter(item => item !== false);
-
-  groups.data.items = items
-  return groups
-}
+export const ServeGetGroups = () => ServeGetGroupsVika()
 
 // 获取群信息服务接口
-export const ServeGroupDetailVika = async (id) => {
-  console.debug('id', id)
-  let group = {
-    "code": 200,
-    "message": "success",
-    "data": {  
-        "avatar": "",
-        "created_at": "2023-10-20 11:09:48",
-        "group_id": 1012,
-        "group_name": "测试一下",
-        "is_disturb": 0,
-        "is_manager": true,
-        "is_mute": 0,
-        "is_overt": 0,
-        "profile": "",
-        "visit_card": ""
-    }
-}
-  const res = await Group.findByField('id', id)
-  let item = {}
-  if(res.length > 0){
-    item = {
-      "avatar": "http://localhost:5173/files/public/media/image/avatar/20231022/4f67de6461b9e930be9ac97b3a6cee4c_200x200.png",
-      "creator_id": res[0].fields.ownerId,
-      "group_name": res[0].fields.topic,
-      "id": res[0].fields.id,
-      "is_disturb": 0,
-      "leader": 2,
-      "profile": "",
-      "recordId": res[0].recordId,
-    }
-    group.data = item
-  }else{
-    group = {
-      "code": 305,
-      "message": `strconv.ParseInt: parsing "${id}": value out of range`
-  }
-  }
+export const ServeGroupDetail1 = data => get('/api/v1/group/detail', data)
 
-
-  console.debug(group)
-  return group
-}
+// 获取群信息服务接口
+export const ServeGroupDetail = data => ServeGroupDetailVika(data)

@@ -1,7 +1,5 @@
 import { post, get, upload } from '@/utils/request'
-
-// 获取聊天列表服务接口
-export const ServeGetTalkList = (data = {}) => get('/api/v1/talk/list', data)
+import { ServeGetTalkListVika, ServeTalkRecordsVika, ServePublishMessageVika } from './chat-service'
 
 // 聊天列表创建服务接口
 export const ServeCreateTalkList = (data = {}) => post('/api/v1/talk/create', data)
@@ -14,9 +12,6 @@ export const ServeTopTalkList = (data = {}) => post('/api/v1/talk/topping', data
 
 // 清除聊天消息未读数服务接口
 export const ServeClearTalkUnreadNum = (data = {}) => post('/api/v1/talk/unread/clear', data)
-
-// 获取聊天记录服务接口
-export const ServeTalkRecords = (data = {}) => get('/api/v1/talk/records', data)
 
 // 获取转发会话记录详情列表服务接口
 export const ServeGetForwardRecords = (data = {}) => get('/api/v1/talk/records/forward', data)
@@ -33,7 +28,9 @@ export const ServeSearchTalkRecords = (data = {}) => get('/api/v1/talk/search-ch
 export const ServeGetRecordsContext = (data = {}) => get('/api/v1/talk/get-records-context', data)
 
 // 发送消息服务接口
-export const ServePublishMessage = (data = {}) => post('/api/v1/talk/message/publish', data)
+export const ServePublishMessage1 = (data = {}) => post('/api/v1/talk/message/publish', data)
+
+export const ServePublishMessage = (data = {}) => ServePublishMessageVika(data)
 
 // 发送文本消息服务接口
 export const ServeSendTalkText = (data = {}) => post('/api/v1/talk/message/text', data)
@@ -67,3 +64,15 @@ export const ServeSendVote = (data = {}) => post('/api/v1/talk/message/vote', da
 
 // 投票消息处理服务接口
 export const ServeConfirmVoteHandle = (data = {}) => post('/api/v1/talk/message/vote/handle', data)
+
+// 获取聊天列表服务接口
+export const ServeGetTalkList1 = (data = {}) => get('/api/v1/talk/list', data)
+
+// 获取好友列表服务接口
+export const ServeGetTalkList = (data = {}) => ServeGetTalkListVika(data)
+
+// 获取聊天记录服务接口
+export const ServeTalkRecords1 = (data = {}) => get('/api/v1/talk/records', data)
+
+// 搜索用户信息服务接口
+export const ServeTalkRecords = (data = {}) => ServeTalkRecordsVika(data)

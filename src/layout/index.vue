@@ -1,6 +1,6 @@
 <script setup>
 import Menu from './component/Menu.vue'
-import Sponsor from './component/Sponsor.vue'
+// import Sponsor from './component/Sponsor.vue'
 import { useNotifyStore } from '@/store/notify'
 import { isElectronMode } from '@/utils/common'
 
@@ -36,7 +36,8 @@ defineProps({
     </section>
   </section>
 
-  <Sponsor />
+  <!-- 开源支持 -->
+  <!-- <Sponsor /> -->
 </template>
 <style lang="less" scoped>
 .container {

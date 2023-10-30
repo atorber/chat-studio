@@ -1,7 +1,7 @@
 {
-  "name": "LumenIM",
+  "name": "ChatFlow",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.6",
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite --mode development",
@@ -75,15 +75,15 @@
     "wait-on": "^6.0.1"
   },
   "build": {
-    "appId": "com.gzydong.lumenim",
-    "productName": "LumenIM",
-    "copyright": "Copyright © 2022 LumenIM",
+    "appId": "cc.vlist.chatflow",
+    "productName": "ChatFlow",
+    "copyright": "Copyright © 2023 ChatFlow",
     "mac": {
       "category": "public.app-category.utilities",
-      "icon": "build/icons/lumen-im-mac.png"
+      "icon": "build/icons/chatflow-mac.png"
     },
     "win": {
-      "icon": "build/icons/lumen-im-mac.png",
+      "icon": "build/icons/chatflow-mac.png",
       "target": [
         {
           "target": "nsis"
@@ -93,12 +93,12 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "build/icons/lumen-im-win.ico",
-      "uninstallerIcon": "build/icons/lumen-im-win.ico",
-      "installerHeaderIcon": "build/icons/lumen-im-win.ico",
+      "installerIcon": "build/icons/chatflow-win.ico",
+      "uninstallerIcon": "build/icons/chatflow-win.ico",
+      "installerHeaderIcon": "build/icons/chatflow-win.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "lumeim-icon"
+      "shortcutName": "chatflow-icon"
     },
     "files": [
       "dist/**/*",

@@ -25,5 +25,15 @@ export default defineConfig(({ command, mode }) => {
     define: {
       __APP_ENV__: env.APP_ENV,
     },
+    // server: {
+    //   proxy: {
+    //     // 当你的本地开发服务器试图获取'/api'路径下的内容时，Vite将自动将请求代理到指定的远程服务器。
+    //     '/space': {
+    //       target: 'https://s1.vika.cn',  // 你的远程服务器地址
+    //       changeOrigin: true,  // 此选项表示是否应更改原始主机头为目标URL
+    //       // rewrite: (path) => path.replace(/^\/space/, '')  // 此选项可以将URL重写为远程服务器能理解的格式
+    //     }
+    //   }
+    // }
   }
 })

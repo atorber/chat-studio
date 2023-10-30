@@ -7,7 +7,6 @@ import GroupManage from './manage/index.vue'
 import { Comment, Search, Close, Plus } from '@icon-park/vue-next'
 import {
   ServeGroupDetail,
-  ServeGroupDetailVika,
   ServeGetGroupMembers,
   ServeSecedeGroup,
   ServeUpdateGroupCard,
@@ -39,24 +38,26 @@ const state = reactive({
  * 加载群信息
  */
  async function loadDetail() {
-  ServeGroupDetail({
+  // ServeGroupDetail({
+  //   group_id: props.gid,
+  // }).then(res => {
+  //   if (res.code === 200) {
+  //     const result = res.data
+  //     state.detail.avatar = result.avatar
+  //     state.detail.name = result.group_name
+  //     state.detail.profile = result.profile
+  //     state.detail.visit_card = result.visit_card
+  //     state.remark = result.visit_card
+
+  //     if (result.notice) {
+  //       state.detail.group_notice = result.notice
+  //     }
+  //   }
+  // })
+
+  const res = await ServeGroupDetail({
     group_id: props.gid,
-  }).then(res => {
-    if (res.code === 200) {
-      const result = res.data
-      state.detail.avatar = result.avatar
-      state.detail.name = result.group_name
-      state.detail.profile = result.profile
-      state.detail.visit_card = result.visit_card
-      state.remark = result.visit_card
-
-      if (result.notice) {
-        state.detail.group_notice = result.notice
-      }
-    }
   })
-
-  const res = await ServeGroupDetailVika(props.gid)
   if (res.code === 200) {
       const result = res.data
       state.detail.avatar = result.avatar

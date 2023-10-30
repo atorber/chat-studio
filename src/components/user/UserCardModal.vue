@@ -2,7 +2,7 @@
 import { ref, computed, reactive } from 'vue'
 import { NIcon, NModal, NButton, NInput, NDropdown, NPopover } from 'naive-ui'
 import { CloseOne, Male, Female, SendOne } from '@icon-park/vue-next'
-import { ServeSearchUser, ServeSearchUserVika } from '@/api/contact'
+import { ServeSearchUser } from '@/api/contact'
 import { toTalk } from '@/utils/talk'
 import { ServeCreateContact } from '@/api/contact'
 import {
@@ -51,21 +51,23 @@ const groupName = computed(() => {
 })
 
 const onLoadData = async () => {
-  ServeSearchUser({
+  // ServeSearchUser({
+  //   user_id: props.uid,
+  // }).then(({ code, data }) => {
+  //   if (code === 200) {
+  //     Object.assign(state, data)
+
+  //     modelRemark.value = state.remark
+
+  //     loading.value = false
+  //   } else {
+  //     window.$message.info('用户信息不存在', { showIcon: false })
+  //   }
+  // })
+
+  const res = await ServeSearchUser({
     user_id: props.uid,
-  }).then(({ code, data }) => {
-    if (code === 200) {
-      Object.assign(state, data)
-
-      modelRemark.value = state.remark
-
-      loading.value = false
-    } else {
-      window.$message.info('用户信息不存在', { showIcon: false })
-    }
   })
-
-  const res = await ServeSearchUserVika(props.uid)
   if (res.code === 200) {
       Object.assign(state, res.data)
 
