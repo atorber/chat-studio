@@ -126,7 +126,7 @@ const onClickMenu = menu => {
       <div>
         <a
           class="pointer"
-          href="https://github.com/gzydong/LumenIM"
+          href="https://github.com/atorber/chat-studio"
           target="_blank"
         >
           <github-one

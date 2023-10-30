@@ -6,6 +6,7 @@ import { getAccessToken } from '@/utils/auth'
  * @param {String} imgsrc 例如图片名： D8x5f13a53dbc4b9_350x345.png
  */
 export function getImageInfo(imgsrc) {
+  console.log('imgsrc', imgsrc)
   const data = {
     width: 0,
     height: 0,

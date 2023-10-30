@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted } from "vue";
 import { NSpace, NDrawer, NTabs, NTab } from "naive-ui";
-import { ServeGetGroups, ServeGetGroupsVika } from "@/api/group";
+import { ServeGetGroups } from "@/api/group";
 import { Search, Plus } from "@icon-park/vue-next";
 import { useUserStore } from "@/store";
 import { useTalkStore } from "@/store/talk";
@@ -46,13 +46,13 @@ const filter = computed(() =>
 );
 
 const onLoadData = async () => {
-  ServeGetGroups().then((res) => {
-    if (res.code === 200) {
-      items.value = res.data.items || [];
-    }
-  });
+  // ServeGetGroups().then((res) => {
+  //   if (res.code === 200) {
+  //     items.value = res.data.items || [];
+  //   }
+  // });
 
-  const res = await ServeGetGroupsVika();
+  const res = await ServeGetGroups();
   console.debug(res);
   if (res.code === 200) {
     items.value = res.data.items || [];

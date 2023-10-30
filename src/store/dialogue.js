@@ -205,8 +205,10 @@ export const useDialogueStore = defineStore('dialogue', {
         },
         ...options,
       }
+      console.log('消息数据：', data)
 
       ServePublishMessage(data).then(res => {
+        console.log('转发消息：', res)
         if (res.code === 200) {
           this.closeMultiSelect()
         }

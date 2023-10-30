@@ -9,7 +9,6 @@ import { publisher } from '@/utils/publisher.ts'
 import { toTalk } from '@/utils/talk'
 import {
   ServeGetContacts,
-  ServeGetContactsVika,
   ServeDeleteContact,
   ServeContactGroupList,
 } from '@/api/contact'
@@ -41,14 +40,14 @@ const filter: any = computed(() => items.value.filter((item: any) => {
 
 const loadContactList = async () => {
 
-  ServeGetContacts().then(res => {
-    console.debug(JSON.stringify(res))
-    if (res.code === 200) {
-      items.value = res.data.items || []
-    }
-  })
+  // ServeGetContacts().then(res => {
+  //   console.debug(JSON.stringify(res))
+  //   if (res.code === 200) {
+  //     items.value = res.data.items || []
+  //   }
+  // })
   
-const res = await ServeGetContactsVika()
+const res = await ServeGetContacts()
 console.debug(res)
   if (res.code === 200) {
       items.value = res.data.items || []

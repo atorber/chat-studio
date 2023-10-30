@@ -125,6 +125,7 @@ const onLoadTalk = () => {
     talk_type: props.talk_type,
     limit: 30,
   }
+  console.debug('load talk', data)
 
   if (locationMessage) {
     data.limit = 100
@@ -140,6 +141,7 @@ const onLoadTalk = () => {
 
   const response = ServeTalkRecords(data)
   response.then(res => {
+    console.debug('load talk response', res)
     // 防止对话切换过快，数据渲染错误
     if (
       data.talk_type !== props.talk_type ||
@@ -150,7 +152,7 @@ const onLoadTalk = () => {
     }
 
     const records = res.data.items || []
-
+console.debug('load talk response props.uid', props.uid)
     records.map((item: IMessageRecord) => formatTalkRecord(props.uid, item))
 
     // 判断是否是初次加载

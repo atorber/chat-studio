@@ -1,8 +1,8 @@
-# Lumen IM 即时聊天
+# Chat Flow 即时聊天
 <img alt="GitHub stars badge" src="https://img.shields.io/github/stars/gzydong/LumenIM"> <img alt="GitHub forks badge" src="https://img.shields.io/github/forks/gzydong/LumenIM"> <img alt="GitHub license badge" src="https://img.shields.io/github/license/gzydong/LumenIM">
 
 ###  项目介绍
-Lumen IM 是一个网页版即时聊天系统，界面简约美观
+Chat Flow 是一个网页版即时聊天系统，界面简约美观
 
 ### 功能模块
 - 支持私聊及群聊
@@ -27,7 +27,7 @@ npm config set registry https://registry.npm.taobao.org
 ## 克隆项目源码包
 git clone https://gitee.com/gzydong/LumenIM.git
 或
-git clone https://github.com/gzydong/LumenIM.git
+git clone https://github.com/atorber/chat-studio.git
 
 ## 安装项目依赖扩展组件
 npm install
@@ -77,7 +77,7 @@ server {
 ### 项目源码
 |代码仓库|前端源码|后端源码|
 |-|-|-|
-|Github|https://github.com/gzydong/LumenIM|https://github.com/gzydong/go-chat|
+|Github|https://github.com/atorber/chat-studio|https://github.com/gzydong/go-chat|
 |码云|https://gitee.com/gzydong/LumenIM|https://gitee.com/gzydong/go-chat|
 
 
