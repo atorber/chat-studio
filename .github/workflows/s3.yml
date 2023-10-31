@@ -2,7 +2,10 @@ name: Node.js Build and Deploy to S3
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
+  create:
+    tags:
+      - '*'
 
 jobs:
   build-and-deploy:
