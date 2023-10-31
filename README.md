@@ -4,7 +4,7 @@
 
 ##  项目介绍
 
-ChatStudio是一个网页版即时聊天系统，界面简约美观。基于(Lumen IM)[https://github/gzydong/LumenIM]二次开发，后端对接ChatFlow项目。
+ChatStudio是一个网页版即时聊天系统，界面简约美观。基于[Lumen IM](https://github/gzydong/LumenIM)二次开发，后端对接ChatFlow项目。
 
 [访问项目语雀文档了解更多信息](https://www.yuque.com/atorber/chatflow)
 
@@ -43,6 +43,10 @@ npm run build
 ## 生产环境桌面客户端打包
 npm run electron:build
 ```
+
+## 效果展示
+
+![image](https://github.com/atorber/chat-studio/assets/19552906/9c7ec288-b364-491a-a9db-eebc04a578d6)
 
 ## 联系方式
 
