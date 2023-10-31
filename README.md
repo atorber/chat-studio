@@ -44,6 +44,10 @@ npm run build
 npm run electron:build
 ```
 
+## 效果展示
+
+![image](https://github.com/atorber/chat-studio/assets/19552906/9c7ec288-b364-491a-a9db-eebc04a578d6)
+
 ## 联系方式
 
 QQ群 : 583830241
