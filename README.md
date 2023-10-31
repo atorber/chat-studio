@@ -1,32 +1,32 @@
-# Chat Flow 即时聊天
-<img alt="GitHub stars badge" src="https://img.shields.io/github/stars/gzydong/LumenIM"> <img alt="GitHub forks badge" src="https://img.shields.io/github/forks/gzydong/LumenIM"> <img alt="GitHub license badge" src="https://img.shields.io/github/license/gzydong/LumenIM">
+# ChatStudio 聊天工作台
 
-###  项目介绍
-Chat Flow 是一个网页版即时聊天系统，界面简约美观
+<img alt="GitHub stars badge" src="https://img.shields.io/github/stars/atorber/chat-studio"> <img alt="GitHub forks badge" src="https://img.shields.io/github/forks/atorber/chat-studio"> <img alt="GitHub license badge" src="https://img.shields.io/github/license/atorber/chat-studio">
 
-### 功能模块
+##  项目介绍
+
+ChatStudio是一个网页版即时聊天系统，界面简约美观。基于(Lumen IM)[https://github/gzydong/LumenIM]二次开发，后端对接ChatFlow项目。
+
+[访问项目语雀文档了解更多信息](https://www.yuque.com/atorber/chatflow)
+
+## 功能模块
+
 - 支持私聊及群聊
 - 支持多种聊天消息类型 例如:文本消息、代码块、群投票、图片及其它类型文件，并支持文件下载
 - 支持聊天消息撤回、删除(批量删除)、转发消息(逐条转发、合并转发)
 - 支持编写笔记
 
-### 项目预览
-- 地址： [http://im.gzydong.com](http://im.gzydong.com)
-- 账号： 18798272054 或 18798272055
-- 密码： admin123
+## 项目预览
 
-### 项目安装(部署)
+- 地址： [http://im2.vlist.cc](http://im2.vlist.cc)
+- 账号： 维格表空间名称
+- 密码： 维格表token
 
-###### 设置 npm 镜像源
-```language
-npm config set registry https://registry.npm.taobao.org
-```
+## 项目安装(部署)
 
-###### 下载安装
+### 下载安装
+
 ```bash
 ## 克隆项目源码包
-git clone https://gitee.com/gzydong/LumenIM.git
-或
 git clone https://github.com/atorber/chat-studio.git
 
 ## 安装项目依赖扩展组件
@@ -44,44 +44,12 @@ npm run build
 npm run electron:build
 ```
 
-###### 修改 .env 配置信息
+## 联系方式
 
-```env
-VITE_BASE_API=http://127.0.0.1:9503
-VITE_SOCKET_API=ws://127.0.0.1:9504
-```
+QQ群 : 583830241
 
-###### 关于 Nginx 的一些配置
-```nginx
-server {
-    listen       80;
-    server_name  www.yourdomain.com;
+微信 : ledongmao
 
-    root /project-path/dist;
-    index  index.html;
+## 如果你觉得还不错，请 Star , Fork 给作者鼓励一下。
 
-    location / {
-      try_files $uri $uri/ /index.html;
-    }
-
-    location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|flv|ico)$ {
-        expires 7d;
-    }
-
-    location ~ .*\.(js|css)?$ {
-        expires 7d;
-    }
-}
-```
-
-### 项目源码
-|代码仓库|前端源码|后端源码|
-|-|-|-|
-|Github|https://github.com/atorber/chat-studio|https://github.com/gzydong/go-chat|
-|码云|https://gitee.com/gzydong/LumenIM|https://gitee.com/gzydong/go-chat|
-
-
-#### 联系方式
-QQ作者 : 837215079
-
-### 如果你觉得还不错，请 Star , Fork 给作者鼓励一下。
+[![Star History Chart](https://api.star-history.com/svg?repos=atorber/chat-studio&type=Date)](https://star-history.com/#atorber/chat-studio&Date)
