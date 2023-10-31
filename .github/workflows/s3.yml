@@ -3,7 +3,7 @@ name: Node.js Build and Deploy to S3
 
 on:
   create:
-      tags:
+    tags:
       - '*'
 
 jobs:
