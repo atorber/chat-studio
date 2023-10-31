@@ -38,7 +38,7 @@ export const ServeGetContacts1 = data => get('/api/v1/contact/list', data)
 export const ServeGetContacts = data => ServeGetContactsVika(data)
 
 // 搜索用户信息服务接口
-export const ServeSearchUser = data => get('/api/v1/contact/detail', data)
+export const ServeSearchUser2 = data => get('/api/v1/contact/detail', data)
 
 // 搜索用户信息服务接口
-export const ServeSearchUser2 = data => ServeSearchUserVika(data)
+export const ServeSearchUser = data => ServeSearchUserVika(data)

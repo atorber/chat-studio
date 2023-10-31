@@ -61,7 +61,7 @@ export const ServeGroupAssignAdmin = data => post('/api/v1/group/assign-admin', 
 export const ServeGroupNoSpeak = data => post('/api/v1/group/no-speak', data)
 
 // 查询用户群聊服务接口
-// export const ServeGetGroups = () => get('/api/v1/group/list')
+export const ServeGetGroups1 = () => get('/api/v1/group/list')
 
 // 查询用户群聊服务接口
 export const ServeGetGroups = () => ServeGetGroupsVika()
