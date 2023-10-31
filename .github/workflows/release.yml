@@ -2,9 +2,9 @@ name: Electron Build and Release
 
 # 定义触发事件
 on:
-    create: 
-        tags:
-          - 'release-v*'
+  create: 
+    tags:
+      - 'release-v*'
        
 # 定义任务
 jobs:
@@ -21,7 +21,7 @@ jobs:
           node-version: '16.x'
       - name: Install Dependencies
         # 安装依赖
-        run: npm ci
+        run: npm indtsll
       - name: Build Electron App
         # 构建 Electron 应用，生成 .dmg 和 .exe 文件
         run: npm run electron:build
@@ -43,8 +43,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/your-app.dmg
-          asset_name: your-app.dmg
+          asset_path: ./dist_electron/ChatFlow-0.2.0-arm64.dmg
+          asset_name: ChatFlow-0.2.0-arm64.dmg
           asset_content_type: application/octet-stream
       - name: Upload EXE Asset
         # 上传 EXE 文件作为发布的一部分
