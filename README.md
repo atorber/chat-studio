@@ -1,6 +1,6 @@
 # ChatStudio 聊天工作台
 
-<img alt="GitHub stars badge" src="https://img.shields.io/github/stars/gzydong/LumenIM"> <img alt="GitHub forks badge" src="https://img.shields.io/github/forks/gzydong/LumenIM"> <img alt="GitHub license badge" src="https://img.shields.io/github/license/gzydong/LumenIM">
+<img alt="GitHub stars badge" src="https://img.shields.io/github/stars/atorber/chat-studio"> <img alt="GitHub forks badge" src="https://img.shields.io/github/forks/atorber/chat-studio"> <img alt="GitHub license badge" src="https://img.shields.io/github/license/atorber/chat-studio">
 
 ##  项目介绍
 
