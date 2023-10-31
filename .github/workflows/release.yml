@@ -2,7 +2,10 @@ name: Electron Build and Release
 
 # 定义触发事件
 on:
-  create: 
+  push:
+    branches:
+      - main
+  create:
     tags:
       - 'release-v*'
        
