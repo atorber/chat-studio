@@ -1,0 +1,58 @@
+name: Electron Build and Release
+
+# 定义触发事件
+on:
+    create: 
+        tags:
+          - 'release-v*'
+       
+# 定义任务
+jobs:
+  build-and-release:
+    # 运行环境
+    runs-on: ubuntu-latest
+    # 步骤
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        # 设置 Node.js 环境
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - name: Install Dependencies
+        # 安装依赖
+        run: npm ci
+      - name: Build Electron App
+        # 构建 Electron 应用，生成 .dmg 和 .exe 文件
+        run: npm run electron:build
+      - name: Create Release
+        # 创建 GitHub 发布
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload DMG Asset
+        # 上传 DMG 文件作为发布的一部分
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/your-app.dmg
+          asset_name: your-app.dmg
+          asset_content_type: application/octet-stream
+      - name: Upload EXE Asset
+        # 上传 EXE 文件作为发布的一部分
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/your-app.exe
+          asset_name: your-app.exe
+          asset_content_type: application/octet-stream

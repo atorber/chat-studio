@@ -1,3 +1,4 @@
+# 编译的静态文件部署到S3存储
 name: Node.js Build and Deploy to S3
 
 on:
