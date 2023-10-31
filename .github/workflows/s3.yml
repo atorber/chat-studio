@@ -1,8 +1,6 @@
 name: Node.js Build and Deploy to S3
 
 on:
-  push:
-    branches: [ "main" ]
   create:
     tags:
       - '*'
