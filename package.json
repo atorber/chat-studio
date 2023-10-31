@@ -1,7 +1,7 @@
 {
   "name": "ChatFlow",
   "private": true,
-  "version": "0.1.6",
+  "version": "0.2.0",
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite --mode development",
