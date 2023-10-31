@@ -80,10 +80,23 @@ export const ServeLoginVika = async (data) => {
         const nodeListResp = await vika.nodes.list({ spaceId: data.spaceId })
         if (nodeListResp.success) {
           console.log('数据表列表', nodeListResp.data.nodes);
+          const nodeList = nodeListResp.data.nodes
+          const nodes = {}
+          for (const node of nodeList) {
+            console.log(node)
+            nodes[node.name] = node.id
+          }
           const client = data.token + data.spacename
           const hash = CryptoJS.SHA256(client).toString();
           console.debug('data.token+data.spacename hash:',client, hash)
-          setVikaToken({ token: data.token, spacename: data.spacename, hash })
+          const vikaToken = {
+            token: data.token,
+            spacename: data.spacename,
+            spaceId: data.spaceId,
+            nodes,
+            hash
+          }
+          setVikaToken(vikaToken)
           initService()
         } else {
           console.error('维格表鉴权失败：', nodeListResp);
