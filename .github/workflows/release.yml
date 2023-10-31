@@ -21,7 +21,7 @@ jobs:
           node-version: '16.x'
       - name: Install Dependencies
         # 安装依赖
-        run: npm indtsll
+        run: npm install
       - name: Build Electron App
         # 构建 Electron 应用，生成 .dmg 和 .exe 文件
         run: npm run electron:build
