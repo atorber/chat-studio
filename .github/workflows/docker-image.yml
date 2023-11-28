@@ -22,6 +22,10 @@ jobs:  # workflow中的job
           username: ${{ secrets.DOCKERHUB_USERNAME }}  # 配置dockerhub的认证，在Github项目主页 【Settings】 -> 【Secrets】 添加对应变量
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Extract package version
+        id: package_version
+        run: echo "::set-output name=VERSION::$(jq -r '.version' package.json)"
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v3  # 抽取项目信息，主要是镜像的tag
@@ -33,5 +37,5 @@ jobs:  # workflow中的job
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.package_version.outputs.VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
