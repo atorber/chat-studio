@@ -18,7 +18,7 @@ export const useConnectStatus = () => {
     const paths = ['/auth/login', '/auth/register', '/auth/forget']
 
     if (!paths.includes(pathname) && isLoggedIn()) {
-      !socket.isConnect() && socket.connect()
+      !socket.isConnect() && socket.connect('useConnectStatus...')
     }
   })
 

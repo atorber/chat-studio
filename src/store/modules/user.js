@@ -18,7 +18,8 @@ export const useUserStore = defineStore('user', {
       online: false, // 在线状态
       isQiye: false,
       isContactApply: false,
-      isGroupApply: false
+      isGroupApply: false,
+      hash: ''
     }
   },
   getters: {},
@@ -37,6 +38,7 @@ export const useUserStore = defineStore('user', {
 
     loadSetting() {
       ServeGetUserSetting().then(({ code, data }) => {
+        console.debug('ServeGetUserSetting', code, data)
         if (code == 200) {
           this.nickname = data.user_info.nickname
           this.uid = data.user_info.uid
@@ -47,6 +49,7 @@ export const useUserStore = defineStore('user', {
           this.email = data.user_info.email || ''
           this.motto = data.user_info.motto
           this.isQiye = data.user_info.is_qiye || false
+          this.hash = data.user_info.hash || ''
 
           storage.set('user_info', data)
         }

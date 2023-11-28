@@ -44,8 +44,9 @@ const onLogin = () => {
     if (res.code == 200) {
       window['$message'].success('登录成功')
       setAccessToken(res.data.access_token, res.data.expires_in)
-      socket.connect()
       userStore.loadSetting()
+      !socket.isConnect() && socket.connect('onLogin...')
+      // socket.connect()
       router.push(route.query.redirect || '/')
     } else {
       window['$message'].warning(res.message)
@@ -91,7 +92,7 @@ const onClickAccount = (type) => {
           <n-input
             placeholder="请输入手机号"
             v-model:value="model.username"
-            :maxlength="11"
+            :maxlength="20"
             @keydown.enter="onValidate"
           />
         </n-form-item>

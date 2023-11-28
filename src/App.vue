@@ -48,10 +48,12 @@ const onChangeRemark = (value) => {
 }
 
 const init = () => {
-  if (!isLoggedIn()) return
-
-  socket.connect()
-  userStore.loadSetting()
+  if (!isLoggedIn()) {
+    return
+  } else {
+    userStore.loadSetting()
+    socket.connect('App.vue init...')
+  }
 }
 
 init()

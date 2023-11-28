@@ -46,7 +46,9 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "vite.config.ts",
-    "assets/**/*.jpg"
+    "assets/**/*.jpg",
+    "vite-env.d.ts",
+    "src/vue-shim.d.ts"
   ],
   "exclude": [
     "node_modules",
