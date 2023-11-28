@@ -12,4 +12,4 @@ RUN npm install
 COPY . .
 
 # 设置启动命令
-CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "run", "dev:host"]

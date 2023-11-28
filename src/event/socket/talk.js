@@ -123,7 +123,7 @@ class Talk extends Base {
   showMessageNocice() {
     if (useSettingsStore().isLeaveWeb) {
       if (useSettingsStore().isWebNotify) {
-        WebNotify('LumenIM 在线聊天', {
+        WebNotify('ChatFlow 在线聊天', {
           dir: 'auto',
           lang: 'zh-CN',
           body: '您有新的消息请注意查收'

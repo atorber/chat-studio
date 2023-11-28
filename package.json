@@ -1,7 +1,7 @@
 {
-  "name": "LumenIM",
+  "name": "ChatFlowConsole",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.2.0",
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite --mode development",
@@ -13,7 +13,8 @@
     "electron:build-mac": "vite build --mode electron && electron-builder --mac",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "dev:host":"npx vite --mode development --host"
   },
   "dependencies": {
     "@highlightjs/vue-plugin": "^2.1.0",
@@ -68,8 +69,8 @@
   },
   "build": {
     "appId": "com.gzydong.lumenim",
-    "productName": "LumenIM",
-    "copyright": "Copyright © 2023 LumenIM",
+    "productName": "ChatFlow",
+    "copyright": "Copyright © 2023 ChatFlow",
     "mac": {
       "category": "public.app-category.utilities",
       "icon": "build/icons/lumen-im-mac.png"
