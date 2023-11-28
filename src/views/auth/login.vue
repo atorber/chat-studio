@@ -90,7 +90,7 @@ const onClickAccount = (type) => {
       <n-form ref="formRef" size="large" :model="model" :rules="rules">
         <n-form-item path="username" :show-label="false">
           <n-input
-            placeholder="请输入手机号"
+            placeholder="请输入空间ID"
             v-model:value="model.username"
             :maxlength="20"
             @keydown.enter="onValidate"
@@ -99,7 +99,7 @@ const onClickAccount = (type) => {
 
         <n-form-item path="password" :show-label="false">
           <n-input
-            placeholder="请输入密码"
+            placeholder="请输入Token"
             type="password"
             show-password-on="click"
             v-model:value="model.password"
@@ -119,15 +119,15 @@ const onClickAccount = (type) => {
         </n-button>
       </n-form>
 
-      <div class="helper">
+      <!-- <div class="helper">
         <n-button text color="#409eff" @click="router.push('/auth/forget')"> 找回密码 </n-button>
         <n-button text color="#409eff" @click="router.push('/auth/register')">
           还没有账号？立即注册
         </n-button>
-      </div>
+      </div> -->
     </main>
 
-    <footer class="el-footer" style="height: 90px">
+    <!-- <footer class="el-footer" style="height: 90px">
       <n-divider style="height: 30px; margin: 0">
         <span style="color: #ccc; font-weight: 300"> 预览账号</span>
       </n-divider>
@@ -135,7 +135,7 @@ const onClickAccount = (type) => {
         <p @click="onClickAccount(1)">预览账号:18798272054 / 密码: admin123</p>
         <p @click="onClickAccount(2)">预览账号:18798272055 / 密码: admin123</p>
       </div>
-    </footer>
+    </footer> -->
   </section>
 </template>
 
