@@ -37,5 +37,5 @@ jobs:  # workflow中的job
         with:
           context: .
           push: true
-          tags: ${{ steps.package_version.outputs.VERSION }}
+          tags: atorber/chatflow-console:${{ steps.package_version.outputs.VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
