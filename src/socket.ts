@@ -14,6 +14,14 @@ import { Client } from 'paho-mqtt' // 从'mqtt-paho'库导入Client
 import { v4 } from 'uuid'
 import { storage } from '@/utils/storage'
 
+/**
+ * 延时函数
+ * @param {*} ms 毫秒
+ */
+async function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 // 格式化消息数据
 function formatMsg(data) {
   return JSON.stringify({
@@ -109,6 +117,8 @@ class Socket {
 
   endpoint
 
+  port
+
   clientID
 
   options
@@ -122,11 +132,15 @@ class Socket {
    */
   constructor() {
     console.debug('Socket init...')
-    this.endpoint = import.meta.env.VITE_SOCKET_API
+    const VITE_SOCKET_API = import.meta.env.VITE_SOCKET_API
+    // 分割字符串VITE_SOCKET_API为host和端口
+    const hostAndPort = VITE_SOCKET_API.split('://')[1]
+    this.endpoint = hostAndPort.split(':')[0]
+    this.port = hostAndPort.split(':')[1]
     console.debug('mqtt endpoint:', this.endpoint)
     this.clientID = v4()
     console.log('client id：', this.clientID)
-    this.client = new Client(this.endpoint, 8084, this.clientID) // 创建新的mqtt-paho客户端实例
+    this.client = new Client(this.endpoint, Number(this.port), this.clientID) // 创建新的mqtt-paho客户端实例
 
     this.options = {
       useSSL: true, // 使用 SSL/TLS 进行安全连接
@@ -188,9 +202,11 @@ class Socket {
   // 连接 mqtt 服务
   connect(from) {
     console.debug('connect()请求来自：', from)
-
+    delay(3000)
+    
     const user = storage.get('user_info')
     console.debug('从缓存中获取用户信息：', user)
+
     const { hash } = user.user_info
     this.botid = hash
     console.debug('从用户信息中获取hash', hash)
@@ -336,7 +352,7 @@ class Socket {
           }
         }
         this.emit('im.message', newMsg)
-        this.client.publish(this.apis.eventApi, formatMsg({ 'im.message': newMsg }))
+        // this.client.publish(this.apis.eventApi, formatMsg({ 'im.message': newMsg }))
       }
 
       if (messageObj.events['ping']) {
@@ -385,7 +401,6 @@ class Socket {
       }
 
       // 好友申请事件
-
       if (messageObj.events['im.contact.apply']) {
         const data = messageObj.events['im.contact.apply']
         window['$notification'].create({
@@ -440,7 +455,7 @@ class Socket {
    */
   send(message) {
     if (this.isConnect()) {
-      this.client.publish(this.apis.eventApi, formatMsg({ 'im.message': message }))
+      // this.client.publish(this.apis.eventApi, formatMsg({ 'im.message': message }))
       this.client.publish(this.apis.commandApi, formatMsgToWechaty(message))
     } else {
       this.client.end()
@@ -454,6 +469,8 @@ class Socket {
    * @param {Object} data 数据
    */
   emit(event, data) {
+    console.debug('emit() event:', event)
+    console.debug('emit() data:', data)
     const rawMsg = {}
     rawMsg[event] = data
     const payload = formatMsg(rawMsg)
