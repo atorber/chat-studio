@@ -4,7 +4,7 @@ name: Build and Deploy to GitHub Pages
 on:
   push:
     branches:
-      - chatflow
+      - main
   create:
     tags:
       - '*'

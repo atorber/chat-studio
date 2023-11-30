@@ -4,7 +4,7 @@ name: Publish Docker image   # workflow名称，可以在Github项目主页的�
 on:   # 配置触发workflow的事件
   push:
     branches:
-      - chatflow
+      - main
 
 jobs:  # workflow中的job
 
