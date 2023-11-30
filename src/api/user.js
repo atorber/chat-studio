@@ -29,3 +29,8 @@ export const ServeGetUserDetail = () => {
 export const ServeGetUserSetting = () => {
   return get('/api/v1/users/setting')
 }
+
+// 获取用户相关系统配置信息
+export const ServeGetUserConfig = () => {
+  return get('/api/v1/users/config')
+}

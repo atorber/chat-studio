@@ -28,6 +28,11 @@ export default {
       path: '/settings/notification',
       meta: { auth: true },
       component: () => import('@/views/setting/notification.vue')
+    },
+    {
+      path: '/settings/config',
+      meta: { auth: true },
+      component: () => import('@/views/setting/config.vue')
     }
   ]
 }

@@ -27,6 +27,11 @@ const menus = [
     name: '通知设置',
     path: '/settings/notification',
     icon: Remind
+  },
+  {
+    name: '系统配置',
+    path: '/settings/config',
+    icon: Remind
   }
 ]
 </script>
