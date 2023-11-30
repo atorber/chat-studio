@@ -1,6 +1,6 @@
 <script setup>
 import Menu from './component/Menu.vue'
-import Sponsor from './component/Sponsor.vue'
+// import Sponsor from './component/Sponsor.vue'
 import { useSettingsStore } from '@/store'
 import { isElectronMode } from '@/utils/common'
 
@@ -29,7 +29,7 @@ const settingsStore = useSettingsStore()
     </section>
   </section>
 
-  <Sponsor />
+  <!-- <Sponsor /> -->
 </template>
 <style lang="less" scoped>
 .container {
