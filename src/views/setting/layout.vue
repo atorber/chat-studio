@@ -9,6 +9,11 @@ const menus = [
     icon: User
   },
   {
+    name: '系统配置',
+    path: '/settings/config',
+    icon: Tool
+  },
+  {
     name: '安全设置',
     path: '/settings/security',
     icon: Protect
@@ -16,23 +21,18 @@ const menus = [
   {
     name: '个性设置',
     path: '/settings/personalize',
-    icon: Tool
-  },
-  {
-    name: '绑定设置',
-    path: '/settings/binding',
-    icon: LinkThree
-  },
-  {
-    name: '通知设置',
-    path: '/settings/notification',
     icon: Remind
   },
-  {
-    name: '系统配置',
-    path: '/settings/config',
-    icon: Remind
-  }
+  // {
+  //   name: '绑定设置',
+  //   path: '/settings/binding',
+  //   icon: LinkThree
+  // },
+  // {
+  //   name: '通知设置',
+  //   path: '/settings/notification',
+  //   icon: Remind
+  // },
 ]
 </script>
 

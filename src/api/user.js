@@ -34,3 +34,13 @@ export const ServeGetUserSetting = () => {
 export const ServeGetUserConfig = () => {
   return get('/api/v1/users/config')
 }
+
+// 获取用户相关系统配置信息分组
+export const ServeGetUserConfigGroup = () => {
+  return get('/api/v1/users/config/group')
+}
+
+// 修改配置服务接口
+export const ServeUpdateConfig = (data) => {
+  return post('/api/v1/users/config', data)
+}

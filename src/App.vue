@@ -58,7 +58,7 @@ const init = () => {
 
 init()
 useVisibilityChange()
-useAccessPrompt()
+// useAccessPrompt()
 useNotifyAuth()
 useUnreadMessage()
 useConnectStatus()
