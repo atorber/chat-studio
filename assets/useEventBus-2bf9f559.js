@@ -1,0 +1,1 @@
+import{o as s,aq as t,aF as r}from"./index-4fb8a37c.js";const m=n=>n.length?(s(()=>{for(const e of n)t.subscribe(e.name,e.event)}),r(()=>{for(const e of n)t.unsubscribe(e.name,e.event)}),{emit:(e,o)=>{t.emit(e,o)}}):void 0;export{m as u};
