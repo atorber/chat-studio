@@ -7,6 +7,7 @@ const message = window.window.$message
 
 // 处理拆分上传文件
 function fileSlice(file, uploadId, eachSize) {
+  console.log(file, uploadId, eachSize)
   const splitNum = Math.ceil(file.size / eachSize) // 分片总数
   const items = []
 
@@ -16,6 +17,7 @@ function fileSlice(file, uploadId, eachSize) {
     let end = Math.min(file.size, start + eachSize)
 
     const form = new FormData()
+    form.append('file_name', file.name)
     form.append('file', file.slice(start, end))
     form.append('upload_id', uploadId)
     form.append('split_index', i)
@@ -97,6 +99,7 @@ export const useUploadsStore = defineStore('uploads', {
             if (item.uploadIndex === item.files.length) {
               item.status = 2
               item.percentage = 100
+              item.url = res.data.src
               this.sendUploadMessage(item)
             } else {
               let percentage = (item.uploadIndex / item.files.length) * 100
@@ -117,7 +120,8 @@ export const useUploadsStore = defineStore('uploads', {
       ServeSendTalkFile({
         upload_id: item.upload_id,
         receiver_id: item.receiver_id,
-        talk_type: item.talk_type
+        talk_type: item.talk_type,
+        url: item.url,
       })
     }
   }

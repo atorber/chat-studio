@@ -190,7 +190,6 @@ function onUploadImage(file: File) {
       form.append('file', file)
       form.append('width', image.width.toString())
       form.append('height', image.height.toString())
-
       ServeUploadImage(form).then(({ code, data, message }) => {
         if (code == 200) {
           resolve(data.src)

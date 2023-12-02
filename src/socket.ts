@@ -203,7 +203,7 @@ class Socket {
   connect(from) {
     console.debug('connect()请求来自：', from)
     delay(3000)
-    
+
     const user = storage.get('user_info')
     console.debug('从缓存中获取用户信息：', user)
 
@@ -267,13 +267,21 @@ class Socket {
         const receiver_id = rawMsg.room ? rawMsg.room.id : rawMsg.listener.id
         const messageType = rawMsg.data.payload.type
         let msg_type = 1
+        let extra = {}
         switch (messageType) {
           case 'Text':
             msg_type = 1
             break
-          case 'Image':
+          case 'Image': {
             msg_type = 3
+            extra = {
+              width: 108,
+              height: 108,
+              url: rawMsg.url,
+              size: 0
+            }
             break
+          }
           case 'Emoticon':
             msg_type = 1
             break
@@ -283,11 +291,30 @@ class Socket {
           case 'Audio':
             msg_type = 4
             break
-          case 'Attachment':
+          case 'Attachment': {
             msg_type = 6
+            const filename = rawMsg.url.split('/').pop()
+            const suffix = filename.split('.').pop()
+            extra = {
+              "suffix": suffix,
+              "name": filename,
+              "path": rawMsg.url,
+              "size": 0,
+              "drive": 1
+            }
             break
+          }
           case 'Video':
             msg_type = 5
+            const filename = rawMsg.url.split('/').pop()
+            const suffix = filename.split('.').pop()
+            extra = {
+              "suffix": suffix,
+              "name": filename,
+              "path": rawMsg.url,
+              "size": 0,
+              "drive": 1
+            }
             break
           case 'MiniProgram':
             msg_type = 1
@@ -344,11 +371,9 @@ class Socket {
             is_revoke: 0, // 是否撤回
             is_mark: 0, // 是否标记
             is_read: 0, // 是否已读
-            content: rawMsg.data.payload.text, // 消息内容
+            content: rawMsg.data.payload.text || messageType, // 消息内容
             created_at: rawMsg.time, // 创建时间
-            extra: {
-              // 扩展字段
-            }
+            extra,
           }
         }
         this.emit('im.message', newMsg)

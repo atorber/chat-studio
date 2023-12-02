@@ -7,6 +7,7 @@ export const ServeUploadAvatar = (data) => {
 
 // 上传头像裁剪图片服务接口
 export const ServeUploadImage = (data) => {
+  console.log(data) 
   return post('/api/v1/upload/image', data)
 }
 
