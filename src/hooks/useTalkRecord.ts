@@ -116,9 +116,6 @@ export const useTalkRecord = (uid: number) => {
       if (request.record_id == 0) {
         el.scrollTop = el.scrollHeight
 
-        setTimeout(() => {
-          el && (el.scrollTop = el?.scrollHeight)
-        }, 100)
       } else {
         el.scrollTop = el.scrollHeight - scrollHeight
       }

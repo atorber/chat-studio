@@ -2,7 +2,7 @@ import { watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSettingsStore } from '@/store'
 import { isLoggedIn } from '@/utils/auth'
-import socket from '@/socket'
+import ws from '@/connect'
 import { useUserStore } from '@/store'
 
 export const useConnectStatus = () => {
@@ -20,7 +20,7 @@ export const useConnectStatus = () => {
 
     if (!paths.includes(pathname) && isLoggedIn()) {
       userStore.loadSetting()
-      !socket.isConnect() && socket.connect('useConnectStatus...')
+      !ws.isConnect() && ws.connect('useConnectStatus...')
     }
   })
 

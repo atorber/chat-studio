@@ -1,14 +1,14 @@
 import { h } from 'vue'
+import { NAvatar } from 'naive-ui'
 import { useTalkStore, useUserStore, useDialogueStore } from '@/store'
+import { notifyIcon } from '@/constant/default'
+
 import { isLoggedIn } from './utils/auth'
 
 import EventTalk from './event/socket/talk'
 import EventKeyboard from './event/socket/keyboard'
 import EventLogin from './event/socket/login'
 import EventRevoke from './event/socket/revoke'
-
-import { NAvatar, c } from 'naive-ui'
-import { notifyIcon } from '@/constant/default'
 
 import { Client } from 'paho-mqtt' // 从'mqtt-paho'库导入Client
 import { v4 } from 'uuid'
