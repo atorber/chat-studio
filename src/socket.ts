@@ -7,7 +7,7 @@ import EventKeyboard from './event/socket/keyboard'
 import EventLogin from './event/socket/login'
 import EventRevoke from './event/socket/revoke'
 
-import { NAvatar } from 'naive-ui'
+import { NAvatar, c } from 'naive-ui'
 import { notifyIcon } from '@/constant/default'
 
 import { Client } from 'paho-mqtt' // 从'mqtt-paho'库导入Client
@@ -261,12 +261,13 @@ class Socket {
         //   rawMsg.room.id = 1029;
         // }
         // rawMsg.talker.id = 2055;
-
         const talk_type = rawMsg.room ? 2 : 1
         const user_id = rawMsg.talker.id
         const receiver_id = rawMsg.room ? rawMsg.room.id : rawMsg.listener.id
-        const messageType = rawMsg.data.payload.type
+        const messageType = rawMsg.type
         let msg_type = 1
+        const text = rawMsg.text ? JSON.parse(rawMsg.text) : {}
+        console.debug('text', text)
         let extra = {}
         switch (messageType) {
           case 'Text':
@@ -274,11 +275,13 @@ class Socket {
             break
           case 'Image': {
             msg_type = 3
-            extra = {
-              width: 108,
-              height: 108,
-              url: rawMsg.url,
-              size: 0
+            if (text.url) {
+              extra = {
+                width: 54,
+                height: 54,
+                url: text.url,
+                size: text.size
+              }
             }
             break
           }
@@ -290,32 +293,48 @@ class Socket {
             break
           case 'Audio':
             msg_type = 4
+            if (text.url) {
+              const filename = text.name
+              const suffix = filename.split('.').pop()
+              extra = {
+                "suffix": suffix,
+                "name": text.name,
+                "path": text.url,
+                "size": 0,
+                "drive": 1
+              }
+            }
             break
           case 'Attachment': {
             msg_type = 6
-            const filename = rawMsg.url.split('/').pop()
-            const suffix = filename.split('.').pop()
-            extra = {
-              "suffix": suffix,
-              "name": filename,
-              "path": rawMsg.url,
-              "size": 0,
-              "drive": 1
+            if (text.url) {
+              const filename = text.name
+              const suffix = filename.split('.').pop()
+              extra = {
+                "suffix": suffix,
+                "name": text.name,
+                "path": text.url,
+                "size": 0,
+                "drive": 1
+              }
             }
             break
           }
-          case 'Video':
+          case 'Video': {
             msg_type = 5
-            const filename = rawMsg.url.split('/').pop()
-            const suffix = filename.split('.').pop()
-            extra = {
-              "suffix": suffix,
-              "name": filename,
-              "path": rawMsg.url,
-              "size": 0,
-              "drive": 1
+            if (text.url) {
+              const filename = text.name
+              const suffix = filename.split('.').pop()
+              extra = {
+                "suffix": suffix,
+                "name": text.name,
+                "path": text.url,
+                "size": 0,
+                "drive": 1
+              }
             }
             break
+          }
           case 'MiniProgram':
             msg_type = 1
             break
@@ -371,7 +390,7 @@ class Socket {
             is_revoke: 0, // 是否撤回
             is_mark: 0, // 是否标记
             is_read: 0, // 是否已读
-            content: rawMsg.data.payload.text || messageType, // 消息内容
+            content: rawMsg.data.payload.text || '', // 消息内容
             created_at: rawMsg.time, // 创建时间
             extra,
           }
