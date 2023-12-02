@@ -414,7 +414,7 @@ const onUploadAvatar = (avatar) => {
         <div class="name">{{ key }}</div>
 
         <!-- v-for 循环遍历 item 中的每个 subitem -->
-        <div class="desc">
+        <div class="desc text-ellipsis">
           <!-- 显示 subitem 的 name 和 value -->
           <text class="" selectable="false" space="false" decode="false" v-for="subitem in item" :key="subitem.id">
             <block v-if="typeof subitem.value !== 'boolean'">{{ subitem.name }} : {{ subitem.value || '未设置' }} &nbsp;&nbsp;&nbsp;&nbsp;</block>
@@ -472,4 +472,11 @@ const onUploadAvatar = (avatar) => {
   border-radius: 10px;
   margin-bottom: 20px;
 }
+.text-ellipsis {
+  width: 750px; /* 调整这个宽度以适应大约10个字符 */
+  white-space: nowrap; /* 确保文本不会换行 */
+  overflow: hidden; /* 隐藏超出部分的文本 */
+  text-overflow: ellipsis; /* 当文本超出容器宽度时显示省略号 */
+}
+
 </style>

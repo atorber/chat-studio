@@ -39,7 +39,7 @@ const tabs = [
   { name: '会话', type: message.ChatMsgTypeForward, show: true },
   { name: '代码', type: message.ChatMsgTypeCode, show: true },
   { name: '位置', type: message.ChatMsgTypeLocation, show: true },
-  { name: '群投票', type: message.ChatMsgTypeVote, show: props.talkType == 2 }
+  // { name: '群投票', type: message.ChatMsgTypeVote, show: props.talkType == 2 }
 ]
 
 const onMaskClick = () => {

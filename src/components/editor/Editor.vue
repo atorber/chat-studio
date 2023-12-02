@@ -163,14 +163,14 @@ const navs = reactive([
     show: true,
     click: () => {}
   },
-  {
-    title: '群投票',
-    icon: markRaw(Ranking),
-    show: computed(() => props.vote),
-    click: () => {
-      isShowEditorVote.value = true
-    }
-  },
+  // {
+  //   title: '群投票',
+  //   icon: markRaw(Ranking),
+  //   show: computed(() => props.vote),
+  //   click: () => {
+  //     isShowEditorVote.value = true
+  //   }
+  // },
   {
     title: '历史记录',
     icon: markRaw(History),
