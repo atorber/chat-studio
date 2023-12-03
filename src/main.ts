@@ -8,6 +8,8 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import router from './router'
 import App from './App.vue'
 import * as plugins from './plugins'
+import { setupNaiveDiscreteApi, setupNaive, setupDirectives } from '@/plugins';
+import naive from 'naive-ui'
 
 async function bootstrap() {
   const pinia = createPinia()
@@ -15,8 +17,11 @@ async function bootstrap() {
 
   const app = createApp(App)
 
+  // 注册全局常用的 naive-ui 组件
+  setupNaive(app);
   app.use(pinia)
   app.use(router)
+  app.use(naive)
 
   plugins.setHljsVuePlugin(app)
   plugins.setupNaive(app)

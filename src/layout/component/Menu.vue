@@ -10,7 +10,12 @@ import {
   Message,
   NotebookAndPen,
   People,
-  SmartOptimization
+  SmartOptimization,
+  Send,
+  TimedMail,
+  ThinkingProblem,
+  WrongUser,
+  Mark,
 } from '@icon-park/vue-next'
 
 defineProps({
@@ -53,6 +58,31 @@ const menus = reactive([
   //   icon: markRaw(SmartOptimization),
   //   title: 'Ai助手'
   // },
+  {
+    link: '/groupnotice',
+    icon: markRaw(Send),
+    title: '群发'
+  },
+  {
+    link: '/notice',
+    icon: markRaw(TimedMail),
+    title: '定时提醒'
+  },
+  {
+    link: '/qa',
+    icon: markRaw(ThinkingProblem),
+    title: '自动问答'
+  },
+  {
+    link: '/statistic',
+    icon: markRaw(Mark),
+    title: '统计'
+  },
+  {
+    link: '/whitelist',
+    icon: markRaw(WrongUser),
+    title: '黑白名单'
+  },
   {
     link: '/settings',
     icon: markRaw(SettingTwo),

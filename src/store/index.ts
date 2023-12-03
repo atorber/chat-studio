@@ -7,6 +7,9 @@ import { useEditorDraftStore } from '@/store/modules/editor-draft'
 import { useUploadsStore } from '@/store/modules/uploads'
 import { useNoteStore } from '@/store/modules/note'
 
+import type { App } from 'vue';
+import { createPinia } from 'pinia';
+
 export {
   useUserStore,
   useSettingsStore,
@@ -17,3 +20,11 @@ export {
   useTalkStore,
   useNoteStore
 }
+
+const store = createPinia();
+
+export function setupStore(app: App<Element>) {
+  app.use(store);
+}
+
+export { store };

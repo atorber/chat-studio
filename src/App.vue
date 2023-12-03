@@ -27,6 +27,7 @@ import { useUnreadMessage } from '@/hooks/useUnreadMessage'
 import { useConnectStatus } from '@/hooks/useConnectStatus'
 import { useClickEvent } from '@/hooks/useClickEvent'
 import { ContactConst } from '@/constant/event-bus'
+import { AppProvider } from '@/components/Application';
 
 IconProvider({
   ...DEFAULT_ICON_CONFIGS,

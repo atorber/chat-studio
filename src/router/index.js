@@ -5,6 +5,8 @@ import MainLayout from '@/layout/MainLayout.vue'
 import SettingRouter from './modules/setting'
 import ContactRouter from './modules/contact'
 import AuthRouter from './modules/auth'
+import StatisticRouter from './modules/statistic'
+import WhitelistRouter from './modules/whitelist'
 
 const routes = [
   {
@@ -27,12 +29,32 @@ const routes = [
         component: () => import('@/views/note/index.vue')
       },
       {
+        path: '/notice',
+        name: 'notice',
+        meta: { auth: true },
+        component: () => import('@/views/notice/index.vue')
+      },
+      {
+        path: '/groupnotice',
+        name: 'groupnotice',
+        meta: { auth: true },
+        component: () => import('@/views/groupnotice/index.vue')
+      },
+      {
+        path: '/qa',
+        name: 'qa',
+        meta: { auth: true },
+        component: () => import('@/views/qa/index.vue')
+      },
+      {
         path: '/example',
         name: 'example',
         component: () => import('@/views/example/index.vue')
       },
       SettingRouter,
-      ContactRouter
+      ContactRouter,
+      StatisticRouter,
+      WhitelistRouter,
     ]
   },
   AuthRouter,
