@@ -1,5 +1,5 @@
 <template>
-  <PageTitle title="自动问答" />
+  <PageTitle title="定时提醒" />
   <n-card :bordered="false" class="proCard">
     <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
       <template #statusSlot="{ model, field }">
@@ -66,7 +66,7 @@
 import { h, reactive, ref } from 'vue'
 import { BasicTable, TableAction } from '@/components/Table'
 import { BasicForm, FormSchema, useForm } from '@/components/Form/index'
-import { ServeGetQas } from '@/api/qa'
+import { ServeGetKeywords } from '@/api/keyword'
 
 import { columns, ListData } from './columns'
 import { PlusOutlined } from '@vicons/antd'
@@ -293,7 +293,7 @@ function addTable() {
 }
 
 const loadDataTable = async (res) => {
-  const { data } = await ServeGetQas({ ...getFieldsValue(), ...res });
+  const { data } = await ServeGetKeywords({ ...getFieldsValue(), ...res });
   console.log('data', JSON.stringify(data))
   return data
 }

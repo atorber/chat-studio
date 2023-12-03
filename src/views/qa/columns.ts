@@ -2,58 +2,64 @@ import { h } from 'vue';
 import { NAvatar } from 'naive-ui';
 import { BasicColumn } from '@/components/Table';
 export interface ListData {
-  id: string;
-  name: string;
-  avatar: string;
-  address: string;
-  beginTime: string;
-  endTime: string;
-  date: string;
+  skillname?: string; // 定义名字属性，可选
+  title?: string;
+  question1?: string;
+  question2?: number;
+  answer?: string;
+  state?: string;
+  syncStatus?: string;
+  lastOperationTime: string;
+  action?: string;
+  recordId?: string;
 }
 export const columns: BasicColumn<ListData>[] = [
   {
-    title: 'id',
-    key: 'id',
-    width: 100,
-  },
-  {
-    title: '名称',
-    key: 'name',
-    width: 100,
-  },
-  {
-    title: '头像',
-    key: 'avatar',
-    width: 100,
-    render(row) {
-      return h(NAvatar, {
-        size: 48,
-        src: row.avatar,
-      });
-    },
-  },
-  {
-    title: '地址',
-    key: 'address',
-    auth: ['basic_list'], // 同时根据权限控制是否显示
-    ifShow: (_column) => {
-      return true; // 根据业务控制是否显示
-    },
+    title: '序号',
+    key: 'recordId',
     width: 150,
   },
   {
-    title: '开始日期',
-    key: 'beginTime',
-    width: 160,
-  },
-  {
-    title: '结束日期',
-    key: 'endTime',
-    width: 160,
-  },
-  {
-    title: '创建时间',
-    key: 'date',
+    title: '分类',
+    key: 'skillname',
     width: 100,
   },
+  {
+    title: '标准问题',
+    key: 'title',
+    width: 200,
+  },
+  {
+    title: '相似问题1',
+    key: 'question1',
+    width: 200,
+  },
+  {
+    title: '相似问题2',
+    key: 'question2',
+    width: 200,
+  },
+  {
+    title: '回答内容',
+    key: 'answer',
+    width: 160,
+  },
+  {
+    title: '状态',
+    key: 'state',
+    width: 100,
+  },
+  {
+    title: '同步状态',
+    key: 'syncStatus',
+    width: 100,
+  },
+  {
+    title: '更新时间',
+    key: 'lastOperationTime',
+    width: 160,
+    render(row) {
+      return new Date(row.lastOperationTime).toLocaleString();
+    },
+  }
 ];

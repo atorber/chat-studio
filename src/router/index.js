@@ -47,6 +47,12 @@ const routes = [
         component: () => import('@/views/qa/index.vue')
       },
       {
+        path: '/keyword',
+        name: 'keyword',
+        meta: { auth: true },
+        component: () => import('@/views/keyword/index.vue')
+      },
+      {
         path: '/example',
         name: 'example',
         component: () => import('@/views/example/index.vue')

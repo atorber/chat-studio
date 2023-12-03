@@ -16,6 +16,7 @@ import {
   ThinkingProblem,
   WrongUser,
   Mark,
+  KeyboardOne
 } from '@icon-park/vue-next'
 
 defineProps({
@@ -87,6 +88,11 @@ const menus = reactive([
     link: '/settings',
     icon: markRaw(SettingTwo),
     title: '设置'
+  },
+  {
+    link: '/keyword',
+    icon: markRaw(KeyboardOne),
+    title: '关键词'
   }
 ])
 

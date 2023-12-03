@@ -66,7 +66,8 @@
 import { h, reactive, ref } from 'vue'
 import { BasicTable, TableAction } from '@/components/Table'
 import { BasicForm, FormSchema, useForm } from '@/components/Form/index'
-import { getTableList } from '@/api/table/list'
+import { ServeGetNotices } from '@/api/notice'
+
 import { columns, ListData } from './columns'
 import { PlusOutlined } from '@vicons/antd'
 import { useRouter } from 'vue-router'
@@ -281,7 +282,7 @@ const actionColumn = reactive({
   }
 })
 
-const [register] = useForm({
+const [register, { getFieldsValue }] = useForm({
   gridProps: { cols: '1 s:1 m:2 l:3 xl:4 2xl:4' },
   labelWidth: 80,
   schemas
@@ -291,137 +292,10 @@ function addTable() {
   showModal.value = true
 }
 
-const loadDataTable = async (_res) => {
-  // return await getTableList({ ...getFieldsValue(), ...res });
-
-  return {
-    "page":1,
-    "pageSize":10,
-    "pageCount":60,
-    "itemCount":600,
-    "list":[
-        {
-            "id":853349,
-            "beginTime":"2002-04-11 21:59:56",
-            "endTime":"1988-01-11 03:49:19",
-            "address":"廊坊市",
-            "name":"金丽",
-            "avatar":"http://dummyimage.com/400x400/79ccf2/f0f279&text=Susan",
-            "date":"1994-06-08",
-            "time":"00:11",
-            "no":4176237,
-            "status":true
-        },
-        {
-            "id":158023,
-            "beginTime":"2008-05-26 19:27:55",
-            "endTime":"2002-11-12 09:35:37",
-            "address":"汉中市",
-            "name":"林军",
-            "avatar":"http://dummyimage.com/400x400/d079f2/79f2ad&text=Sandra",
-            "date":"2014-03-19",
-            "time":"05:39",
-            "no":7337022,
-            "status":false
-        },
-        {
-            "id":260065,
-            "beginTime":"2009-09-12 12:48:17",
-            "endTime":"1976-07-08 05:04:47",
-            "address":"毕节市",
-            "name":"锺敏",
-            "avatar":"http://dummyimage.com/400x400/f28a79/798bf2&text=Daniel",
-            "date":"2010-06-23",
-            "time":"04:43",
-            "no":8146502,
-            "status":true
-        },
-        {
-            "id":283066,
-            "beginTime":"1972-10-24 13:39:56",
-            "endTime":"2004-04-03 14:10:38",
-            "address":"海外",
-            "name":"范静",
-            "avatar":"http://dummyimage.com/400x400/aef279/f279d1&text=Donna",
-            "date":"1993-09-13",
-            "time":"12:48",
-            "no":2482337,
-            "status":true
-        },
-        {
-            "id":28263,
-            "beginTime":"2012-11-27 13:42:26",
-            "endTime":"2022-09-14 17:22:19",
-            "address":"鹤壁市",
-            "name":"夏丽",
-            "avatar":"http://dummyimage.com/400x400/79f2ef/f2cb79&text=Deborah",
-            "date":"2017-12-03",
-            "time":"09:25",
-            "no":5821656,
-            "status":false
-        },
-        {
-            "id":108505,
-            "beginTime":"1980-03-12 17:35:16",
-            "endTime":"1975-06-05 00:54:32",
-            "address":"湖州市",
-            "name":"田娜",
-            "avatar":"http://dummyimage.com/400x400/a879f2/79f285&text=Donna",
-            "date":"1985-03-22",
-            "time":"07:05",
-            "no":1963024,
-            "status":true
-        },
-        {
-            "id":985346,
-            "beginTime":"1996-07-16 19:59:46",
-            "endTime":"2018-07-21 16:30:39",
-            "address":"绍兴市",
-            "name":"苏娜",
-            "avatar":"http://dummyimage.com/400x400/f27990/79b3f2&text=Kenneth",
-            "date":"2021-12-20",
-            "time":"15:08",
-            "no":609904,
-            "status":false
-        },
-        {
-            "id":635879,
-            "beginTime":"2007-11-04 20:06:20",
-            "endTime":"1982-03-22 21:48:44",
-            "address":"临沧市",
-            "name":"史敏",
-            "avatar":"http://dummyimage.com/400x400/d7f279/ea79f2&text=Kevin",
-            "date":"2013-06-26",
-            "time":"09:50",
-            "no":1549986,
-            "status":true
-        },
-        {
-            "id":240535,
-            "beginTime":"1974-08-21 11:30:25",
-            "endTime":"1995-07-16 20:36:19",
-            "address":"荆门市",
-            "name":"孟艳",
-            "avatar":"http://dummyimage.com/400x400/79f2c6/f2a379&text=Kenneth",
-            "date":"1976-03-07",
-            "time":"08:40",
-            "no":9542516,
-            "status":true
-        },
-        {
-            "id":122280,
-            "beginTime":"1985-10-24 12:42:23",
-            "endTime":"2010-05-11 03:14:18",
-            "address":"离岛",
-            "name":"陈秀英",
-            "avatar":"http://dummyimage.com/400x400/7f79f2/95f279&text=Frank",
-            "date":"1996-12-05",
-            "time":"04:42",
-            "no":9664492,
-            "status":true
-        }
-    ]
-}
+const loadDataTable = async (res) => {
+  const { data } = await ServeGetNotices({ ...getFieldsValue(), ...res });
+  console.log('data', JSON.stringify(data))
+  return data
 }
 
 function onCheckedRow(rowKeys) {
