@@ -16,12 +16,12 @@ import {
 const userStore = useUserStore()
 
 const menus = reactive([
-  {
-    name: '申请管理',
-    path: '/contact/apply',
-    icon: markRaw(Permissions),
-    tips: computed(() => (userStore.isContactApply || userStore.isGroupApply ? 'New' : ''))
-  },
+  // {
+  //   name: '申请管理',
+  //   path: '/contact/apply',
+  //   icon: markRaw(Permissions),
+  //   tips: computed(() => (userStore.isContactApply || userStore.isGroupApply ? 'New' : ''))
+  // },
   {
     name: '我的好友',
     path: '/contact/friend',
@@ -32,11 +32,11 @@ const menus = reactive([
     path: '/contact/group',
     icon: markRaw(Peoples)
   },
-  {
-    name: '公开群聊',
-    path: '/contact/group/open',
-    icon: markRaw(PeoplesTwo)
-  },
+  // {
+  //   name: '公开群聊',
+  //   path: '/contact/group/open',
+  //   icon: markRaw(PeoplesTwo)
+  // },
   {
     name: '组织架构',
     path: '/contact/organize',

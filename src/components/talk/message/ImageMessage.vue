@@ -8,8 +8,13 @@ defineProps({
 })
 
 const img = (src, width = 200) => {
-  const info = getImageInfo(src)
 
+  try {
+    var info = getImageInfo(src)
+  } catch (error) {
+    console.error('图片加载失败')
+    return {}
+  }
   if (info.width == 0 || info.height == 0) {
     return {}
   }

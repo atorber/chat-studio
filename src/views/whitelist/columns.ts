@@ -2,58 +2,85 @@ import { h } from 'vue';
 import { NAvatar } from 'naive-ui';
 import { BasicColumn } from '@/components/Table';
 export interface ListData {
-  id: string;
+  serialNumber: string; // 定义名字属性，可选
+  app: string;
+  type: string;
   name: string;
-  avatar: string;
-  address: string;
-  beginTime: string;
-  endTime: string;
-  date: string;
+  id: string;
+  alias: string;
+  info: string;
+  state: string;
+  quota: number;
+  adminName: string;
+  adminAlias: string;
+  adminId: string;
+
+  syncStatus: string;
+  lastOperationTime: number;
+  action: string;
 }
 export const columns: BasicColumn<ListData>[] = [
+  // {
+  //   title: '序号',
+  //   key: 'recordId',
+  //   width: 150,
+  // },
   {
-    title: 'id',
-    key: 'id',
+    title: '编号',
+    key: 'serialNumber',
     width: 100,
   },
   {
-    title: '名称',
-    key: 'name',
-    width: 100,
-  },
-  {
-    title: '头像',
-    key: 'avatar',
-    width: 100,
-    render(row) {
-      return h(NAvatar, {
-        size: 48,
-        src: row.avatar,
-      });
-    },
-  },
-  {
-    title: '地址',
-    key: 'address',
-    auth: ['basic_list'], // 同时根据权限控制是否显示
-    ifShow: (_column) => {
-      return true; // 根据业务控制是否显示
-    },
+    title: '所属应用',
+    key: 'app',
     width: 150,
   },
   {
-    title: '开始日期',
-    key: 'beginTime',
-    width: 160,
-  },
-  {
-    title: '结束日期',
-    key: 'endTime',
-    width: 160,
-  },
-  {
-    title: '创建时间',
-    key: 'date',
+    title: '类型',
+    key: 'type',
     width: 100,
   },
+  {
+    title: '昵称/群名称',
+    key: 'name',
+    width: 160,
+  },
+  {
+    title: '好友ID/群ID',
+    key: 'id',
+    width: 160,
+  },
+  {
+    title: '好友备注',
+    key: 'alias',
+    width: 160,
+  },
+  {
+    title: '配额',
+    key: 'qupta',
+    width: 160,
+  },
+  {
+    title: '备注说明',
+    key: 'info',
+    width: 160,
+  },
+  {
+    title: '状态',
+    key: 'state',
+    width: 160,
+  },
+  {
+    title: '同步状态',
+    key: 'syncStatus',
+    width: 100,
+  },
+  {
+    title: '更新时间',
+    key: 'lastOperationTime',
+    width: 160,
+    render(row) {
+      return new Date(row.lastOperationTime).toLocaleString();
+    },
+  }
 ];

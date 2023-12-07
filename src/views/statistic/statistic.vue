@@ -1,11 +1,11 @@
 <template>
   <PageTitle title="统计" />
   <n-card :bordered="false" class="proCard">
-    <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
+    <!-- <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
       <template #statusSlot="{ model, field }">
         <n-input v-model:value="model[field]" />
       </template>
-    </BasicForm>
+    </BasicForm> -->
 
     <BasicTable
       :columns="columns"

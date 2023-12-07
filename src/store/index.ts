@@ -6,6 +6,7 @@ import { useDialogueStore } from '@/store/modules/dialogue'
 import { useEditorDraftStore } from '@/store/modules/editor-draft'
 import { useUploadsStore } from '@/store/modules/uploads'
 import { useNoteStore } from '@/store/modules/note'
+import { usePluginStore } from '@/store/modules/plugin'
 
 import type { App } from 'vue';
 import { createPinia } from 'pinia';
@@ -18,7 +19,8 @@ export {
   useEditorDraftStore,
   useUploadsStore,
   useTalkStore,
-  useNoteStore
+  useNoteStore,
+  usePluginStore,
 }
 
 const store = createPinia();

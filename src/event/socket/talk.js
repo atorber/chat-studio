@@ -80,7 +80,7 @@ class Talk extends Base {
     if (this.resource.msg_type != message.ChatMsgTypeText) {
       text = message.ChatMsgTypeMapping[this.resource.msg_type]
     }
-
+    console.log('text...', text)
     return text
   }
 

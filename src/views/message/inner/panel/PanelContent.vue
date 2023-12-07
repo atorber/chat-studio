@@ -34,7 +34,7 @@ const props = defineProps({
 })
 
 const { loadConfig, records, onLoad, onRefreshLoad, onJumpMessage } = useTalkRecord(props.uid)
-
+console.log('records...', records)
 const { dropdown, showDropdownMenu, closeDropdownMenu } = useMenu()
 const user: any = inject('$user')
 const dialogueStore = useDialogueStore()
@@ -89,10 +89,10 @@ const onPanelScroll = (e: any) => {
   if (skipBottom.value == false) {
     let len = dialogueStore.records.length
 
-    if (len > 100) {
+    if (len > 500) {
       // 为了优化数据过多页面卡顿，页面最多只显示100条数据
       // 目前没有用虚拟列表只能这么干
-      dialogueStore.records.splice(0, len - 100)
+      dialogueStore.records.splice(0, len - 500)
 
       let minid = 0
       dialogueStore.records.forEach((item: IMessageRecord) => {

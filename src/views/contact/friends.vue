@@ -127,7 +127,7 @@ useEventBus([{ name: ContactConst.UpdateRemark, event: onChangeRemark }])
 
 <template>
   <section class="el-container is-vertical height100">
-    <header class="el-header from-header bdr-b">
+    <header class="el-header me-view-header bdr-b">
       <div class="groups">
         <n-tabs v-if="groups.length" v-model:value="index">
           <n-tab v-for="tab in groups" :key="tab.id" :name="tab.id">
@@ -137,17 +137,18 @@ useEventBus([{ name: ContactConst.UpdateRemark, event: onChangeRemark }])
       </div>
       <div class="tools">
         <n-space>
+
           <n-input
-            v-model:value.trim="keywords"
-            placeholder="搜索"
-            clearable
-            style="width: 200px"
-            round
-          >
-            <template #prefix>
-              <n-icon :component="Search" />
-            </template>
-          </n-input>
+          v-model:value.trim="keywords"
+          placeholder="搜索"
+          clearable
+          style="max-width: 200px"
+          round
+        >
+          <template #prefix>
+            <n-icon :component="Search" />
+          </template>
+        </n-input>
 
           <n-dropdown
             :animated="true"

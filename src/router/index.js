@@ -7,6 +7,11 @@ import ContactRouter from './modules/contact'
 import AuthRouter from './modules/auth'
 import StatisticRouter from './modules/statistic'
 import WhitelistRouter from './modules/whitelist'
+import QaRouter from './modules/qa'
+import ChatbotRouter from './modules/chatbot'
+import AppRouter from './modules/app'
+
+const IFrame = () => import('@/views/iframe/index.vue');
 
 const routes = [
   {
@@ -14,7 +19,7 @@ const routes = [
     name: 'home',
     meta: { auth: true },
     component: MainLayout,
-    redirect: '/message',
+    redirect: '/workplace',
     children: [
       {
         path: '/message',
@@ -23,34 +28,41 @@ const routes = [
         component: () => import('@/views/message/index.vue')
       },
       {
+        path: '/workplace',
+        name: 'workplace',
+        meta: { auth: true },
+        component: () => import('@/views/workplace/workplace.vue')
+      },  
+      {
         path: '/note',
         name: 'note',
         meta: { auth: true },
         component: () => import('@/views/note/index.vue')
       },
       {
-        path: '/notice',
-        name: 'notice',
+        path: '/plugin',
+        name: 'plugin',
         meta: { auth: true },
-        component: () => import('@/views/notice/index.vue')
+        component: () => import('@/views/plugin/index.vue')
       },
-      {
-        path: '/groupnotice',
-        name: 'groupnotice',
-        meta: { auth: true },
-        component: () => import('@/views/groupnotice/index.vue')
-      },
-      {
-        path: '/qa',
-        name: 'qa',
-        meta: { auth: true },
-        component: () => import('@/views/qa/index.vue')
-      },
+      AppRouter,
+      QaRouter,
+      ChatbotRouter,
       {
         path: '/keyword',
         name: 'keyword',
         meta: { auth: true },
         component: () => import('@/views/keyword/index.vue')
+      },
+      {
+        path: '/help',
+        name: 'help',
+        meta: {
+          auth: true,
+          title: '项目文档(内嵌)',
+          frameSrc: 'https://www.yuque.com/atorber/chatflow',
+        },
+        component: IFrame,
       },
       {
         path: '/example',

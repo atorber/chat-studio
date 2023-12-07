@@ -2,13 +2,18 @@ import { h } from 'vue';
 import { NAvatar } from 'naive-ui';
 import { BasicColumn } from '@/components/Table';
 export interface ListData {
-  id: string;
-  name: string;
-  avatar: string;
-  address: string;
-  beginTime: string;
-  endTime: string;
-  date: string;
+  text: string; // 内容
+  type: string; // 类型
+  alias: string; // 好友备注(选填)
+  name: string; // 昵称/群名称
+  id: string; // 好友ID/群ID(选填)
+  state: string; // 状态
+  pubTime: string; // 发送时间
+  info: string; // 信息
+  syncStatus: string; // 同步状态
+  lastOperationTime: string; // 最后操作时间
+  action: string; // 操作
+  recordId: string; // 记录ID
 }
 export const columns: BasicColumn<ListData>[] = [
   {
@@ -17,48 +22,64 @@ export const columns: BasicColumn<ListData>[] = [
     width: 100,
   },
   {
-    title: '所属应用',
-    key: 'name',
-    width: 100,
-  },
-  {
-    title: '头像',
-    key: 'avatar',
-    width: 100,
-    render(row) {
-      return h(NAvatar, {
-        size: 48,
-        src: row.avatar,
-      });
-    },
+    title: '内容',
+    key: 'text',
+    width: 200,
   },
   {
     title: '类型',
-    key: 'address',
-    auth: ['basic_list'], // 同时根据权限控制是否显示
-    ifShow: (_column) => {
-      return true; // 根据业务控制是否显示
-    },
-    width: 150,
-  },
-  {
-    title: '昵称/群名称',
-    key: 'beginTime',
-    width: 160,
-  },
-  {
-    title: '好友ID/群ID',
-    key: 'endTime',
+    key: 'type',
     width: 160,
   },
   {
     title: '好友备注',
-    key: 'endTime',
+    key: 'alias',
+    width: 150,
+  },
+  {
+    title: '昵称/群名称',
+    key: 'name',
     width: 160,
   },
   {
-    title: '创建时间',
-    key: 'date',
+    title: '好友ID/群ID',
+    key: 'id',
+    width: 160,
+  },
+  {
+    title: '状态',
+    key: 'state',
+    width: 160,
+  },
+  {
+    title: '发送时间',
+    key: 'pubTime',
+    width: 160,
+    render(row) {
+      return new Date(row.pubTime).toLocaleString();
+    },
+  },
+  {
+    title: '备注信息',
+    key: 'info',
     width: 100,
   },
+  {
+    title: '状态',
+    key: 'state',
+    width: 160,
+  },
+  {
+    title: '同步状态',
+    key: 'syncStatus',
+    width: 100,
+  },
+  {
+    title: '更新时间',
+    key: 'lastOperationTime',
+    width: 160,
+    render(row) {
+      return new Date(row.lastOperationTime).toLocaleString();
+    },
+  }
 ];

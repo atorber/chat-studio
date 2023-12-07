@@ -112,6 +112,7 @@ export const useDialogueStore = defineStore('dialogue', {
 
     // 数组头部压入对话记录
     unshiftDialogueRecord(records) {
+      console.log('unshiftDialogueRecord...', records.length)
       this.records.unshift(...records)
     },
 

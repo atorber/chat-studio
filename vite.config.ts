@@ -3,6 +3,12 @@ import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import compressPlugin from 'vite-plugin-compression'
+import type { UserConfig, ConfigEnv } from 'vite';
+import { resolve } from 'path';
+
+function pathResolve(dir: string) {
+  return resolve(process.cwd(), '.', dir);
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -13,9 +19,20 @@ export default defineConfig(({ mode }) => {
   return {
     base: env.VITE_BASE,
     resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url))
-      },
+      alias:[
+        {
+          find: /\/#\//,
+          replacement: pathResolve('types') + '/',
+        },
+        {
+          find: '@',
+          replacement: pathResolve('src') + '/',
+        },
+        // {
+        //   '@': fileURLToPath(new URL('./src', import.meta.url))
+        // }
+      ] ,
+      dedupe: ['vue'],
       extensions: ['.js', '.json', 'jsx', '.vue', '.ts'], // 使用路径别名时想要省略的后缀名，可以自己 增减
     },
     root: process.cwd(),

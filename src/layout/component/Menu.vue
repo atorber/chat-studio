@@ -16,7 +16,12 @@ import {
   ThinkingProblem,
   WrongUser,
   Mark,
-  KeyboardOne
+  KeyboardOne,
+  Help,
+  Dashboard,
+  Workbench,
+  AppStore,
+  System,
 } from '@icon-park/vue-next'
 
 defineProps({
@@ -37,6 +42,11 @@ const color = computed(() => {
 })
 
 const menus = reactive([
+{
+    link: '/workplace',
+    icon: markRaw(Workbench),
+    title: '工作台'
+  },
   {
     link: '/message',
     icon: markRaw(Message),
@@ -50,9 +60,19 @@ const menus = reactive([
     hotspot: computed(() => userStore.isContactApply || userStore.isGroupApply)
   },
   {
-    link: '/note',
-    icon: markRaw(NotebookAndPen),
-    title: '笔记'
+    link: '/app',
+    icon: markRaw(System),
+    title: '应用中心'
+  },
+  // {
+  //   link: '/plugin',
+  //   icon: markRaw(System),
+  //   title: '插件市场'
+  // },
+  {
+    link: '/chatbot',
+    icon: markRaw(SmartOptimization),
+    title: 'ChatBot'
   },
   // {
   //   link: '/settings',
@@ -60,39 +80,44 @@ const menus = reactive([
   //   title: 'Ai助手'
   // },
   {
-    link: '/groupnotice',
-    icon: markRaw(Send),
-    title: '群发'
-  },
-  {
-    link: '/notice',
-    icon: markRaw(TimedMail),
-    title: '定时提醒'
-  },
-  {
     link: '/qa',
     icon: markRaw(ThinkingProblem),
     title: '自动问答'
   },
+  // {
+  //   link: '/groupnotice',
+  //   icon: markRaw(Send),
+  //   title: '群发消息'
+  // },
   {
     link: '/statistic',
     icon: markRaw(Mark),
-    title: '统计'
+    title: '统计打卡'
   },
   {
-    link: '/whitelist',
-    icon: markRaw(WrongUser),
-    title: '黑白名单'
+    link: '/note',
+    icon: markRaw(NotebookAndPen),
+    title: '素材'
   },
+  // {
+  //   link: '/whitelist',
+  //   icon: markRaw(WrongUser),
+  //   title: '黑白名单'
+  // },
+  // {
+  //   link: '/keyword',
+  //   icon: markRaw(KeyboardOne),
+  //   title: '关键词'
+  // },
   {
     link: '/settings',
     icon: markRaw(SettingTwo),
     title: '设置'
   },
   {
-    link: '/keyword',
-    icon: markRaw(KeyboardOne),
-    title: '关键词'
+    link: '/help',
+    icon: markRaw(Help),
+    title: '帮助'
   }
 ])
 
@@ -167,7 +192,7 @@ const isActive = (menu) => {
 
     <footer class="menu-footer">
       <div>
-        <a class="pointer" href="https://github.com/atorber/chat-studio" target="_blank">
+        <a class="pointer" href="https://github.com/atorber/chatflow-console" target="_blank">
           <github-one theme="outline" size="22" :fill="color" :strokeWidth="2" />
         </a>
       </div>

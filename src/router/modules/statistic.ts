@@ -13,6 +13,16 @@ export default {
         path: '/statistic/order',
         meta: { auth: true },
         component: () => import('@/views/statistic/order.vue')
+      },
+      {
+        path: '/statistic/whitelist',
+        meta: { auth: true },
+        component: () => import('@/views/whitelist/white.vue')
+      },
+      {
+        path: '/statistic/config',
+        meta: { auth: true },
+        component: () => import('@/views/statistic/detail.vue')
       }
     ]
   }

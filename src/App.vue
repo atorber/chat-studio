@@ -103,3 +103,11 @@ useClickEvent()
     </n-layout-content>
   </n-config-provider>
 </template>
+
+<style lang="less">
+  @import 'styles/index.less';
+  @import 'styles/tailwind.css';
+  .container {
+max-width: 100%;
+  }
+</style>

@@ -14,11 +14,11 @@ export interface ListData {
   recordId: string;
 }
 export const columns: BasicColumn<ListData>[] = [
-  {
-    title: '序号',
-    key: 'recordId',
-    width: 150,
-  },
+  // {
+  //   title: '序号',
+  //   key: 'recordId',
+  //   width: 150,
+  // },
   {
     title: '流水号',
     key: 'serialNumber',
@@ -26,7 +26,7 @@ export const columns: BasicColumn<ListData>[] = [
   },
   {
     title: '活动编号',
-    key: 'type',
+    key: 'code',
     width: 100,
   },
   {

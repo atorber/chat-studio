@@ -1,28 +1,28 @@
 <script setup>
 import SubViewLayout from '@/layout/SubViewLayout.vue'
-import { Tool, Protect, Remind, LinkThree, User } from '@icon-park/vue-next'
+import { Tool, Protect, Remind, LinkThree, User, Setting, Mark, Order } from '@icon-park/vue-next'
 
 const menus = [
   {
     name: '活动',
     path: '/statistic/list',
-    icon: User
+    icon: Mark
   },
   {
     name: '记录',
     path: '/statistic/order',
-    icon: Tool
+    icon: Order
   },
-  // {
-  //   name: '安全设置',
-  //   path: '/statistic/security',
-  //   icon: Protect
-  // },
-  // {
-  //   name: '个性设置',
-  //   path: '/statistic/personalize',
-  //   icon: Remind
-  // },
+  {
+    name: '白名单',
+    path: '/statistic/whitelist',
+    icon: Protect
+  },
+  {
+    name: '配置',
+    path: '/statistic/config',
+    icon: Setting
+  },
   // {
   //   name: '绑定设置',
   //   path: '/statistic/binding',

@@ -12,7 +12,7 @@ const props = defineProps<{
 const float = props.data.float
 
 let textContent = props.data.content
-
+console.log('textContent...', textContent)
 textContent = textReplaceLink(textContent)
 textContent = textReplaceMention(textContent, '#1890ff')
 textContent = textReplaceEmoji(textContent)

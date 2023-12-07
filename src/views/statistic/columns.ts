@@ -16,15 +16,15 @@ export interface ListData {
   action?: string;
 }
 export const columns: BasicColumn<ListData>[] = [
-  {
-    title: '序号',
-    key: 'recordId',
-    width: 150,
-  },
+  // {
+  //   title: '序号',
+  //   key: 'recordId',
+  //   width: 150,
+  // },
   {
     title: '编号',
     key: '_id',
-    width: 50,
+    width: 150,
   },
   {
     title: '类型',

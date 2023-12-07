@@ -1,74 +1,10 @@
-<template>
-  <PageTitle title="记录" />
-  <n-card :bordered="false" class="proCard">
-    <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
-      <template #statusSlot="{ model, field }">
-        <n-input v-model:value="model[field]" />
-      </template>
-    </BasicForm>
-
-    <BasicTable
-      :columns="columns"
-      :request="loadDataTable"
-      :row-key="(row: ListData) => row.id"
-      ref="actionRef"
-      :actionColumn="actionColumn"
-      @update:checked-row-keys="onCheckedRow"
-      :scroll-x="1090"
-    >
-      <template #tableTitle>
-        <n-button type="primary" @click="addTable">
-          <template #icon>
-            <n-icon>
-              <PlusOutlined />
-            </n-icon>
-          </template>
-          新建
-        </n-button>
-      </template>
-
-      <template #toolbar>
-        <n-button type="primary" @click="reloadTable">刷新数据</n-button>
-      </template>
-    </BasicTable>
-
-    <n-modal v-model:show="showModal" :show-icon="false" preset="dialog" title="新建">
-      <n-form
-        :model="formParams"
-        :rules="rules"
-        ref="formRef"
-        label-placement="left"
-        :label-width="80"
-        class="py-4"
-      >
-        <n-form-item label="名称" path="name">
-          <n-input placeholder="请输入名称" v-model:value="formParams.name" />
-        </n-form-item>
-        <n-form-item label="地址" path="address">
-          <n-input type="textarea" placeholder="请输入地址" v-model:value="formParams.address" />
-        </n-form-item>
-        <n-form-item label="日期" path="date">
-          <n-date-picker type="datetime" placeholder="请选择日期" v-model:value="formParams.date" />
-        </n-form-item>
-      </n-form>
-
-      <template #action>
-        <n-space>
-          <n-button @click="() => (showModal = false)">取消</n-button>
-          <n-button type="info" :loading="formBtnLoading" @click="confirmForm">确定</n-button>
-        </n-space>
-      </template>
-    </n-modal>
-  </n-card>
-</template>
-
 <script lang="ts" setup>
 import { h, reactive, ref } from 'vue'
 import { BasicTable, TableAction } from '@/components/Table'
 import { BasicForm, FormSchema, useForm } from '@/components/Form/index'
 import { ServeGetOrders } from '@/api/order'
 
-import { columns, ListData } from './columns'
+import { columns, ListData } from './columnsOrder'
 import { PlusOutlined } from '@vicons/antd'
 import { useRouter } from 'vue-router'
 import { type FormRules } from 'naive-ui'
@@ -293,7 +229,7 @@ function addTable() {
 }
 
 const loadDataTable = async (res) => {
-  const { data } = await ServeGetOrders({ ...getFieldsValue(), ...res });
+  const { data } = await ServeGetOrders({ ...getFieldsValue(), ...res })
   console.log('data', JSON.stringify(data))
   return data
 }
@@ -342,6 +278,70 @@ function handleReset(values: Recordable) {
   console.log(values)
 }
 </script>
+
+<template>
+  <PageTitle title="记录" />
+  <n-card :bordered="false" class="proCard">
+    <!-- <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
+      <template #statusSlot="{ model, field }">
+        <n-input v-model:value="model[field]" />
+      </template>
+    </BasicForm> -->
+
+    <BasicTable
+      :columns="columns"
+      :request="loadDataTable"
+      :row-key="(row: ListData) => row.id"
+      ref="actionRef"
+      :actionColumn="actionColumn"
+      @update:checked-row-keys="onCheckedRow"
+      :scroll-x="1090"
+    >
+      <template #tableTitle>
+        <n-button type="primary" @click="addTable">
+          <template #icon>
+            <n-icon>
+              <PlusOutlined />
+            </n-icon>
+          </template>
+          新建
+        </n-button>
+      </template>
+
+      <template #toolbar>
+        <n-button type="primary" @click="reloadTable">刷新数据</n-button>
+      </template>
+    </BasicTable>
+
+    <n-modal v-model:show="showModal" :show-icon="false" preset="dialog" title="新建">
+      <n-form
+        :model="formParams"
+        :rules="rules"
+        ref="formRef"
+        label-placement="left"
+        :label-width="80"
+        class="py-4"
+      >
+        <n-form-item label="名称" path="name">
+          <n-input placeholder="请输入名称" v-model:value="formParams.name" />
+        </n-form-item>
+        <n-form-item label="地址" path="address">
+          <n-input type="textarea" placeholder="请输入地址" v-model:value="formParams.address" />
+        </n-form-item>
+        <n-form-item label="日期" path="date">
+          <n-date-picker type="datetime" placeholder="请选择日期" v-model:value="formParams.date" />
+        </n-form-item>
+      </n-form>
+
+      <template #action>
+        <n-space>
+          <n-button @click="() => (showModal = false)">取消</n-button>
+          <n-button type="info" :loading="formBtnLoading" @click="confirmForm">确定</n-button>
+        </n-space>
+      </template>
+    </n-modal>
+  </n-card>
+</template>
 
 <style lang="less" scoped>
 .el-header {

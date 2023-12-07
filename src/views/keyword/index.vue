@@ -1,12 +1,6 @@
 <template>
-  <PageTitle title="定时提醒" />
+  <PageTitle title="关键词" />
   <n-card :bordered="false" class="proCard">
-    <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
-      <template #statusSlot="{ model, field }">
-        <n-input v-model:value="model[field]" />
-      </template>
-    </BasicForm>
-
     <BasicTable
       :columns="columns"
       :request="loadDataTable"

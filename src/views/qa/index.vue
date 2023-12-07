@@ -1,11 +1,11 @@
 <template>
   <PageTitle title="自动问答" />
   <n-card :bordered="false" class="proCard">
-    <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
+    <!-- <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
       <template #statusSlot="{ model, field }">
         <n-input v-model:value="model[field]" />
       </template>
-    </BasicForm>
+    </BasicForm> -->
 
     <BasicTable
       :columns="columns"
@@ -351,4 +351,7 @@ function handleReset(values: Recordable) {
   font-size: 18px;
   -webkit-app-region: drag;
 }
+.background-color{
+  background: #f5f7f9
+};
 </style>
