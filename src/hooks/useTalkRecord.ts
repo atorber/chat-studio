@@ -99,6 +99,7 @@ export const useTalkRecord = (uid: number) => {
 
     const items = (data.items || []).map((item: IMessageRecord) => formatTalkRecord(uid, item))
 
+    console.log('load...', items)
     if (request.record_id == 0) {
       // 判断是否是初次加载
       dialogueStore.clearDialogueRecord()

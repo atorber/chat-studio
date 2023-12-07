@@ -1,7 +1,7 @@
 export default {
   path: '/settings',
   name: 'settings',
-  redirect: '/settings/detail',
+  redirect: '/settings/config',
   component: () => import('@/views/setting/layout.vue'),
   children: [
     {

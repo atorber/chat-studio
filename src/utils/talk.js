@@ -10,7 +10,7 @@ export function formatTalkRecord(uid, data) {
   }
 
   data.isCheck = false
-
+  // console.log('data...',data.created_at, data.content || '消息丢失')
   return data
 }
 

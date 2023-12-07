@@ -27,6 +27,7 @@ import { useUnreadMessage } from '@/hooks/useUnreadMessage'
 import { useConnectStatus } from '@/hooks/useConnectStatus'
 import { useClickEvent } from '@/hooks/useClickEvent'
 import { ContactConst } from '@/constant/event-bus'
+import { AppProvider } from '@/components/Application';
 
 IconProvider({
   ...DEFAULT_ICON_CONFIGS,
@@ -102,3 +103,11 @@ useClickEvent()
     </n-layout-content>
   </n-config-provider>
 </template>
+
+<style lang="less">
+  @import 'styles/index.less';
+  @import 'styles/tailwind.css';
+  .container {
+max-width: 100%;
+  }
+</style>

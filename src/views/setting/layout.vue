@@ -3,15 +3,15 @@ import SubViewLayout from '@/layout/SubViewLayout.vue'
 import { Tool, Protect, Remind, LinkThree, User } from '@icon-park/vue-next'
 
 const menus = [
+{
+    name: '系统配置',
+    path: '/settings/config',
+    icon: Tool
+  },
   {
     name: '个人中心',
     path: '/settings/detail',
     icon: User
-  },
-  {
-    name: '系统配置',
-    path: '/settings/config',
-    icon: Tool
   },
   {
     name: '安全设置',

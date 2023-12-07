@@ -134,35 +134,35 @@ const navs = reactive([
     }
   },
   {
-    title: '附件',
+    title: '文件',
     icon: markRaw(FolderUpload),
     show: true,
     click: () => {
       uploadFileRef.value.click()
     }
   },
+  // {
+  //   title: '代码',
+  //   icon: markRaw(SourceCode),
+  //   show: true,
+  //   click: () => {
+  //     isShowEditorCode.value = true
+  //   }
+  // },
   {
-    title: '代码',
-    icon: markRaw(SourceCode),
-    show: true,
-    click: () => {
-      isShowEditorCode.value = true
-    }
-  },
-  {
-    title: '语音消息',
+    title: '语音',
     icon: markRaw(IconVoice),
     show: true,
     click: () => {
       isShowEditorRecorder.value = true
     }
   },
-  {
-    title: '地理位置',
-    icon: markRaw(Local),
-    show: true,
-    click: () => {}
-  },
+  // {
+  //   title: '地理位置',
+  //   icon: markRaw(Local),
+  //   show: true,
+  //   click: () => {}
+  // },
   // {
   //   title: '群投票',
   //   icon: markRaw(Ranking),

@@ -34,7 +34,7 @@ const props = defineProps({
 })
 
 const { loadConfig, records, onLoad, onRefreshLoad, onJumpMessage } = useTalkRecord(props.uid)
-
+console.log('records...', records)
 const { dropdown, showDropdownMenu, closeDropdownMenu } = useMenu()
 const user: any = inject('$user')
 const dialogueStore = useDialogueStore()

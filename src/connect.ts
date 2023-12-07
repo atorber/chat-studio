@@ -251,244 +251,253 @@ class Socket {
    */
   onMessage(topic, message) {
     console.debug('topic:', topic)
-    console.debug('payload:', message)
-    const messageObj = JSON.parse(message)
+    console.debug('payload:', message.toString())
+    try{
+      const messageObj = JSON.parse(message.toString())
 
-    if (topic === this.apis.eventApi) {
-      if (messageObj.events['onMessage']) {
-        const rawMsg = messageObj.events.onMessage
-        // if(rawMsg.room) {
-        //   rawMsg.room.id = 1029;
-        // }
-        // rawMsg.talker.id = 2055;
-        const talk_type = rawMsg.room ? 2 : 1
-        const user_id = rawMsg.talker.id
-        const receiver_id = rawMsg.room ? rawMsg.room.id : rawMsg.listener.id
-        const messageType = rawMsg.type
-        let msg_type = 1
-        const text = rawMsg.text ? JSON.parse(rawMsg.text) : {}
-        console.debug('text', text)
-        let extra = {}
-        switch (messageType) {
-          case 'Text':
-            msg_type = 1
-            break
-          case 'Image': {
-            msg_type = 3
-            if (text.url) {
-              extra = {
-                width: 54,
-                height: 54,
-                url: text.url,
-                size: text.size
-              }
-            }
-            break
+      if (topic === this.apis.eventApi) {
+        if (messageObj.events['onMessage']) {
+          const rawMsg = messageObj.events.onMessage
+          // if(rawMsg.room) {
+          //   rawMsg.room.id = 1029;
+          // }
+          // rawMsg.talker.id = 2055;
+          const talk_type = rawMsg.room ? 2 : 1
+          const user_id = rawMsg.talker.id
+          const receiver_id = rawMsg.room ? rawMsg.room.id : rawMsg.listener.id
+          const messageType = rawMsg.type
+          let msg_type = 1
+          let text:any = {}
+          try{
+          text = JSON.parse(rawMsg.text)
+          }catch(e){
+            console.error('JSON.parse(rawMsg.text) error:', e)
           }
-          case 'Emoticon':
-            msg_type = 1
-            break
-          case 'ChatHistory':
-            msg_type = 9
-            break
-          case 'Audio':
-            msg_type = 4
-            if (text.url) {
-              const filename = text.name
-              const suffix = filename.split('.').pop()
-              extra = {
-                "suffix": suffix,
-                "name": text.name,
-                "path": text.url,
-                "size": 0,
-                "drive": 1
+          console.debug('text', text)
+          let extra = {}
+          switch (messageType) {
+            case 'Text':
+              msg_type = 1
+              break
+            case 'Image': {
+              msg_type = 3
+              if (text.url) {
+                extra = {
+                  width: 54,
+                  height: 54,
+                  url: text.url,
+                  size: text.size
+                }
               }
+              break
             }
-            break
-          case 'Attachment': {
-            msg_type = 6
-            if (text.url) {
-              const filename = text.name
-              const suffix = filename.split('.').pop()
-              extra = {
-                "suffix": suffix,
-                "name": text.name,
-                "path": text.url,
-                "size": 0,
-                "drive": 1
+            case 'Emoticon':
+              msg_type = 1
+              break
+            case 'ChatHistory':
+              msg_type = 9
+              break
+            case 'Audio':
+              msg_type = 4
+              if (text.url) {
+                const filename = text.name
+                const suffix = filename.split('.').pop()
+                extra = {
+                  "suffix": suffix,
+                  "name": text.name,
+                  "path": text.url,
+                  "size": 0,
+                  "drive": 1
+                }
               }
+              break
+            case 'Attachment': {
+              msg_type = 6
+              if (text.url) {
+                const filename = text.name
+                const suffix = filename.split('.').pop()
+                extra = {
+                  "suffix": suffix,
+                  "name": text.name,
+                  "path": text.url,
+                  "size": 0,
+                  "drive": 1
+                }
+              }
+              break
             }
-            break
+            case 'Video': {
+              msg_type = 5
+              if (text.url) {
+                const filename = text.name
+                const suffix = filename.split('.').pop()
+                extra = {
+                  "suffix": suffix,
+                  "name": text.name,
+                  "path": text.url,
+                  "size": 0,
+                  "drive": 1
+                }
+              }
+              break
+            }
+            case 'MiniProgram':
+              msg_type = 1
+              break
+            case 'Url':
+              msg_type = 1
+              break
+            case 'Recalled':
+              msg_type = 1
+              break
+            case 'RedEnvelope':
+              msg_type = 1
+              break
+            case 'Contact':
+              msg_type = 1
+              break
+            case 'Location':
+              msg_type = 1
+              break
+            case 'GroupNote':
+              msg_type = 1
+              break
+            case 'Transfer':
+              msg_type = 1
+              break
+            case 'Post':
+              msg_type = 1
+              break
+            case 'qrcode':
+              msg_type = 3
+              break
+            case 'Unknown':
+              msg_type = 1
+              break
+            default:
+              break
           }
-          case 'Video': {
-            msg_type = 5
-            if (text.url) {
-              const filename = text.name
-              const suffix = filename.split('.').pop()
-              extra = {
-                "suffix": suffix,
-                "name": text.name,
-                "path": text.url,
-                "size": 0,
-                "drive": 1
-              }
-            }
-            break
-          }
-          case 'MiniProgram':
-            msg_type = 1
-            break
-          case 'Url':
-            msg_type = 1
-            break
-          case 'Recalled':
-            msg_type = 1
-            break
-          case 'RedEnvelope':
-            msg_type = 1
-            break
-          case 'Contact':
-            msg_type = 1
-            break
-          case 'Location':
-            msg_type = 1
-            break
-          case 'GroupNote':
-            msg_type = 1
-            break
-          case 'Transfer':
-            msg_type = 1
-            break
-          case 'Post':
-            msg_type = 1
-            break
-          case 'qrcode':
-            msg_type = 3
-            break
-          case 'Unknown':
-            msg_type = 1
-            break
-          default:
-            break
-        }
-        const newMsg = {
-          receiver_id, // 接收者ID
-          sender_id: user_id, // 发送者ID
-          talk_type, // 对话类型
-          data: {
-            id: rawMsg.data.payload.timestamp || rawMsg.data.id, // 消息ID
-            sequence: rawMsg.data.payload.timestamp, // 消息序列号
-            msg_id: rawMsg.data.id, // 消息ID
-            talk_type, // 对话类型
-            msg_type, // 消息类型
-            user_id, // 发送者ID
+          const newMsg = {
             receiver_id, // 接收者ID
-            nickname: rawMsg.talker.payload.name, // 发送者昵称
-            avatar:
-              rawMsg.talker.payload.avatar ||
-              'https://im.gzydong.com/public/media/image/avatar/20230530/f76a14ce98ca684752df742974f5473a_200x200.png', // 发送者头像
-            is_revoke: 0, // 是否撤回
-            is_mark: 0, // 是否标记
-            is_read: 0, // 是否已读
-            content: rawMsg.data.payload.text || '', // 消息内容
-            created_at: rawMsg.time, // 创建时间
-            extra,
+            sender_id: user_id, // 发送者ID
+            talk_type, // 对话类型
+            data: {
+              id: rawMsg.data.payload.timestamp || rawMsg.data.id, // 消息ID
+              sequence: rawMsg.data.payload.timestamp, // 消息序列号
+              msg_id: rawMsg.data.id, // 消息ID
+              talk_type, // 对话类型
+              msg_type, // 消息类型
+              user_id, // 发送者ID
+              receiver_id, // 接收者ID
+              nickname: rawMsg.talker.payload.name, // 发送者昵称
+              avatar:
+                rawMsg.talker.payload.avatar ||
+                'https://im.gzydong.com/public/media/image/avatar/20230530/f76a14ce98ca684752df742974f5473a_200x200.png', // 发送者头像
+              is_revoke: 0, // 是否撤回
+              is_mark: 0, // 是否标记
+              is_read: 0, // 是否已读
+              content: rawMsg.data.payload.text || '', // 消息内容
+              created_at: rawMsg.time, // 创建时间
+              extra,
+            }
+          }
+          this.emit('im.message', newMsg)
+          // this.client.publish(this.apis.eventApi, formatMsg({ 'im.message': newMsg }))
+        }
+  
+        if (messageObj.events['ping']) {
+          this.emit('pong', '')
+        }
+  
+        if (messageObj.events['pong']) {
+          console.debug('pong')
+        }
+  
+        // 对话消息事件
+        if (messageObj.events['im.message']) {
+          const data = messageObj.events['im.message']
+          new EventTalk(data)
+        }
+  
+        if (messageObj.events['im.message.read']) {
+          const data = messageObj.events['im.message.read']
+          console.debug('im.message.read', data)
+  
+          const dialogueStore = useDialogueStore()
+  
+          if (dialogueStore.index_name == `1_${data.sender_id}`) {
+            for (const msgid of data.ids) {
+              dialogueStore.updateDialogueRecord({ id: msgid, is_read: 1 })
+            }
           }
         }
-        this.emit('im.message', newMsg)
-        // this.client.publish(this.apis.eventApi, formatMsg({ 'im.message': newMsg }))
-      }
-
-      if (messageObj.events['ping']) {
-        this.emit('pong', '')
-      }
-
-      if (messageObj.events['pong']) {
-        console.debug('pong')
-      }
-
-      // 对话消息事件
-      if (messageObj.events['im.message']) {
-        const data = messageObj.events['im.message']
-        new EventTalk(data)
-      }
-
-      if (messageObj.events['im.message.read']) {
-        const data = messageObj.events['im.message.read']
-        console.debug('im.message.read', data)
-
-        const dialogueStore = useDialogueStore()
-
-        if (dialogueStore.index_name == `1_${data.sender_id}`) {
-          for (const msgid of data.ids) {
-            dialogueStore.updateDialogueRecord({ id: msgid, is_read: 1 })
-          }
+  
+        // 好友在线状态事件
+        if (messageObj.events['im.contact.status']) {
+          const data = messageObj.events['im.contact.status']
+          new EventLogin(data)
+        }
+  
+        // 好友键盘输入事件
+        if (messageObj.events['im.message.keyboard']) {
+          const data = messageObj.events['im.message.keyboard']
+          new EventKeyboard(data)
+        }
+  
+        // 消息撤回事件
+        if (messageObj.events['im.message.revoke']) {
+          const data = messageObj.events['im.message.revoke']
+          new EventRevoke(data)
+        }
+  
+        // 好友申请事件
+        if (messageObj.events['im.contact.apply']) {
+          const data = messageObj.events['im.contact.apply']
+          window['$notification'].create({
+            title: '好友申请通知',
+            content: data.remark,
+            description: `申请人: ${data.friend.nickname}`,
+            meta: data.friend.created_at,
+            avatar: () =>
+              h(NAvatar, {
+                size: 'small',
+                round: true,
+                src: notifyIcon,
+                style: 'background-color:#fff;'
+              }),
+            duration: 3000
+          })
+          useUserStore().isContactApply = true
+        }
+  
+        // 群组申请事件
+        if (messageObj.events['im.group.apply']) {
+          const data = messageObj.events['im.group.apply']
+          console.debug('im.group.apply', data)
+          window['$notification'].create({
+            title: '入群申请通知',
+            content: '有新的入群申请，请注意查收',
+            avatar: () =>
+              h(NAvatar, {
+                size: 'small',
+                round: true,
+                src: notifyIcon,
+                style: 'background-color:#fff;'
+              }),
+            duration: 30000
+          })
+  
+          useUserStore().isGroupApply = true
+        }
+  
+        // 报错事件
+        if (messageObj.events.event_error) {
+          const data = messageObj.events['event_error']
+          window['$message'].error(JSON.stringify(data))
         }
       }
-
-      // 好友在线状态事件
-      if (messageObj.events['im.contact.status']) {
-        const data = messageObj.events['im.contact.status']
-        new EventLogin(data)
-      }
-
-      // 好友键盘输入事件
-      if (messageObj.events['im.message.keyboard']) {
-        const data = messageObj.events['im.message.keyboard']
-        new EventKeyboard(data)
-      }
-
-      // 消息撤回事件
-      if (messageObj.events['im.message.revoke']) {
-        const data = messageObj.events['im.message.revoke']
-        new EventRevoke(data)
-      }
-
-      // 好友申请事件
-      if (messageObj.events['im.contact.apply']) {
-        const data = messageObj.events['im.contact.apply']
-        window['$notification'].create({
-          title: '好友申请通知',
-          content: data.remark,
-          description: `申请人: ${data.friend.nickname}`,
-          meta: data.friend.created_at,
-          avatar: () =>
-            h(NAvatar, {
-              size: 'small',
-              round: true,
-              src: notifyIcon,
-              style: 'background-color:#fff;'
-            }),
-          duration: 3000
-        })
-        useUserStore().isContactApply = true
-      }
-
-      // 群组申请事件
-      if (messageObj.events['im.group.apply']) {
-        const data = messageObj.events['im.group.apply']
-        console.debug('im.group.apply', data)
-        window['$notification'].create({
-          title: '入群申请通知',
-          content: '有新的入群申请，请注意查收',
-          avatar: () =>
-            h(NAvatar, {
-              size: 'small',
-              round: true,
-              src: notifyIcon,
-              style: 'background-color:#fff;'
-            }),
-          duration: 30000
-        })
-
-        useUserStore().isGroupApply = true
-      }
-
-      // 报错事件
-      if (messageObj.events.event_error) {
-        const data = messageObj.events['event_error']
-        window['$message'].error(JSON.stringify(data))
-      }
+    }catch(e){
+      console.error('onMessage() error:', e)
     }
   }
 
