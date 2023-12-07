@@ -1,0 +1,1 @@
+const t=[{title:"机器人ID",key:"id",width:100},{title:"描述",key:"desc",width:200},{title:"类型",key:"type",width:100},{title:"模型",key:"model",width:100},{title:"系统提示词",key:"prompt",width:200},{title:"配额",key:"quota",width:100},{title:"接入点",key:"endpoint",width:160},{title:"密钥",key:"key",width:160}];export{t as c};
