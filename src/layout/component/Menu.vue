@@ -94,11 +94,11 @@ const menus = reactive([
     icon: markRaw(Mark),
     title: '统计打卡'
   },
-  {
-    link: '/note',
-    icon: markRaw(NotebookAndPen),
-    title: '素材'
-  },
+  // {
+  //   link: '/note',
+  //   icon: markRaw(NotebookAndPen),
+  //   title: '素材'
+  // },
   // {
   //   link: '/whitelist',
   //   icon: markRaw(WrongUser),

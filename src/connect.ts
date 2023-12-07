@@ -253,7 +253,7 @@ class Socket {
     console.debug('topic:', topic)
     console.debug('payload:', message.toString())
     try{
-      const messageObj = JSON.parse(message)
+      const messageObj = JSON.parse(message.toString())
 
       if (topic === this.apis.eventApi) {
         if (messageObj.events['onMessage']) {
@@ -267,7 +267,12 @@ class Socket {
           const receiver_id = rawMsg.room ? rawMsg.room.id : rawMsg.listener.id
           const messageType = rawMsg.type
           let msg_type = 1
-          const text = rawMsg.text ? JSON.parse(rawMsg.text) : {}
+          let text:any = {}
+          try{
+          text = JSON.parse(rawMsg.text)
+          }catch(e){
+            console.error('JSON.parse(rawMsg.text) error:', e)
+          }
           console.debug('text', text)
           let extra = {}
           switch (messageType) {
