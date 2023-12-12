@@ -38,17 +38,29 @@
         :rules="rules"
         ref="formRef"
         label-placement="left"
-        :label-width="80"
+        :label-width="125"
         class="py-4"
       >
-        <n-form-item label="名称" path="name">
-          <n-input placeholder="请输入名称" v-model:value="formParams.name" />
+      <n-form-item label="昵称" path="name">
+          <n-input placeholder="请输入机器人的昵称" v-model:value="formParams.name" />
         </n-form-item>
-        <n-form-item label="地址" path="address">
-          <n-input type="textarea" placeholder="请输入地址" v-model:value="formParams.address" />
+        <n-form-item label="类型" path="type">
+          <n-input placeholder="请输入类型" v-model:value="formParams.type" />
         </n-form-item>
-        <n-form-item label="日期" path="date">
-          <n-date-picker type="datetime" placeholder="请选择日期" v-model:value="formParams.date" />
+        <n-form-item label="模型" path="model">
+          <n-input placeholder="请输入模型" v-model:value="formParams.model" />
+        </n-form-item>
+        <n-form-item label="接入点" path="endpoint">
+          <n-input placeholder="请输入接入点" v-model:value="formParams.endpoint" />
+        </n-form-item>
+        <n-form-item label="密钥" path="key">
+          <n-input placeholder="请输入密钥" v-model:value="formParams.key" />
+        </n-form-item>
+        <n-form-item label="系统提示词" path="prompt">
+          <n-input type="textarea" placeholder="请输入系统提示词" v-model:value="formParams.prompt" />
+        </n-form-item>
+        <n-form-item label="描述" path="desc">
+          <n-input type="textarea" placeholder="请输入描述" v-model:value="formParams.desc" />
         </n-form-item>
       </n-form>
 
@@ -66,7 +78,7 @@
 import { h, reactive, ref } from 'vue'
 import { BasicTable, TableAction } from '@/components/Table'
 import { BasicForm, FormSchema, useForm } from '@/components/Form/index'
-import { ServeGetChatbots } from '@/api/chatbot'
+import { ServeGetChatbots, ServeCreateChatbots, ServeDeleteChatbots } from '@/api/chatbot'
 
 import { columns, ListData } from './columns'
 import { PlusOutlined } from '@vicons/antd'
@@ -226,8 +238,13 @@ const showModal = ref(false)
 const formBtnLoading = ref(false)
 const formParams = reactive({
   name: '',
-  address: '',
-  date: null
+  desc: '',
+  type: '',
+  model: '',
+  prompt: '',
+  quota: 100,
+  endpoint: '',
+  key: '',
 })
 
 const actionColumn = reactive({
@@ -309,8 +326,10 @@ function reloadTable() {
 function confirmForm(e) {
   e.preventDefault()
   formBtnLoading.value = true
-  formRef.value.validate((errors) => {
+  formRef.value.validate(async (errors) => {
     if (!errors) {
+      const res = await ServeCreateChatbots(formParams)
+      console.debug('res', res)
       window['$message'].success('新建成功')
       setTimeout(() => {
         showModal.value = false
@@ -328,9 +347,16 @@ function handleEdit(record: Recordable) {
   router.push({ name: 'basic-info', params: { id: record.id } })
 }
 
-function handleDelete(record: Recordable) {
+async function handleDelete(record: Recordable) {
   console.log('点击了删除', record)
-  window['$message'].info('点击了删除')
+  const res = await ServeDeleteChatbots({recordId:record.recordId})
+  console.log('删除res', res)
+  if(res.code === 200){
+    window['$message'].success('删除成功')
+    reloadTable()
+  }else{
+    window['$message'].error('删除失败')
+  }
 }
 
 function handleSubmit(values: Recordable) {

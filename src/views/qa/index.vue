@@ -38,17 +38,26 @@
         :rules="rules"
         ref="formRef"
         label-placement="left"
-        :label-width="80"
+        :label-width="125"
         class="py-4"
       >
-        <n-form-item label="名称" path="name">
-          <n-input placeholder="请输入名称" v-model:value="formParams.name" />
+        <n-form-item label="分类" path="skillname">
+          <n-input placeholder="请输入问题分类" v-model:value="formParams.skillname" />
         </n-form-item>
-        <n-form-item label="地址" path="address">
-          <n-input type="textarea" placeholder="请输入地址" v-model:value="formParams.address" />
+        <n-form-item label="标准问题" path="title">
+          <n-input type="textarea" placeholder="请输入标准问题" v-model:value="formParams.title" />
         </n-form-item>
-        <n-form-item label="日期" path="date">
-          <n-date-picker type="datetime" placeholder="请选择日期" v-model:value="formParams.date" />
+        <n-form-item label="相似问题1" path="question1">
+          <n-input type="textarea" placeholder="请输入相似问题1" v-model:value="formParams.question1" />
+        </n-form-item>
+        <n-form-item label="相似问题2" path="question2">
+          <n-input type="textarea" placeholder="请输入相似问题2" v-model:value="formParams.question2" />
+        </n-form-item>
+        <n-form-item label="相似问题3" path="question3">
+          <n-input type="textarea" placeholder="请输入相似问题3" v-model:value="formParams.question3" />
+        </n-form-item>
+        <n-form-item label="机器人回答" path="answer">
+          <n-input type="textarea" placeholder="请输入机器人回答" v-model:value="formParams.answer" />
         </n-form-item>
       </n-form>
 
@@ -66,7 +75,7 @@
 import { h, reactive, ref } from 'vue'
 import { BasicTable, TableAction } from '@/components/Table'
 import { BasicForm, FormSchema, useForm } from '@/components/Form/index'
-import { ServeGetQas } from '@/api/qa'
+import { ServeGetQas, ServeDeleteQas, ServeCreateQas } from '@/api/qa'
 
 import { columns, ListData } from './columns'
 import { PlusOutlined } from '@vicons/antd'
@@ -76,22 +85,21 @@ import { NForm, NFormItem, NSwitch, NPopconfirm, NDatePicker, NCard } from 'naiv
 import PageTitle from '@/layout/PageTitle.vue'
 
 const rules: FormRules = {
-  name: {
+  skillname: {
     required: true,
     trigger: ['blur', 'input'],
-    message: '请输入名称'
+    message: '请输入问题分类'
   },
-  address: {
+  title: {
     required: true,
     trigger: ['blur', 'input'],
-    message: '请输入地址'
+    message: '请输入标准答案'
   },
-  date: {
-    type: 'number',
+  answer: {
     required: true,
-    trigger: ['blur', 'change'],
-    message: '请选择日期'
-  }
+    trigger: ['blur', 'input'],
+    message: '请输入机器人回答'
+  },
 }
 
 const schemas: FormSchema[] = [
@@ -225,13 +233,16 @@ const actionRef = ref()
 const showModal = ref(false)
 const formBtnLoading = ref(false)
 const formParams = reactive({
-  name: '',
-  address: '',
-  date: null
+  skillname: '',
+  title: '',
+  question1: '',
+  question2: '',
+  question3: '',
+  answer: ''
 })
 
 const actionColumn = reactive({
-  width: 220,
+  width: 80,
   title: '操作',
   key: 'action',
   fixed: 'right',
@@ -249,32 +260,32 @@ const actionColumn = reactive({
           // 根据权限控制是否显示: 有权限，会显示，支持多个
           auth: ['basic_list']
         },
-        {
-          label: '编辑',
-          onClick: handleEdit.bind(null, record),
-          ifShow: () => {
-            return true
-          },
-          auth: ['basic_list']
-        }
+        // {
+        //   label: '编辑',
+        //   onClick: handleEdit.bind(null, record),
+        //   ifShow: () => {
+        //     return true
+        //   },
+        //   auth: ['basic_list']
+        // }
       ],
-      dropDownActions: [
-        {
-          label: '启用',
-          key: 'enabled',
-          // 根据业务控制是否显示: 非enable状态的不显示启用按钮
-          ifShow: () => {
-            return true
-          }
-        },
-        {
-          label: '禁用',
-          key: 'disabled',
-          ifShow: () => {
-            return true
-          }
-        }
-      ],
+      // dropDownActions: [
+      //   {
+      //     label: '启用',
+      //     key: 'enabled',
+      //     // 根据业务控制是否显示: 非enable状态的不显示启用按钮
+      //     ifShow: () => {
+      //       return true
+      //     }
+      //   },
+      //   {
+      //     label: '禁用',
+      //     key: 'disabled',
+      //     ifShow: () => {
+      //       return true
+      //     }
+      //   }
+      // ],
       select: (key) => {
         window['$message'].info(`您点击了，${key} 按钮`)
       }
@@ -309,8 +320,10 @@ function reloadTable() {
 function confirmForm(e) {
   e.preventDefault()
   formBtnLoading.value = true
-  formRef.value.validate((errors) => {
+  formRef.value.validate(async (errors) => {
     if (!errors) {
+      const res = await ServeCreateQas(formParams)
+      console.log('新建res', res)
       window['$message'].success('新建成功')
       setTimeout(() => {
         showModal.value = false
@@ -328,9 +341,16 @@ function handleEdit(record: Recordable) {
   router.push({ name: 'basic-info', params: { id: record.id } })
 }
 
-function handleDelete(record: Recordable) {
+async function handleDelete(record: Recordable) {
   console.log('点击了删除', record)
-  window['$message'].info('点击了删除')
+  const res = await ServeDeleteQas({recordId:record.recordId})
+  console.log('删除res', res)
+  if(res.code === 200){
+    window['$message'].success('删除成功')
+    reloadTable()
+  }else{
+    window['$message'].error('删除失败')
+  }
 }
 
 function handleSubmit(values: Recordable) {
@@ -354,4 +374,8 @@ function handleReset(values: Recordable) {
 .background-color{
   background: #f5f7f9
 };
+.n-dialog.n-modal {
+    width: 50%;
+    max-width: calc(100vw - 32px);
+}
 </style>

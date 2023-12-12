@@ -38,17 +38,35 @@
         :rules="rules"
         ref="formRef"
         label-placement="left"
-        :label-width="80"
+        :label-width="125"
         class="py-4"
       >
-        <n-form-item label="名称" path="name">
-          <n-input placeholder="请输入名称" v-model:value="formParams.name" />
+        <n-form-item label="类型" path="type">
+          <n-input placeholder="请输入类型" v-model:value="formParams.type" />
         </n-form-item>
-        <n-form-item label="地址" path="address">
-          <n-input type="textarea" placeholder="请输入地址" v-model:value="formParams.address" />
+        <n-form-item label="描述" path="desc">
+          <n-input type="textarea" placeholder="请输入描述" v-model:value="formParams.desc" />
         </n-form-item>
-        <n-form-item label="日期" path="date">
-          <n-date-picker type="datetime" placeholder="请选择日期" v-model:value="formParams.date" />
+        <n-form-item label="开始时间(选填)" path="startTime">
+          <n-date-picker type="datetime" placeholder="请选择开始时间" v-model:value="formParams.startTime" />
+        </n-form-item>
+        <n-form-item label="时长(小时，选填)" path="duration">
+          <n-input placeholder="请输入时长" v-model:value="formParams.duration" />
+        </n-form-item>
+        <n-form-item label="限制人数(选填)" path="maximum">
+          <n-input placeholder="请输入限制人数" v-model:value="formParams.maximum" />
+        </n-form-item>
+        <n-form-item label="地点(选填)" path="location">
+          <n-input placeholder="请输入地点" v-model:value="formParams.location" />
+        </n-form-item>
+        <n-form-item label="周期(选填)" path="cycle">
+          <n-input placeholder="请输入周期" v-model:value="formParams.cycle" />
+        </n-form-item>
+        <n-form-item label="关联群名称" path="topic">
+          <n-input placeholder="请输入群名称" v-model:value="formParams.topic" />
+        </n-form-item>
+        <n-form-item label="关联群ID(选填)" path="roomid">
+          <n-input placeholder="请输入群ID" v-model:value="formParams.roomid" />
         </n-form-item>
       </n-form>
 
@@ -66,7 +84,7 @@
 import { h, reactive, ref } from 'vue'
 import { BasicTable, TableAction } from '@/components/Table'
 import { BasicForm, FormSchema, useForm } from '@/components/Form/index'
-import { ServeGetStatistics } from '@/api/statistic'
+import { ServeGetStatistics, ServeCreateStatistics, ServeDeleteStatistics } from '@/api/statistic'
 
 import { columns, ListData } from './columns'
 import { PlusOutlined } from '@vicons/antd'
@@ -225,9 +243,15 @@ const actionRef = ref()
 const showModal = ref(false)
 const formBtnLoading = ref(false)
 const formParams = reactive({
-  name: '',
-  address: '',
-  date: null
+  type: '',
+      startTime: null,
+      desc: '',
+      duration: 2,
+      maximum: 20,
+      location:'',
+      cycle: '',
+      topic: '',
+      roomid: '',
 })
 
 const actionColumn = reactive({
@@ -309,8 +333,10 @@ function reloadTable() {
 function confirmForm(e) {
   e.preventDefault()
   formBtnLoading.value = true
-  formRef.value.validate((errors) => {
+  formRef.value.validate(async (errors) => {
     if (!errors) {
+      const res = await ServeCreateStatistics(formParams)
+      console.log('创建活动res', res)
       window['$message'].success('新建成功')
       setTimeout(() => {
         showModal.value = false
@@ -328,9 +354,17 @@ function handleEdit(record: Recordable) {
   router.push({ name: 'basic-info', params: { id: record.id } })
 }
 
-function handleDelete(record: Recordable) {
+async function handleDelete(record: Recordable) {
   console.log('点击了删除', record)
-  window['$message'].info('点击了删除')
+  const res = await ServeDeleteStatistics({recordId:record.recordId})
+  console.log('删除res', res)
+  if(res.code === 200){
+    window['$message'].success('删除成功')
+    reloadTable()
+  }else{
+    window['$message'].error('删除失败')
+  }
+  reloadTable()
 }
 
 function handleSubmit(values: Recordable) {

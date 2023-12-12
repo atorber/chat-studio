@@ -12,7 +12,7 @@ export default {
       {
         path: '/qa/whitelist',
         meta: { auth: true },
-        component: () => import('@/views/whitelist/white.vue')
+        component: () => import('@/views/qa/white.vue')
       },
       {
         path: '/qa/config',

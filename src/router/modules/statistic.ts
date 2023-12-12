@@ -17,7 +17,7 @@ export default {
       {
         path: '/statistic/whitelist',
         meta: { auth: true },
-        component: () => import('@/views/whitelist/white.vue')
+        component: () => import('@/views/statistic/white.vue')
       },
       {
         path: '/statistic/config',
