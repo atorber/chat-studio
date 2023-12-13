@@ -28,6 +28,12 @@ jobs:
     - name: Build
       run: npm run build
 
+    - name: Print current directory
+      run: pwd
+
+    - name: List files in .github/workflows
+      run: ls -l .github/workflows
+
     - name: Copy build.yml to dist/.github/workflows
       run: |
         mkdir -p dist/.github/workflows
