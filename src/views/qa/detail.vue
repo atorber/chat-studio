@@ -56,6 +56,7 @@ const onChangeDetail = () => {
     console.debug('key', key)
     console.debug('configMap[key]', configMap[key])
     console.debug('detail[key]', detail[key])
+    const curTime = new Date().getTime()
     if(key !== 'loading'){
       if(key === 'AUTOQA_AUTOREPLY'){
         detail[key] = detail[key] === '1' ? 'true' : 'false'
@@ -63,6 +64,7 @@ const onChangeDetail = () => {
       }else{
         configMap[key].name = '微信对话开放平台-' + configMap[key].name
       }
+      configMap[key].lastOperationTime = curTime
       const item = {
       recordId: configMap[key].id,
       fields: configMap[key]
