@@ -34,10 +34,10 @@ jobs:
     - name: List files in .github/workflows
       run: ls -l .github/workflows
 
-    - name: Copy build.yml to dist/.github/workflows
+    - name: Copy static.yml to dist/.github/workflows
       run: |
-        mkdir -p ./dist/.github/workflows
-        cp .github/workflows/static.yml ./dist/.github/workflows/
+        mkdir -p dist/.github/workflows
+        cp .github/workflows/static.yml dist/.github/workflows/
 
     - name: List files in dist
       run: ls -l ./dist
@@ -47,3 +47,14 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
+    - name: Push dist to gh-pages branch
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+        git checkout --orphan gh-pages
+        git reset --hard
+        git add -f dist
+        git mv -k dist/* .
+        git clean -fdx
+        git commit -m "Deploy to gh-pages"
+        git push origin gh-pages --force
