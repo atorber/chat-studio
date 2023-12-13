@@ -1,0 +1,1 @@
+import{S as e}from"./SubViewLayout-614ad3cd.js";import{c as o,e as a}from"./index-8e0b9476.js";import{U as s,T as r}from"./User-b55f6f59.js";const u={__name:"layout",setup(c){const t=[{name:"白名单",path:"/whitelist/white",icon:s},{name:"黑名单",path:"/whitelist/black",icon:r}];return(i,n)=>(o(),a(e,{title:"黑白名单",menus:t}))}};export{u as default};
