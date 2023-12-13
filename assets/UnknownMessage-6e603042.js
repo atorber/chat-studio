@@ -1,1 +1,0 @@
-import{_ as s,c as t,i as n,t as a}from"./index-8e0b9476.js";const _={class:"im-message-unknown"},o={__name:"UnknownMessage",props:{extra:Object,data:Object},setup(e){return(c,p)=>(t(),n("div",_,"["+a(e.data.msg_type)+"] 未知消息类型",1))}},d=s(o,[["__scopeId","data-v-071ee96b"]]);export{d as default};

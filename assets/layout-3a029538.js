@@ -1,0 +1,1 @@
+import{S as o}from"./SubViewLayout-035c054d.js";import{c as a,e}from"./index-a0bcc847.js";import{M as r}from"./Mark-da73a910.js";import{P as c}from"./Protect-5956c635.js";const h={__name:"layout",setup(s){const t=[{name:"ChatBot列表",path:"/chatbot/list",icon:r},{name:"白名单",path:"/chatbot/whitelist",icon:c}];return(m,n)=>(a(),e(o,{title:"聊天机器人",menus:t}))}};export{h as default};
