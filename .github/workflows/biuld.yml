@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    tags:
-      - '*'
   workflow_dispatch:
 
 permissions:
@@ -31,6 +29,7 @@ jobs:
       with:
         node-version: '16.x'
         cache: 'npm'
+        cache-dependency-path: '**/package-lock.json' # 添加缓存依赖路径
 
     - name: Install Dependencies
       run: npm install
@@ -43,18 +42,3 @@ jobs:
       with:
         github_token: ${{ secrets.GIT_TOKEN }}
         publish_dir: ./dist
-
-    - name: Setup Pages
-      if: github.ref == 'refs/heads/gh-pages'
-      uses: actions/configure-pages@v3
-
-    - name: Upload artifact
-      if: github.ref == 'refs/heads/gh-pages'
-      uses: actions/upload-pages-artifact@v2
-      with:
-        path: dist
-
-    - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/gh-pages'
-      id: deployment
-      uses: actions/deploy-pages@v2
