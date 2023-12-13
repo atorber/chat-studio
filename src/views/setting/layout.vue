@@ -8,16 +8,16 @@ const menus = [
     path: '/settings/config',
     icon: Tool
   },
-  {
-    name: '个人中心',
-    path: '/settings/detail',
-    icon: User
-  },
-  {
-    name: '安全设置',
-    path: '/settings/security',
-    icon: Protect
-  },
+  // {
+  //   name: '个人中心',
+  //   path: '/settings/detail',
+  //   icon: User
+  // },
+  // {
+  //   name: '安全设置',
+  //   path: '/settings/security',
+  //   icon: Protect
+  // },
   {
     name: '个性设置',
     path: '/settings/personalize',
