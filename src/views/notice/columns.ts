@@ -2,13 +2,16 @@ import { h } from 'vue';
 import { NAvatar } from 'naive-ui';
 import { BasicColumn } from '@/components/Table';
 export interface ListData {
+  alias: string
+  id: string
+  name: string
+  type: string
   desc: string
   time: number
   cycle: string
   state: string
   syncStatus: string
   lastOperationTime: number
-  action: string
   recordId: string
 }
 export const columns: BasicColumn<ListData>[] = [
@@ -21,6 +24,26 @@ export const columns: BasicColumn<ListData>[] = [
     title: '内容',
     key: 'desc',
     width: 300,
+  },
+  {
+    title: '类型',
+    key: 'type',
+    width: 100,
+  },
+  {
+    title: '昵称/群名称',
+    key: 'name',
+    width: 100,
+  },
+  {
+    title: '好友ID/群ID',
+    key: 'id',
+    width: 100,
+  },
+  {
+    title: '好友备注',
+    key: 'alias',
+    width: 100,
   },
   {
     title: '周期',

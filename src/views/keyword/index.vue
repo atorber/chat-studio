@@ -6,11 +6,10 @@
       :request="loadDataTable"
       :row-key="(row: ListData) => row.id"
       ref="actionRef"
-      :actionColumn="actionColumn"
       @update:checked-row-keys="onCheckedRow"
       :scroll-x="1090"
     >
-      <template #tableTitle>
+      <!-- <template #tableTitle>
         <n-button type="primary" @click="addTable">
           <template #icon>
             <n-icon>
@@ -19,7 +18,7 @@
           </template>
           新建
         </n-button>
-      </template>
+      </template> -->
 
       <template #toolbar>
         <n-button type="primary" @click="reloadTable">刷新数据</n-button>
@@ -243,32 +242,31 @@ const actionColumn = reactive({
           // 根据权限控制是否显示: 有权限，会显示，支持多个
           auth: ['basic_list']
         },
-        {
-          label: '编辑',
-          onClick: handleEdit.bind(null, record),
-          ifShow: () => {
-            return true
-          },
-          auth: ['basic_list']
-        }
+        // {
+        //   label: '编辑',
+        //   onClick: handleEdit.bind(null, record),
+        //   ifShow: () => {
+        //     return true
+        //   },
+        //   auth: ['basic_list']
+        // }
       ],
-      dropDownActions: [
-        {
-          label: '启用',
-          key: 'enabled',
-          // 根据业务控制是否显示: 非enable状态的不显示启用按钮
-          ifShow: () => {
-            return true
-          }
-        },
-        {
-          label: '禁用',
-          key: 'disabled',
-          ifShow: () => {
-            return true
-          }
-        }
-      ],
+      // dropDownActions: [
+      //   {
+      //     label: '启用',
+      //     key: 'enabled',
+      //     ifShow: () => {
+      //       return true
+      //     }
+      //   },
+      //   {
+      //     label: '禁用',
+      //     key: 'disabled',
+      //     ifShow: () => {
+      //       return true
+      //     }
+      //   }
+      // ],
       select: (key) => {
         window['$message'].info(`您点击了，${key} 按钮`)
       }

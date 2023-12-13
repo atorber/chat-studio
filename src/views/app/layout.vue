@@ -23,11 +23,11 @@ const menus = [
     path: '/app/whitelist',
     icon: ListSuccess
   },
-  {
-    name: '黑名单',
-    path: '/app/blacklist',
-    icon: Blackboard
-  },
+  // {
+  //   name: '黑名单',
+  //   path: '/app/blacklist',
+  //   icon: Blackboard
+  // },
   // {
   //   name: '绑定设置',
   //   path: '/statistic/binding',

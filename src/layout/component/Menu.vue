@@ -89,11 +89,11 @@ const menus = reactive([
   //   icon: markRaw(Send),
   //   title: '群发消息'
   // },
-  {
-    link: '/statistic',
-    icon: markRaw(Mark),
-    title: '统计打卡'
-  },
+  // {
+  //   link: '/statistic',
+  //   icon: markRaw(Mark),
+  //   title: '统计打卡'
+  // },
   // {
   //   link: '/note',
   //   icon: markRaw(NotebookAndPen),
