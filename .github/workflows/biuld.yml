@@ -28,8 +28,10 @@ jobs:
     - name: Build
       run: npm run build
 
-    - name: Copy build.yml to dist
-      run: cp .github/workflows/build.yml dist/.github/workflows/build.yml
+    - name: Copy build.yml to dist/.github/workflows
+      run: |
+        mkdir -p dist/.github/workflows
+        cp .github/workflows/build.yml dist/.github/workflows/
       
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
