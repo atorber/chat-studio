@@ -12,7 +12,6 @@ const components = {
   group: GroupApply
 }
 </script>
-
 <template>
   <section class="el-container is-vertical height100">
     <header class="el-header me-view-header bdr-b">
