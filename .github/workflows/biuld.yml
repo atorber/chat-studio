@@ -38,7 +38,10 @@ jobs:
       run: |
         mkdir -p dist/.github/workflows
         cp .github/workflows/static.yml dist/.github/workflows/
-      
+
+    - name: List files in dist
+      run: ls -l ./dist
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
