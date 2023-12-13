@@ -95,7 +95,7 @@ const onSendTextEvent = throttle((value: any) => {
 
     callBack(true)
   })
-}, 1000)
+}, 3000)
 
 // 发送图片消息
 const onSendImageEvent = ({ data, callBack }) => {
@@ -136,9 +136,9 @@ const onSendCodeEvent = ({ data, callBack }) => {
 
 // 发送文件消息
 const onSendFileEvent = ({ data }) => {
-  let maxsize = 200 * 1024 * 1024
+  let maxsize = 10 * 1024 * 1024
   if (data.size > maxsize) {
-    return window['$message'].warning('上传文件不能超过100M!')
+    return window['$message'].warning('上传文件不能超过10M!')
   }
 
   uploadsStore.initUploadFile(data, props.talk_type, props.receiver_id, dialogueStore.talk.username)
