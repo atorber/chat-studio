@@ -45,7 +45,7 @@ jobs:
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.GIT_TOKEN }}
         publish_dir: ./dist
     - name: Push dist to gh-pages branch
       run: |
@@ -58,3 +58,5 @@ jobs:
         git clean -fdx
         git commit -m "Deploy to gh-pages"
         git push origin gh-pages --force
+      env:
+        GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
