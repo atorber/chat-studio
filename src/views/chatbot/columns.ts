@@ -25,11 +25,6 @@ export const columns: BasicColumn<ListData>[] = [
     width: 100,
   },
   {
-    title: '描述',
-    key: 'desc',
-    width: 200,
-  },
-  {
     title: '类型',
     key: 'type',
     width: 100,
@@ -45,10 +40,15 @@ export const columns: BasicColumn<ListData>[] = [
     width: 200,
   },
   {
-    title: '配额',
-    key: 'quota',
-    width: 100,
+    title: '描述',
+    key: 'desc',
+    width: 200,
   },
+  // {
+  //   title: '配额',
+  //   key: 'quota',
+  //   width: 100,
+  // },
   {
     title: '接入点',
     key: 'endpoint',

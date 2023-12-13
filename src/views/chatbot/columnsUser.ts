@@ -24,10 +24,16 @@ export const columns: BasicColumn<ListData>[] = [
     width: 100,
   },
   {
+    title: '备注名称',
+    key: 'alias',
+    width: 200,
+  },
+  {
     title: '用户ID',
     key: 'wxid',
     width: 200,
   },
+  
   {
     title: '机器人ID',
     key: 'id',

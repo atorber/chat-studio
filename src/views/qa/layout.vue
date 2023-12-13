@@ -32,5 +32,5 @@ const menus = [
 </script>
 
 <template>
-  <SubViewLayout title="统计&打卡" :menus="menus" />
+  <SubViewLayout title="自动问答" :menus="menus" />
 </template>

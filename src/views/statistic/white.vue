@@ -1,10 +1,87 @@
+<template>
+  <PageTitle title="白名单" />
+  <n-card :bordered="false" class="proCard">
+    <!-- <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
+      <template #statusSlot="{ model, field }">
+        <n-input v-model:value="model[field]" />
+      </template>
+    </BasicForm> -->
+
+    <BasicTable
+      :columns="columns"
+      :request="loadDataTable"
+      :row-key="(row: ListData) => row.id"
+      ref="actionRef"
+      :actionColumn="actionColumn"
+      @update:checked-row-keys="onCheckedRow"
+      :scroll-x="1090"
+    >
+      <template #tableTitle>
+        <n-button type="primary" @click="addTable">
+          <template #icon>
+            <n-icon>
+              <PlusOutlined />
+            </n-icon>
+          </template>
+          新建
+        </n-button>
+      </template>
+
+      <template #toolbar>
+        <n-button type="primary" @click="reloadTable">刷新数据</n-button>
+      </template>
+    </BasicTable>
+
+    <n-modal v-model:show="showModal" :show-icon="false" preset="dialog" title="新建">
+      <n-form
+        :model="formParams"
+        :rules="rules"
+        ref="formRef"
+        label-placement="left"
+        :label-width="125"
+        class="py-4"
+      >
+        <n-form-item label="所属应用" path="app" v-show="false">
+          <n-input placeholder="请输入所属应用" v-model:value="formParams.app" />
+        </n-form-item>
+        <n-form-item label="类型" path="type">
+          <n-input placeholder="可选项：好友、群" v-model:value="formParams.type" />
+        </n-form-item>
+        <n-form-item label="昵称/群名称" path="name">
+          <n-input placeholder="请输入昵称/群名称" v-model:value="formParams.name" />
+        </n-form-item>
+        <n-form-item label="好友ID/群ID(选填)" path="type">
+          <n-input placeholder="请输入好友ID/群ID" v-model:value="formParams.id" />
+        </n-form-item>
+        <n-form-item label="好友备注(选填)" path="alias">
+          <n-input placeholder="请输入好友备注" v-model:value="formParams.alias" />
+        </n-form-item>
+        <n-form-item label="配额(选填)" path="quota">
+          <n-input placeholder="请输入配额" v-model:value="formParams.quota" />
+        </n-form-item>
+
+        <n-form-item label="备注说明(选填)" path="info">
+          <n-input type="textarea" placeholder="请输入备注说明" v-model:value="formParams.info" />
+        </n-form-item>
+      </n-form>
+
+      <template #action>
+        <n-space>
+          <n-button @click="() => (showModal = false)">取消</n-button>
+          <n-button type="info" :loading="formBtnLoading" @click="confirmForm">确定</n-button>
+        </n-space>
+      </template>
+    </n-modal>
+  </n-card>
+</template>
+
 <script lang="ts" setup>
 import { h, reactive, ref } from 'vue'
 import { BasicTable, TableAction } from '@/components/Table'
 import { BasicForm, FormSchema, useForm } from '@/components/Form/index'
-import { ServeGetOrders, ServeDeleteOrders, ServeCreateOrders } from '@/api/order'
+import { ServeGetWhitelistWhite, ServeCreateWhitelistWhite, ServeDeleteWhitelistWhite } from '@/api/whitelist'
 
-import { columnsOrder as columns, ListDataOrder as ListData } from './columns'
+import { columnsWhiteList as columns, ListDataQa as ListData } from './columns'
 import { PlusOutlined } from '@vicons/antd'
 import { useRouter } from 'vue-router'
 import { type FormRules } from 'naive-ui'
@@ -35,9 +112,9 @@ const schemas: FormSchema[] = [
     field: 'name',
     labelMessage: '这是一个提示',
     component: 'NInput',
-    label: '姓名',
+    label: '序号',
     componentProps: {
-      placeholder: '请输入姓名',
+      placeholder: '请输入记录ID',
       onInput: (e: any) => {
         console.log(e)
       }
@@ -64,11 +141,11 @@ const schemas: FormSchema[] = [
       placeholder: '请选择类型',
       options: [
         {
-          label: '舒适性',
+          label: '好友',
           value: 1
         },
         {
-          label: '经济性',
+          label: '群',
           value: 2
         }
       ],
@@ -161,13 +238,12 @@ const actionRef = ref()
 const showModal = ref(false)
 const formBtnLoading = ref(false)
 const formParams = reactive({
-      code: '',
-      desc: '',
-      name: '',
-      alias: '',
-      wxid: '',
-      topic: '',
-      info: '',
+  app: '活动管理|act',
+  type: '',
+  id: '',
+  alias: '',
+  quota: 100,
+  info:'',
 })
 
 const actionColumn = reactive({
@@ -233,7 +309,7 @@ function addTable() {
 }
 
 const loadDataTable = async (res) => {
-  const { data } = await ServeGetOrders({ ...getFieldsValue(), ...res })
+  const { data } = await ServeGetWhitelistWhite({ ...getFieldsValue(), ...res, ...{fieldName:'app',value:'活动管理|act'} });
   console.log('data', JSON.stringify(data))
   return data
 }
@@ -249,8 +325,11 @@ function reloadTable() {
 function confirmForm(e) {
   e.preventDefault()
   formBtnLoading.value = true
-  formRef.value.validate((errors) => {
+  formRef.value.validate(async (errors) => {
     if (!errors) {
+      const res = await ServeCreateWhitelistWhite(formParams)
+      console.log('新建res', res)
+
       window['$message'].success('新建成功')
       setTimeout(() => {
         showModal.value = false
@@ -270,7 +349,7 @@ function handleEdit(record: Recordable) {
 
 async function handleDelete(record: Recordable) {
   console.log('点击了删除', record)
-  const res = await ServeDeleteOrders({recordId:record.recordId})
+  const res = await ServeDeleteWhitelistWhite({recordId:record.recordId})
   console.log('删除res', res)
   if(res.code === 200){
     window['$message'].success('删除成功')
@@ -290,82 +369,6 @@ function handleReset(values: Recordable) {
   console.log(values)
 }
 </script>
-
-<template>
-  <PageTitle title="记录" />
-  <n-card :bordered="false" class="proCard">
-    <!-- <BasicForm @register="register" @submit="handleSubmit" @reset="handleReset">
-      <template #statusSlot="{ model, field }">
-        <n-input v-model:value="model[field]" />
-      </template>
-    </BasicForm> -->
-
-    <BasicTable
-      :columns="columns"
-      :request="loadDataTable"
-      :row-key="(row: ListData) => row.id"
-      ref="actionRef"
-      :actionColumn="actionColumn"
-      @update:checked-row-keys="onCheckedRow"
-      :scroll-x="1090"
-    >
-      <template #tableTitle>
-        <n-button type="primary" @click="addTable">
-          <template #icon>
-            <n-icon>
-              <PlusOutlined />
-            </n-icon>
-          </template>
-          新建
-        </n-button>
-      </template>
-
-      <template #toolbar>
-        <n-button type="primary" @click="reloadTable">刷新数据</n-button>
-      </template>
-    </BasicTable>
-
-    <n-modal v-model:show="showModal" :show-icon="false" preset="dialog" title="新建">
-      <n-form
-        :model="formParams"
-        :rules="rules"
-        ref="formRef"
-        label-placement="left"
-        :label-width="125"
-        class="py-4"
-      >
-        <n-form-item label="活动编号" path="code">
-          <n-input placeholder="请输入活动编号" v-model:value="formParams.code" />
-        </n-form-item>
-        <n-form-item label="描述" path="desc">
-          <n-input type="textarea" placeholder="请输入描述" v-model:value="formParams.desc" />
-        </n-form-item>
-        <n-form-item label="昵称" path="name">
-          <n-input placeholder="请输入昵称" v-model:value="formParams.name" />
-        </n-form-item>
-        <n-form-item label="备注名称(选填)" path="alias">
-          <n-input placeholder="请输入地点" v-model:value="formParams.alias" />
-        </n-form-item>
-        <n-form-item label="好友ID(选填)" path="wxid">
-          <n-input placeholder="请输入周期" v-model:value="formParams.wxid" />
-        </n-form-item>
-        <n-form-item label="群名称" path="topic">
-          <n-input placeholder="请输入群名称" v-model:value="formParams.topic" />
-        </n-form-item>
-        <n-form-item label="备注" path="info">
-          <n-input placeholder="请输入备注信息" v-model:value="formParams.info" />
-        </n-form-item>
-      </n-form>
-
-      <template #action>
-        <n-space>
-          <n-button @click="() => (showModal = false)">取消</n-button>
-          <n-button type="info" :loading="formBtnLoading" @click="confirmForm">确定</n-button>
-        </n-space>
-      </template>
-    </n-modal>
-  </n-card>
-</template>
 
 <style lang="less" scoped>
 .el-header {

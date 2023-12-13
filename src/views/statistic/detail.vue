@@ -24,10 +24,10 @@ const detail = reactive({
 
 // 加载用户信息
 ServeGetUserDetail().then(({ data }) => {
-  detail.nickname = data.nickname.toString()
+  // detail.nickname = data.nickname.toString()
   detail.mobile = data.mobile.toString()
   detail.email = data.email.toString()
-  detail.gender = data.gender.toString()
+  // detail.gender = data.gender.toString()
   detail.motto = data.motto.toString()
   detail.avatar = data.avatar
   if (data.birthday) {
@@ -75,7 +75,7 @@ const onUploadAvatar = (avatar) => {
 <template>
   <h3 class="title">配置信息</h3>
   <div class="view-box">
-    <section class="el-container container">
+    <section class="container el-container">
       <main class="el-main" style="padding-right: 20px">
         <n-form
           ref="formRef"

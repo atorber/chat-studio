@@ -2,58 +2,92 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { NForm, NFormItem, NInput, NDatePicker, NRadio, NRadioGroup, NSpace } from 'naive-ui'
-import { ServeUpdateUserDetail, ServeGetUserDetail } from '@/api/user'
+import { ServeGetUserConfigGroup, ServeUpdateConfig } from '@/api/user'
 import AvatarCropper from '@/components/base/AvatarCropper.vue'
 import { hidePhone } from '@/utils/strings'
 import { useUserStore } from '@/store'
+import ws from '@/connect'
 
 const userStore = useUserStore()
 const router = useRouter()
 const cropper = ref(false)
 
 const detail = reactive({
-  avatar: '',
-  nickname: '',
-  mobile: '',
-  email: '',
-  gender: '0',
-  motto: '0',
-  birthday: ref(),
+  AUTOQA_AUTOREPLY: '0',
+  WXOPENAI_TOKEN: '',
+  WXOPENAI_ENCODINGAESKEY: '',
+  WXOPENAI_APPID: '',
+  WXOPENAI_MANAGERID: '',
   loading: false
 })
 
-// 加载用户信息
-ServeGetUserDetail().then(({ data }) => {
-  detail.nickname = data.nickname.toString()
-  detail.mobile = data.mobile.toString()
-  detail.email = data.email.toString()
-  detail.gender = data.gender.toString()
-  detail.motto = data.motto.toString()
-  detail.avatar = data.avatar
-  if (data.birthday) {
-    detail.birthday = ref(data.birthday)
-  }
-})
+const configMap = reactive({})
 
+function reloadTable() {
+  // 加载用户信息
+ServeGetUserConfigGroup().then(({ data }) => {
+  console.log('ServeGetUserConfigGroup', data)
+  console.log('ServeGetUserConfigGroup', data['智能问答'])
+  console.log('ServeGetUserConfigGroup', data['微信对话开放平台'])
+  const qaSwich = data['智能问答']
+  detail[qaSwich[0].key] = qaSwich[0].value === true ? '1' : '0'
+  configMap[qaSwich[0].key] = qaSwich[0]
+  const config = data['微信对话开放平台']
+  for(let i=0; i<config.length; i++){
+    configMap[config[i].key] = config[i]
+    detail[config[i].key] = config[i].value
+  }
+  console.log('configMap', configMap)
+  console.log('detail', detail)
+})
+}
+reloadTable()
 // 修改用户信息
 const onChangeDetail = () => {
-  if (!detail.nickname.trim()) {
-    return window['$message'].warning('昵称不能为空')
+  console.log('detail', detail)
+  
+  if (!detail.WXOPENAI_TOKEN || !detail.WXOPENAI_ENCODINGAESKEY || !detail.WXOPENAI_APPID || !detail.WXOPENAI_MANAGERID) {
+    return window['$message'].warning('必填项不能为空')
   }
 
   detail.loading = true
+  const config = []
+  for (const key in detail) {
+    console.debug('key', key)
+    console.debug('configMap[key]', configMap[key])
+    console.debug('detail[key]', detail[key])
+    const curTime = new Date().getTime()
+    if(key !== 'loading'){
+      if(key === 'AUTOQA_AUTOREPLY'){
+        detail[key] = detail[key] === '1' ? 'true' : 'false'
+        configMap[key].name = '智能问答-' + configMap[key].name
+      }else{
+        configMap[key].name = '微信对话开放平台-' + configMap[key].name
+      }
+      configMap[key].lastOperationTime = curTime
+      const item = {
+      recordId: configMap[key].id,
+      fields: configMap[key]
+    }
+    item.fields.value = detail[key]
+    delete item.fields.id
+    config.push(item)
+    }
+  }
 
-  const response = ServeUpdateUserDetail({
-    nickname: detail.nickname.trim(),
-    avatar: detail.avatar,
-    motto: detail.motto,
-    gender: parseInt(detail.gender),
-    birthday: detail.birthday
-  })
+  console.log('config', config)
+  
+  const response = ServeUpdateConfig(config)
 
   response.then(() => {
     window['$message'].success('信息保存成功')
-    userStore.loadSetting()
+
+    const rawMsg = {app:'智能问答|qa', type: 'env', action: 'reload'}
+    const payload = ws.formatMsgToCommand(rawMsg)
+    ws.client.publish(ws.apis.commandApi, payload)
+    
+    // userStore.loadSetting()
+    reloadTable()
   })
 
   response.catch(() => {
@@ -65,17 +99,12 @@ const onChangeDetail = () => {
   })
 }
 
-const onUploadAvatar = (avatar) => {
-  cropper.value = false
-  detail.avatar = avatar
-  onChangeDetail()
-}
 </script>
 
 <template>
   <h3 class="title">配置信息</h3>
   <div class="view-box">
-    <section class="el-container container">
+    <section class="container el-container">
 
 <main class="el-main" style="padding-right: 20px">
   <n-form
@@ -87,7 +116,7 @@ const onUploadAvatar = (avatar) => {
     style="max-width: 500px; margin-top: 25px"
   >
   <n-form-item label="自动问答：">
-      <n-radio-group v-model:value="detail.gender" name="gender">
+      <n-radio-group v-model:value="detail.AUTOQA_AUTOREPLY" name="AUTOQA_AUTOREPLY">
         <n-space>
           <n-radio key="1" value="1"> 开启 </n-radio>
           <n-radio key="0" value="0"> 关闭 </n-radio>

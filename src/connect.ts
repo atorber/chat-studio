@@ -14,94 +14,14 @@ import { Client } from 'paho-mqtt' // 从'mqtt-paho'库导入Client
 import { v4 } from 'uuid'
 import { storage } from '@/utils/storage'
 
+import { getKeyByBasicString, encrypt, decrypt } from '@/utils/crypto-use-crypto-js.mjs'
+
 /**
  * 延时函数
  * @param {*} ms 毫秒
  */
 async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-// 格式化消息数据
-function formatMsg(data) {
-  return JSON.stringify({
-    reqId: v4(),
-    method: 'thing.event.post',
-    version: '1.0',
-    timestamp: new Date().getTime(),
-    events: data
-  })
-}
-
-function formatMsgToWechaty(data) {
-  // {"type":"text","content":"ok","quote_id":"","mention":{"all":0,"uids":[]},"receiver":{"receiver_id":"wxid_pnza7m7kf9tq12","talk_type":1}}
-  // {"type":"image","width":1024,"height":1024,"url":"https://im.gzydong.com/public/media/image/common/20231030/2143db60700049fd68ab44263cd8b2cc_1024x1024.png","size":10000,"receiver":{"receiver_id":"20889085065@chatroom","talk_type":2}}
-  const msg_type = data.type
-  let messageType: any = 'Text'
-  let messagePayload = ''
-
-  switch (msg_type) {
-    case 'text':
-      messageType = 'Text'
-      messagePayload = data.content
-      break
-    case 'image':
-      messagePayload = data.url
-      messageType = 'Image'
-      break
-    case 'Emoticon':
-      messageType = 'Text'
-      break
-    case 'ChatHistory':
-      messageType = 'Text'
-      break
-    case 'Audio':
-      messageType = 4
-      break
-    case 'Attachment':
-      messageType = 6
-      break
-    case 'Video':
-      messageType = 5
-      break
-    case 'MiniProgram':
-      messageType = 1
-      break
-    case 'Url':
-      messageType = 1
-      break
-    case 'Recalled':
-      messageType = 1
-      break
-    case 'RedEnvelope':
-      messageType = 1
-      break
-    case 'Contact':
-      messageType = 1
-      break
-    case 'Location':
-      messageType = 1
-      break
-    default:
-      messageType = 'Text'
-      break
-  }
-  const msg = {
-    reqId: v4(),
-    method: 'thing.command.invoke',
-    version: '1.0',
-    timestamp: new Date().getTime(),
-    name: 'send',
-    params: {
-      toContacts: [
-        data.receiver.receiver_id
-        // "5550027590@chatroom",
-      ],
-      messageType: messageType,
-      messagePayload: messagePayload
-    }
-  }
-  return JSON.stringify(msg)
 }
 
 /**
@@ -126,6 +46,8 @@ class Socket {
   apis
 
   botid
+
+  key
 
   /**
    * Socket 初始化实例
@@ -182,6 +104,115 @@ class Socket {
     // this.connect();
   }
 
+  formatMsgToWechaty(data) {
+    // {"type":"text","content":"ok","quote_id":"","mention":{"all":0,"uids":[]},"receiver":{"receiver_id":"wxid_pnza7m7kf9tq12","talk_type":1}}
+    // {"type":"image","width":1024,"height":1024,"url":"https://im.gzydong.com/public/media/image/common/20231030/2143db60700049fd68ab44263cd8b2cc_1024x1024.png","size":10000,"receiver":{"receiver_id":"20889085065@chatroom","talk_type":2}}
+    const msg_type = data.type
+    let messageType: any = 'Text'
+    let messagePayload = ''
+  
+    switch (msg_type) {
+      case 'text':
+        messageType = 'Text'
+        messagePayload = data.content
+        break
+      case 'image':
+        messagePayload = data.url
+        messageType = 'Image'
+        break
+      case 'Emoticon':
+        messageType = 'Text'
+        break
+      case 'ChatHistory':
+        messageType = 'Text'
+        break
+      case 'Audio':
+        messageType = 4
+        break
+      case 'Attachment':
+        messageType = 6
+        break
+      case 'Video':
+        messageType = 5
+        break
+      case 'MiniProgram':
+        messageType = 1
+        break
+      case 'Url':
+        messageType = 1
+        break
+      case 'Recalled':
+        messageType = 1
+        break
+      case 'RedEnvelope':
+        messageType = 1
+        break
+      case 'Contact':
+        messageType = 1
+        break
+      case 'Location':
+        messageType = 1
+        break
+      default:
+        messageType = 'Text'
+        break
+    }
+    const msg = {
+      reqId: v4(),
+      method: 'thing.command.invoke',
+      version: '1.0',
+      timestamp: new Date().getTime(),
+      name: 'send',
+      params: {
+        toContacts: [
+          data.receiver.receiver_id
+          // "5550027590@chatroom",
+        ],
+        messageType: messageType,
+        messagePayload: messagePayload
+      }
+    }
+    const msgStr = JSON.stringify(msg)
+    const msgStrEncrypted = encrypt(msgStr, this.key)
+    console.debug('msgStrEncrypted...', msgStrEncrypted)
+    const msgStrDecrypted = decrypt(msgStrEncrypted, this.key)
+    console.debug('msgStrDecrypted...', msgStrDecrypted)
+    return msgStrEncrypted
+  }
+
+  formatMsgToCommand(data) {
+    const msg = {
+      reqId: v4(),
+      method: 'thing.command.invoke',
+      version: '1.0',
+      timestamp: new Date().getTime(),
+      name: 'updateConfig',
+      params: data
+    }
+    const msgStr = JSON.stringify(msg)
+    const msgStrEncrypted = encrypt(msgStr, this.key)
+    console.debug('msgStrEncrypted...', msgStrEncrypted)
+    const msgStrDecrypted = decrypt(msgStrEncrypted, this.key)
+    console.debug('msgStrDecrypted...', msgStrDecrypted)
+    return msgStrEncrypted
+  }
+
+  // 格式化消息数据
+ formatMsg(data) {
+  const msgStr =  JSON.stringify({
+    reqId: v4(),
+    method: 'thing.event.post',
+    version: '1.0',
+    timestamp: new Date().getTime(),
+    events: data
+  })
+  const msgStrEncrypted = encrypt(msgStr, this.key)
+  console.debug('msgStrEncrypted...', msgStrEncrypted)
+  const msgStrDecrypted = decrypt(msgStrEncrypted, this.key)
+  console.debug('msgStrDecrypted...', msgStrDecrypted)
+  return msgStrEncrypted
+}
+
   subscribeToTopics() {
     console.debug('订阅消息主题:', JSON.stringify(this.apis))
     this.client.subscribe(this.apis.eventApi)
@@ -210,7 +241,8 @@ class Socket {
     const { hash } = user.user_info
     this.botid = hash
     console.debug('从用户信息中获取hash', hash)
-
+    this.key = getKeyByBasicString(hash)
+    console.debug('从用户信息中获取key', this.key)
     this.apis = {
       eventApi: `thing/chatbot/${this.botid}/event/post`,
       commandApi: `thing/chatbot/${this.botid}/command/invoke`
@@ -252,8 +284,12 @@ class Socket {
   onMessage(topic, message) {
     console.debug('topic:', topic)
     console.debug('payload:', message.toString())
+
     try{
-      const messageObj = JSON.parse(message.toString())
+      message = decrypt(message.toString(), this.key)
+      console.debug('decrypt message:', message)
+
+      const messageObj = JSON.parse(message)
 
       if (topic === this.apis.eventApi) {
         if (messageObj.events['onMessage']) {
@@ -509,7 +545,7 @@ class Socket {
   send(message) {
     if (this.isConnect()) {
       // this.client.publish(this.apis.eventApi, formatMsg({ 'im.message': message }))
-      this.client.publish(this.apis.commandApi, formatMsgToWechaty(message))
+      this.client.publish(this.apis.commandApi, this.formatMsgToWechaty(message))
     } else {
       this.client.end()
     }
@@ -526,7 +562,7 @@ class Socket {
     console.debug('emit() data:', data)
     const rawMsg = {}
     rawMsg[event] = data
-    const payload = formatMsg(rawMsg)
+    const payload = this.formatMsg(rawMsg)
     this.client.publish(this.apis.eventApi, payload)
   }
 }

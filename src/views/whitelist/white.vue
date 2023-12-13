@@ -12,11 +12,10 @@
       :request="loadDataTable"
       :row-key="(row: ListData) => row.id"
       ref="actionRef"
-      :actionColumn="actionColumn"
       @update:checked-row-keys="onCheckedRow"
       :scroll-x="1090"
     >
-      <template #tableTitle>
+      <!-- <template #tableTitle>
         <n-button type="primary" @click="addTable">
           <template #icon>
             <n-icon>
@@ -25,14 +24,14 @@
           </template>
           新建
         </n-button>
-      </template>
+      </template> -->
 
       <template #toolbar>
         <n-button type="primary" @click="reloadTable">刷新数据</n-button>
       </template>
     </BasicTable>
 
-    <n-modal v-model:show="showModal" :show-icon="false" preset="dialog" title="新建">
+    <!-- <n-modal v-model:show="showModal" :show-icon="false" preset="dialog" title="新建">
       <n-form
         :model="formParams"
         :rules="rules"
@@ -58,7 +57,7 @@
           <n-button type="info" :loading="formBtnLoading" @click="confirmForm">确定</n-button>
         </n-space>
       </template>
-    </n-modal>
+    </n-modal> -->
   </n-card>
 </template>
 

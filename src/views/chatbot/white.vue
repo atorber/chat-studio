@@ -38,17 +38,30 @@
         :rules="rules"
         ref="formRef"
         label-placement="left"
-        :label-width="80"
+        :label-width="125"
         class="py-4"
       >
-        <n-form-item label="名称" path="name">
-          <n-input placeholder="请输入名称" v-model:value="formParams.name" />
+        <n-form-item label="机器人名称" path="botname">
+          <n-input placeholder="请选择机器人名称" v-model:value="formParams.botname" />
         </n-form-item>
-        <n-form-item label="地址" path="address">
-          <n-input type="textarea" placeholder="请输入地址" v-model:value="formParams.address" />
+        <n-form-item label="机器人ID" path="botname">
+          <n-input placeholder="请选择机器人ID" v-model:value="formParams.id" />
         </n-form-item>
-        <n-form-item label="日期" path="date">
-          <n-date-picker type="datetime" placeholder="请选择日期" v-model:value="formParams.date" />
+        <n-form-item label="昵称/群名称" path="name">
+          <n-input placeholder="请输入昵称/群名称" v-model:value="formParams.name" />
+        </n-form-item>
+        <n-form-item label="好友ID/群ID" path="type">
+          <n-input placeholder="请输入好友ID/群ID" v-model:value="formParams.wxid" />
+        </n-form-item>
+        <!-- <n-form-item label="好友备注" path="alias">
+          <n-input placeholder="请输入好友备注" v-model:value="formParams.alias" />
+        </n-form-item> -->
+        <n-form-item label="配额" path="quota">
+          <n-input placeholder="请输入配额" v-model:value="formParams.quota" />
+        </n-form-item>
+
+        <n-form-item label="备注" path="info">
+          <n-input type="textarea" placeholder="请输入备注说明" v-model:value="formParams.info" />
         </n-form-item>
       </n-form>
 
@@ -66,7 +79,7 @@
 import { h, reactive, ref } from 'vue'
 import { BasicTable, TableAction } from '@/components/Table'
 import { BasicForm, FormSchema, useForm } from '@/components/Form/index'
-import { ServeGetChatbotUsers } from '@/api/chatbot'
+import { ServeGetChatbotUsers, ServeCreateChatbotUsers, ServeDeleteChatbotUsers } from '@/api/chatbot'
 
 import { columns, ListData } from './columnsUser'
 import { PlusOutlined } from '@vicons/antd'
@@ -225,9 +238,13 @@ const actionRef = ref()
 const showModal = ref(false)
 const formBtnLoading = ref(false)
 const formParams = reactive({
+  id: '',
+  botname: '',
+  wxid: '',
   name: '',
-  address: '',
-  date: null
+  prompt: '',
+  quota: 100,
+  info: '',
 })
 
 const actionColumn = reactive({
@@ -309,8 +326,10 @@ function reloadTable() {
 function confirmForm(e) {
   e.preventDefault()
   formBtnLoading.value = true
-  formRef.value.validate((errors) => {
+  formRef.value.validate(async (errors) => {
     if (!errors) {
+      const res = await ServeCreateChatbotUsers(formParams)
+      console.log('新建res', res)
       window['$message'].success('新建成功')
       setTimeout(() => {
         showModal.value = false
@@ -328,9 +347,16 @@ function handleEdit(record: Recordable) {
   router.push({ name: 'basic-info', params: { id: record.id } })
 }
 
-function handleDelete(record: Recordable) {
+async function handleDelete(record: Recordable) {
   console.log('点击了删除', record)
-  window['$message'].info('点击了删除')
+  const res = await ServeDeleteChatbotUsers({recordId:record.recordId})
+  console.log('删除res', res)
+  if(res.code === 200){
+    window['$message'].success('删除成功')
+    reloadTable()
+  }else{
+    window['$message'].error('删除失败')
+  }
 }
 
 function handleSubmit(values: Recordable) {
