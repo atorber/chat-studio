@@ -1,6 +1,6 @@
 import { parseTime } from './datetime'
 
-const KEY_INDEX_NAME = 'send_message_index_name'
+export const KEY_INDEX_NAME = 'send_message_index_name'
 
 export function formatTalkRecord(uid, data) {
   data.float = 'center'
@@ -10,7 +10,7 @@ export function formatTalkRecord(uid, data) {
   }
 
   data.isCheck = false
-  // console.log('data...',data.created_at, data.content || '消息丢失')
+
   return data
 }
 
@@ -75,4 +75,12 @@ export function getCacheIndexName() {
  */
 export function setCacheIndexName(type, id) {
   sessionStorage.setItem(KEY_INDEX_NAME, `${type}_${id}`)
+}
+
+export const ttime = (datetime) => {
+  if (datetime == undefined || datetime == '') {
+    return new Date().getTime()
+  }
+
+  return new Date(datetime.replace(/-/g, '/')).getTime()
 }

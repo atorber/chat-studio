@@ -1,12 +1,12 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { fileFormatSize } from '@/utils/strings'
 import { download } from '@/utils/functions'
-import { FileExtra } from './types'
+import { ITalkRecordExtraFile, ITalkRecord } from '@/types/chat'
 
 defineProps<{
-  extra: FileExtra
-  data: any
-  maxWidth: Boolean
+  extra: ITalkRecordExtraFile
+  data: ITalkRecord
+  maxWidth?: Boolean
 }>()
 </script>
 

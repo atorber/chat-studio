@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import {
   useTalkStore,
@@ -78,24 +78,18 @@ const onSendTextEvent = throttle((value: any) => {
     type: 'text',
     content: data.items[0].content,
     quote_id: data.quoteId,
-    mention: {
-      all: data.mentions.find((v: any) => v.atid == 0) ? 1 : 0,
-      uids: data.mentionUids
-    }
+    mentions: data.mentionUids
   }
 
   onSendMessage(message, (ok: boolean) => {
     if (!ok) return
 
     let el = document.getElementById('talk-session-list')
-    if (el) {
-      // 对话列表滚动条置顶
-      el.scrollTop = 0
-    }
+    el?.scrollTo({ top: 0, behavior: 'smooth' })
 
     callBack(true)
   })
-}, 3000)
+}, 1000)
 
 // 发送图片消息
 const onSendImageEvent = ({ data, callBack }) => {
@@ -136,9 +130,9 @@ const onSendCodeEvent = ({ data, callBack }) => {
 
 // 发送文件消息
 const onSendFileEvent = ({ data }) => {
-  let maxsize = 10 * 1024 * 1024
+  let maxsize = 200 * 1024 * 1024
   if (data.size > maxsize) {
-    return window['$message'].warning('上传文件不能超过10M!')
+    return window['$message'].warning('上传文件不能超过100M!')
   }
 
   uploadsStore.initUploadFile(data, props.talk_type, props.receiver_id, dialogueStore.talk.username)

@@ -1,111 +1,137 @@
 import { h } from 'vue'
+import { NAvatar } from 'naive-ui'
 import { useTalkStore, useUserStore, useDialogueStore } from '@/store'
-import { getAccessToken, isLoggedIn } from './utils/auth'
+import { notifyIcon } from '@/constant/default'
 import WsSocket from './plugins/ws-socket'
 import EventTalk from './event/socket/talk'
 import EventKeyboard from './event/socket/keyboard'
 import EventLogin from './event/socket/login'
 import EventRevoke from './event/socket/revoke'
-import { NAvatar } from 'naive-ui'
-import { notifyIcon } from '@/constant/default'
+import { getAccessToken, isLoggedIn } from './utils/auth'
 
 const urlCallback = () => {
   if (!isLoggedIn()) {
     window.location.reload()
   }
 
-  const url = `${import.meta.env.VITE_SOCKET_API}/wss/default.io`
-
-  return `${url}?token=${getAccessToken()}`
+  return `${import.meta.env.VITE_SOCKET_API}/wss/default.io?token=${getAccessToken()}`
 }
 
-/**
- * Socket 连接实例
- *
- * 注释: 所有 WebSocket 消息接收处理在此实例中处理
- */
-class Socket {
-  /**
-   * WsSocket 实例
-   */
-  socket
+class Connect {
+  private conn: WsSocket
 
-  /**
-   * Socket 初始化实例
-   */
   constructor() {
-    this.socket = new WsSocket(urlCallback, {
-      onError: (evt) => {
+    this.conn = new WsSocket(urlCallback, {
+      onError: (evt: any) => {
         console.log('Websocket 连接失败回调方法', evt)
       },
       // Websocket 连接成功回调方法
-      onOpen: (evt) => {
+      onOpen: () => {
         // 更新 WebSocket 连接状态
         useUserStore().updateSocketStatus(true)
         useTalkStore().loadTalkList()
       },
       // Websocket 断开连接回调方法
-      onClose: (evt) => {
+      onClose: () => {
         // 更新 WebSocket 连接状态
         useUserStore().updateSocketStatus(false)
       }
     })
 
-    this.register()
-  }
-
-  // 连接 WebSocket 服务
-  connect() {
-    this.socket.connection()
-  }
-
-  // 连接 WebSocket 服务
-  disconnect() {
-    this.socket.close()
-  }
-
-  isConnect() {
-    if (!this.socket.connect) {
-      return false
-    }
-
-    return this.socket.connect.readyState === 1
+    this.bindEvents()
   }
 
   /**
-   * 注册回调消息处理事件
+   * 连接
    */
-  register() {
-    this.socket.on('ping', (data) => {
-      this.emit('pong', '')
-    })
+  connect() {
+    this.conn.connection()
+  }
 
-    this.socket.on('pong', (data) => {})
+  /**
+   * 断开连接
+   */
+  disconnect() {
+    this.conn.close()
+  }
 
-    // 对话消息事件
-    this.socket.on('im.message', (data) => new EventTalk(data))
+  /**
+   * 连接状态
+   * @returns WebSocket 连接状态
+   */
+  isConnect() {
+    if (!this.conn.connect) return false
 
-    this.socket.on('im.message.read', (data) => {
+    return this.conn.connect.readyState === 1
+  }
+
+  /**
+   * 推送事件消息
+   * @param event 事件名
+   * @param data  数据
+   */
+  emit(event: string, data: any) {
+    this.conn.emit(event, data)
+  }
+
+  /**
+   * 绑定监听消息事件
+   */
+  bindEvents() {
+    this.onPing()
+    this.onPong()
+    this.onImMessage()
+    this.onImMessageRead()
+    this.onImContactStatus()
+    this.onImMessageRevoke()
+    this.onImMessageKeyboard()
+  }
+
+  onPing() {
+    this.conn.on('ping', () => this.emit('pong', ''))
+  }
+
+  onPong() {
+    this.conn.on('pong', () => {})
+  }
+
+  onImMessage() {
+    this.conn.on('im.message', (data: any) => new EventTalk(data))
+  }
+
+  onImMessageRead() {
+    this.conn.on('im.message.read', (data: any) => {
       const dialogueStore = useDialogueStore()
 
-      if (dialogueStore.index_name == `1_${data.sender_id}`) {
-        for (const msgid of data.ids) {
-          dialogueStore.updateDialogueRecord({ id: msgid, is_read: 1 })
-        }
+      if (dialogueStore.index_name !== `1_${data.sender_id}`) {
+        return
+      }
+
+      for (const msgid of data.ids) {
+        dialogueStore.updateDialogueRecord({ id: msgid, is_read: 1 })
       }
     })
+  }
 
+  onImContactStatus() {
     // 好友在线状态事件
-    this.socket.on('im.contact.status', (data) => new EventLogin(data))
+    this.conn.on('im.contact.status', (data: any) => new EventLogin(data))
+  }
 
+  onImMessageKeyboard() {
     // 好友键盘输入事件
-    this.socket.on('im.message.keyboard', (data) => new EventKeyboard(data))
+    this.conn.on('im.message.keyboard', (data: any) => new EventKeyboard(data))
+  }
 
+  // 即将废弃
+  onImMessageRevoke() {
     // 消息撤回事件
-    this.socket.on('im.message.revoke', (data) => new EventRevoke(data))
+    this.conn.on('im.message.revoke', (data: any) => new EventRevoke(data))
+  }
 
+  onImContactApply() {
     // 好友申请事件
-    this.socket.on('im.contact.apply', (data) => {
+    this.conn.on('im.contact.apply', (data: any) => {
       window['$notification'].create({
         title: '好友申请通知',
         content: data.remark,
@@ -122,8 +148,11 @@ class Socket {
       })
       useUserStore().isContactApply = true
     })
+  }
 
-    this.socket.on('im.group.apply', (data) => {
+  onImGroupApply() {
+    // 群申请消息
+    this.conn.on('im.group.apply', () => {
       window['$notification'].create({
         title: '入群申请通知',
         content: '有新的入群申请，请注意查收',
@@ -139,34 +168,14 @@ class Socket {
 
       useUserStore().isGroupApply = true
     })
+  }
 
-    this.socket.on('event_error', (data) => {
+  onEventError() {
+    this.conn.on('event_error', (data: any) => {
       window['$message'].error(JSON.stringify(data))
     })
   }
-
-  /**
-   * 聊天发送数据
-   *
-   * @param {Object} mesage
-   */
-  send(mesage) {
-    if (this.isConnect()) {
-      this.socket.send(mesage)
-    } else {
-      this.socket.close()
-    }
-  }
-
-  /**
-   * 推送消息
-   *
-   * @param {String} event 事件名
-   * @param {Object} data 数据
-   */
-  emit(event, data) {
-    this.socket.emit(event, data)
-  }
 }
 
-export default new Socket()
+// 导出单例
+export default new Connect()

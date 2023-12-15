@@ -304,13 +304,16 @@ class Socket {
           const messageType = rawMsg.type
           let msg_type = 1
           let text:any = {}
+          const messagePayload = rawMsg.data.payload.text
           try{
           text = JSON.parse(rawMsg.text)
           }catch(e){
             console.error('JSON.parse(rawMsg.text) error:', e)
           }
           console.debug('text', text)
-          let extra = {}
+          let extra: any = {
+            content: messagePayload,
+          };
           switch (messageType) {
             case 'Text':
               msg_type = 1
@@ -413,6 +416,25 @@ class Socket {
             default:
               break
           }
+
+          if (['Image', 'Attachment', 'Video', 'Audio'].includes(messageType)) {
+            extra = {
+              height: 1000,
+              name: '无效文件',
+              size: 0,
+              suffix: '',
+              url: '',
+              width: 563,
+            };
+            try {
+              const textObj = JSON.parse(messagePayload);
+              extra.name = textObj.name;
+              extra.url = textObj.url;
+            } catch (e) {
+              console.debug('解析消息内容失败', e);
+            }
+          }
+
           const newMsg = {
             receiver_id, // 接收者ID
             sender_id: user_id, // 发送者ID
@@ -432,7 +454,6 @@ class Socket {
               is_revoke: 0, // 是否撤回
               is_mark: 0, // 是否标记
               is_read: 0, // 是否已读
-              content: rawMsg.data.payload.text || '', // 消息内容
               created_at: rawMsg.time, // 创建时间
               extra,
             }
