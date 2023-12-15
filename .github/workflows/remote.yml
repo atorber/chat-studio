@@ -33,8 +33,8 @@ jobs:
         SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
         SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
       run: |
-        apt-get update
-        apt-get install -y sshpass
+        sudo apt-get update
+        sudo apt-get install -y sshpass
         sshpass -p $SSH_PASSWORD scp -r ./dist/* $SSH_USERNAME@$SSH_HOST:/etc/nginx/html/
         # 使用 sshpass 工具来传递密码，确保有相应权限和路径正确
 
