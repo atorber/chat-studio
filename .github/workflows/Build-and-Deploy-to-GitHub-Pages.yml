@@ -6,6 +6,11 @@ on:
       - main  # 触发构建的分支
   workflow_dispatch:
 
+permissions:  # 添加权限配置
+  contents: read
+  id-token: write
+  pages: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
