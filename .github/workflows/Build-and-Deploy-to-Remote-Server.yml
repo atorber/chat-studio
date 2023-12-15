@@ -35,11 +35,4 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y sshpass
-        sshpass -p $SSH_PASSWORD scp -r ./dist/* $SSH_USERNAME@$SSH_HOST:/etc/nginx/html/
-        # 使用 sshpass 工具来传递密码，确保有相应权限和路径正确
-
-    # 可选步骤，如果需要在服务器上执行额外命令
-    - name: Additional Commands on Server
-      run: |
-        sshpass -p $SSH_PASSWORD ssh $SSH_USERNAME@$SSH_HOST 'some-commands-to-run-on-server'
-        # 替换 some-commands-to-run-on-server 为实际需要执行的命令
+        sshpass -p $SSH_PASSWORD scp -o StrictHostKeyChecking=no -r ./dist/* $SSH_USERNAME@$SSH_HOST:/etc/nginx/html/
