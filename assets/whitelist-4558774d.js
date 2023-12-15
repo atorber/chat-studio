@@ -1,0 +1,1 @@
+import{bZ as e,b5 as i}from"./index-0666afcb.js";const r=t=>i("/api/v1/whitelist/list/white",t),h=t=>e("/api/v1/whitelist/list/white/create",t),a=t=>e("/api/v1/whitelist/list/white/delete",t);export{a as S,r as a,h as b};

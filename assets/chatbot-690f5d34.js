@@ -1,1 +1,0 @@
-import{bZ as e,b5 as a}from"./index-cfea8079.js";const s=t=>a("/api/v1/chatbot/list",t),o=t=>e("/api/v1/chatbot/create",t),b=t=>e("/api/v1/chatbot/delete",t),c=t=>a("/api/v1/chatbot/user/list",t),h=t=>e("/api/v1/chatbot/user/create",t),n=t=>e("/api/v1/chatbot/user/delete",t);export{b as S,s as a,o as b,n as c,c as d,h as e};
