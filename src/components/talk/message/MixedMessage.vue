@@ -1,14 +1,14 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { NImage } from 'naive-ui'
 import { textReplaceEmoji } from '@/utils/emojis'
 import { textReplaceLink } from '@/utils/strings'
-import { Data, MixedExtra } from './types.d'
 import { getImageInfo } from '@/utils/functions'
+import { ITalkRecordExtraMixed, ITalkRecord } from '@/types/chat'
 
 const props = defineProps<{
-  extra: MixedExtra
-  data: Data
-  maxWidth: Boolean
+  extra: ITalkRecordExtraMixed
+  data: ITalkRecord
+  maxWidth?: Boolean
 }>()
 
 const float = props.data.float

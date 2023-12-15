@@ -1,20 +1,17 @@
-<script setup>
+<script lang="ts" setup>
 import { NImage } from 'naive-ui'
 import { getImageInfo } from '@/utils/functions'
+import { ITalkRecordExtraImage, ITalkRecord } from '@/types/chat'
 
-defineProps({
-  extra: Object,
-  data: Object
-})
+defineProps<{
+  extra: ITalkRecordExtraImage
+  data: ITalkRecord
+  maxWidth?: Boolean
+}>()
 
-const img = (src, width = 200) => {
+const img = (src: string, width = 200) => {
+  const info = getImageInfo(src)
 
-  try {
-    var info = getImageInfo(src)
-  } catch (error) {
-    console.error('图片加载失败')
-    return {}
-  }
   if (info.width == 0 || info.height == 0) {
     return {}
   }
@@ -28,7 +25,7 @@ const img = (src, width = 200) => {
 
   return {
     width: width + 'px',
-    height: parseInt(info.height / (info.width / width)) + 'px'
+    height: `${info.height / (info.width / width)}px`
   }
 }
 </script>

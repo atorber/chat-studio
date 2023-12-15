@@ -21,14 +21,11 @@ const isKeyboard = computed({
 
 const isWebNotify = computed({
   get: () => settingsStore.isWebNotify,
-  set: (val) => {
-    if (val === false) {
-      settingsStore.isWebNotify = false
-    } else {
-      window.Notification.requestPermission((res) => {
-        console.log(res)
-        settingsStore.isWebNotify = 'granted' === res
-      })
+  set: (value) => {
+    settingsStore.setWebNotify(value)
+
+    if (value) {
+      toPermission()
     }
   }
 })

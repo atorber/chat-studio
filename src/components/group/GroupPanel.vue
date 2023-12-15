@@ -416,7 +416,6 @@ loadMembers()
           .text {
             height: 100%;
             line-height: 30px;
-            width: 30%;
             text-align: right;
           }
         }

@@ -1,20 +1,25 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { textReplaceEmoji } from '@/utils/emojis'
 import { textReplaceLink, textReplaceMention } from '@/utils/strings'
-import { Data } from './types.d'
+import { ITalkRecordExtraText, ITalkRecord } from '@/types/chat'
 
 const props = defineProps<{
-  extra: any
-  data: Data
-  maxWidth: Boolean
+  extra: ITalkRecordExtraText
+  data: ITalkRecord
+  maxWidth?: boolean
+  source?: 'panel' | 'forward' | 'history'
 }>()
 
 const float = props.data.float
 
-let textContent = props.data.content
-// console.log('textContent...', textContent)
+let textContent = props.extra?.content || ''
+
 textContent = textReplaceLink(textContent)
-textContent = textReplaceMention(textContent, '#1890ff')
+
+if (props.data.talk_type == 2) {
+  textContent = textReplaceMention(textContent, '#1890ff')
+}
+
 textContent = textReplaceEmoji(textContent)
 </script>
 
@@ -24,7 +29,8 @@ textContent = textReplaceEmoji(textContent)
     :class="{
       left: float == 'left',
       right: float == 'right',
-      maxwidth: maxWidth
+      maxwidth: maxWidth,
+      'radius-reset': source != 'panel'
     }"
   >
     <pre v-html="textContent" />
@@ -48,6 +54,10 @@ textContent = textReplaceEmoji(textContent)
 
   &.maxwidth {
     max-width: 70%;
+  }
+
+  &.radius-reset {
+    border-radius: 0;
   }
 
   pre {

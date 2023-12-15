@@ -75,7 +75,7 @@ defineProps({
 <style lang="less" scoped>
 .talk {
   padding: 8px 10px 8px 5px;
-  height: 50px;
+  height: 60px;
   display: flex;
   align-items: center;
   transition: 0.2s ease-in;

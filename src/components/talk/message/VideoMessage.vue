@@ -1,18 +1,16 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import 'xgplayer/dist/index.min.css'
-
 import { ref, nextTick } from 'vue'
 import { NImage, NModal, NCard } from 'naive-ui'
 import { Play, Close } from '@icon-park/vue-next'
 import { getImageInfo } from '@/utils/functions'
 import Player from 'xgplayer'
-
-import { Data, VideoExtra } from './types'
+import { ITalkRecordExtraVideo, ITalkRecord } from '@/types/chat'
 
 const props = defineProps<{
-  extra: VideoExtra
-  data: Data
-  maxWidth: Boolean
+  extra: ITalkRecordExtraVideo
+  data: ITalkRecord
+  maxWidth?: Boolean
 }>()
 
 const img = (src: string, width = 200) => {
@@ -92,7 +90,7 @@ async function onPlay() {
   background: var(--im-message-left-bg-color);
   min-width: 30px;
   min-height: 30px;
-  display: flex;
+  display: inline-flex;
   position: relative;
 
   &.left {
