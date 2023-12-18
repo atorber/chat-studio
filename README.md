@@ -1,6 +1,6 @@
 # ChatFlow Console 聊天工作台
 
-<img alt="GitHub stars badge" src="https://img.shields.io/github/stars/atorber/chatflow-console"> <img alt="GitHub forks badge" src="https://img.shields.io/github/forks/atorber/chatflow-console"> <img alt="GitHub license badge" src="https://img.shields.io/github/license/atorber/chatflow-console">
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-im2.vlist.cc-brightgreen.svg)](https://atorber.github.io/chatflow-console/) <img alt="GitHub stars badge" src="https://img.shields.io/github/stars/atorber/chatflow-console"> <img alt="GitHub forks badge" src="https://img.shields.io/github/forks/atorber/chatflow-console"> <img alt="GitHub license badge" src="https://img.shields.io/github/license/atorber/chatflow-console">
 
 ##  项目介绍
 
