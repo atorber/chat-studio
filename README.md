@@ -6,7 +6,9 @@
 
 ChatFlow Console是一个网页版即时聊天系统，界面简约美观。基于[Lumen IM](https://github/gzydong/LumenIM)二次开发，后端对接ChatFlow项目。
 
-[访问项目语雀文档了解更多信息](https://www.yuque.com/atorber/chatflow)
+配套后端项目 ChatFlowAdmin [https://github.com/atorber/chatflow-admin](https://github.com/atorber/chatflow-admin)
+
+访问[项目语雀文档](https://www.yuque.com/atorber/chatflow)了解更多信息
 
 ## 功能模块
 
