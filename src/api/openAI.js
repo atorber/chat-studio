@@ -97,3 +97,7 @@ export function updateChatAiPlugin(params) {
   // });
   return post('/api/v1/echo/openai/updateChatAiPlugin', params)
 }
+
+export function callChat(params) {
+  return post('/api/v1/copilot/chat', params)
+}

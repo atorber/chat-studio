@@ -1,280 +1,181 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
-import ChatCard from './ChatCard.vue'
-import ChatInput from './ChatInput.vue'
-import More from './More.vue'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-dayjs.extend(relativeTime)
-import { message } from 'ant-design-vue'
-import showdown from 'showdown'
-import { IClose, IPlus, IHistory, IEdit, IArrowDown } from '../icons'
+import { ref, onMounted, nextTick } from "vue";
+import ChatCard from "./summaryCard.vue";
+import ChatInput from "./ChatInput.vue";
+import More from "./More.vue";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
+import { message } from "ant-design-vue";
+import showdown from "showdown";
+import { IClose, IPlus, IHistory, IEdit, IArrowDown } from "../icons";
 import {
   queryChatList,
   queryChatContentList,
   createChat,
   queryPlugins,
   updateChatAiPlugin,
-  callChat
-} from '../../api/openAI'
-import { fetchShortCutDetail } from '../../api/shortCut'
-import { queryChatCompletion } from '../../api/embedding'
+} from "../../api/openAI";
+import { fetchShortCutDetail } from "../../api/shortCut";
+import {
+  queryChatCompletion
+} from '../../api/embedding'
 
-const historyVisible = ref(false)
-const historys = ref([])
-const onlineChatList = ref([])
-const curChat = ref(null)
-const curOnlineChat = ref(null)
-const chatContentList = ref([])
-const chatContentTotal = ref(0)
+const historyVisible = ref(false);
+const historys = ref([]);
+const onlineChatList = ref([]);
+const curChat = ref(null);
+const curOnlineChat = ref(null);
+const chatContentList = ref([]);
+const chatContentTotal = ref(0);
 const chatContentParam = ref({
   page: 0,
-  size: 20
-})
-const chatContentLoading = ref(false)
-const textareaContent = ref('')
-const showLoading = ref(false)
-const generating = ref(false)
-const plugins = ref([])
-const usePlugin = ref([])
-const selectionText = ref('')
+  size: 20,
+});
+const chatContentLoading = ref(false);
+const textareaContent = ref("");
+const showLoading = ref(false);
+const generating = ref(false);
+const plugins = ref([]);
+const usePlugin = ref([]);
+const selectionText = ref("");
 
-const converter = new showdown.Converter()
+const converter = new showdown.Converter();
 
 const getHtml = (content) => {
-  return converter.makeHtml(content)
-}
+  return converter.makeHtml(content);
+};
 
 const scrollToBottom = () => {
   nextTick(() => {
     document
-      .querySelector('#echo-content-root')
-      .shadowRoot.querySelector('.chat-container').scrollTop = 999999
-  })
-}
+      .querySelector("#echo-content-root")
+      .shadowRoot.querySelector(".chat-container").scrollTop = 999999;
+  });
+};
 const fetchPluginList = async () => {
   try {
-    // const response = await queryPlugins();
-    const response = []
-
-    plugins.value = response
+    const response = await queryPlugins();
+    plugins.value = response;
   } catch (e) {
-    plugins.value = []
+    plugins.value = [];
   }
-}
+};
 const fetchChatList = async () => {
   try {
-    // const response = await queryChatList();
-    const response = [
-      {
-        _id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        title: '测试会话',
-        userid: '60f9b1b3e4b0c9b6e0f3e3b5',
-        gmt_create: 1627020003,
-        gmt_update: 1627020003,
-        last_message: '你好',
-        short_cut_id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        plugins: ['60f9b1b3e4b0c9b6e0f3e3b5']
-      },
-      {
-        _id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        title: '测试会话',
-        userid: '60f9b1b3e4b0c9b6e0f3e3b5',
-        gmt_create: 1627020003,
-        gmt_update: 1627020003,
-        last_message: '你好',
-        short_cut_id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        plugins: ['60f9b1b3e4b0c9b6e0f3e3b5']
-      },
-      {
-        _id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        title: '测试会话',
-        userid: '60f9b1b3e4b0c9b6e0f3e3b5',
-        gmt_create: 1627020003,
-        gmt_update: 1627020003,
-        last_message: '你好',
-        short_cut_id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        plugins: ['60f9b1b3e4b0c9b6e0f3e3b5']
-      }
-    ]
-    historys.value = response.filter((item) => !item.short_cut_id)
+    const response = await queryChatList();
+    historys.value = response.filter((item) => !item.short_cut_id);
     if (response && response.length) {
-      curChat.value = response[0]
-      usePlugin.value = curChat.value.plugins || []
-      chatContentParam.value.page = 0
-      chatContentList.value = []
+      curChat.value = response[0];
+      usePlugin.value = curChat.value.plugins || [];
+      chatContentParam.value.page = 0;
+      chatContentList.value = [];
     }
   } catch (e) {
-    message.error(e.message)
+    message.error(e.message);
   }
-}
+};
 const fetchOnlineChatList = async () => {
   try {
-    // const response = await queryChatList();
-    const response = [
-      {
-        _id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        title: '测试会话',
-        userid: '60f9b1b3e4b0c9b6e0f3e3b5',
-        gmt_create: 1627020003,
-        gmt_update: 1627020003,
-        last_message: '你好',
-        short_cut_id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        plugins: ['60f9b1b3e4b0c9b6e0f3e3b5']
-      },
-      {
-        _id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        title: '测试会话',
-        userid: '60f9b1b3e4b0c9b6e0f3e3b5',
-        gmt_create: 1627020003,
-        gmt_update: 1627020003,
-        last_message: '你是谁？',
-        short_cut_id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        plugins: ['60f9b1b3e4b0c9b6e0f3e3b5']
-      },
-      {
-        _id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        title: '测试会话',
-        userid: '60f9b1b3e4b0c9b6e0f3e3b5',
-        gmt_create: 1627020003,
-        gmt_update: 1627020003,
-        last_message: '你好',
-        short_cut_id: '60f9b1b3e4b0c9b6e0f3e3b5',
-        plugins: ['60f9b1b3e4b0c9b6e0f3e3b5']
-      }
-    ]
-    onlineChatList.value = response
+    const response = await queryChatList();
+    onlineChatList.value = response;
     if (response && response.length) {
-      curOnlineChat.value = response[0]
+      curOnlineChat.value = response[0];
     }
   } catch (e) {
-    message.error(e.message)
+    message.error(e.message);
   }
-}
+};
 const fetchChatContentList = async () => {
-  if (!curChat.value) return
-  if (chatContentLoading.value) return
+  if (!curChat.value) return;
+  if (chatContentLoading.value) return;
   try {
-    chatContentLoading.value = true
-    // const response = await queryChatContentList({
-    //   chat_id: curChat.value._id,
-    //   page: chatContentParam.value.page,
-    //   size: chatContentParam.value.size,
-    // });
-    const response = {
-      items: [
-        {
-          chat_id: '60f9b1b3e4b0c9b6e0f3e3b5',
-          content: '你好',
-          gmt_create: 1627020003,
-          gmt_update: 1627020003,
-          item_type: 'intent',
-          userid: '60f9b1b3e4b0c9b6e0f3e3b5',
-          _id: '60f9b1b3e4b0c9b6e0f3e3b5'
-        },
-        {
-          chat_id: '60f9b1b3e4b0c9b6e0f3e3b5',
-          content: '你是谁？',
-          gmt_create: 1627020003,
-          gmt_update: 1627020003,
-          item_type: 'reply',
-          userid: '60f9b1b3e4b0c9b6e0f3e3b5',
-          _id: '60f9b1b3e4b0c9b6e0f3e3b5'
-        },
-        {
-          chat_id: '60f9b1b3e4b0c9b6e0f3e3b5',
-          content: '你好',
-          gmt_create: 1627020003,
-          gmt_update: 1627020003,
-          item_type: 'intent',
-          userid: '60f9b1b3e4b0c9b6e0f3e3b5',
-          _id: '60f9b1b3e4b0c9b6e0f3e3b5'
-        }
-      ]
-    }
+    chatContentLoading.value = true;
+    const response = await queryChatContentList({
+      chat_id: curChat.value._id,
+      page: chatContentParam.value.page,
+      size: chatContentParam.value.size,
+    });
     chatContentList.value = chatContentList.value.reverse().concat(
       (response.items || []).map((item) => {
         return {
           ...item,
-          content: getHtml(item.content)
-        }
+          content: getHtml(item.content),
+        };
       })
-    )
-    chatContentTotal.value = response.total || 0
-    chatContentList.value = chatContentList.value.reverse()
-    chatContentLoading.value = false
+    );
+    chatContentTotal.value = response.total || 0;
+    chatContentList.value = chatContentList.value.reverse();
+    chatContentLoading.value = false;
   } catch (e) {
-    message.error(e.message)
-    chatContentLoading.value = false
+    message.error(e.message);
+    chatContentLoading.value = false;
   }
-}
+};
 
 const handleMore = async () => {
-  if (chatContentLoading.value) return
-  chatContentParam.value.page += 1
-  await fetchChatContentList()
-}
+  if (chatContentLoading.value) return;
+  chatContentParam.value.page += 1;
+  await fetchChatContentList();
+};
 
 const showHistoryDrawer = () => {
-  historyVisible.value = true
-}
+  historyVisible.value = true;
+};
 const handleChangeChat = async (item) => {
-  curChat.value = item
-  historyVisible.value = false
-  chatContentParam.value.page = 0
-  chatContentList.value = []
-  await fetchChatContentList()
-  scrollToBottom()
-}
+  curChat.value = item;
+  historyVisible.value = false;
+  chatContentParam.value.page = 0;
+  chatContentList.value = [];
+  await fetchChatContentList();
+  scrollToBottom();
+};
 
 const handleChangeTextarea = (content) => {
-  textareaContent.value = content
-}
+  textareaContent.value = content;
+};
 
 const handleEnter = async () => {
   if (!textareaContent.value) {
-    return message.error('请输入内容')
+    return message.error("请输入内容");
   }
   if (generating.value) {
-    return message.error('会话中,请稍后再试!')
+    return message.error("会话中,请稍后再试!");
   }
-  const content = textareaContent.value
+  const content = textareaContent.value;
   if (selectionText.value) {
     chatContentList.value.push({
       chat_id: curChat.value._id,
       content: selectionText.value,
       gmt_create: Date.now(),
       gmt_update: Date.now(),
-      item_type: 'intent',
+      item_type: "intent",
       userid: curChat.value.userid,
-      _id: Date.now()
-    })
+      _id: Date.now(),
+    });
   }
   chatContentList.value.push({
     chat_id: curChat.value._id,
     content,
     gmt_create: Date.now(),
     gmt_update: Date.now(),
-    item_type: 'intent',
+    item_type: "intent",
     userid: curChat.value.userid,
-    _id: Date.now()
-  })
-  textareaContent.value = ''
-  scrollToBottom()
-  showLoading.value = true
+    _id: Date.now(),
+  });
+  textareaContent.value = "";
+  scrollToBottom();
+  showLoading.value = true;
 
   try {
-    let prompt = ''
+    let prompt = "";
     if (curChat.value.short_cut_id) {
-      // const shortCut = await fetchShortCutDetail({
-      //   id: curChat.value.short_cut_id,
-      // });
-      const shortCut = {
-        prompt: '你好'
-      }
-      prompt = shortCut.prompt || ''
+      const shortCut = await fetchShortCutDetail({
+        id: curChat.value.short_cut_id,
+      });
+      prompt = shortCut.prompt || "";
     }
-    generating.value = true
+    generating.value = true;
 
     // chrome.runtime.sendMessage(
     //   {
@@ -294,61 +195,51 @@ const handleEnter = async () => {
     //   () => {}
     // );
     const params = {
-      prompt,
-      content,
-      shortCutId: curChat.value.short_cut_id,
-      chat_id: curChat.value._id,
-      chat_title: curChat.value.title,
-      selection_text: selectionText.value,
-      stream: true
-    }
-    const params2 = {
-      id: 'xxx',
-      type: 'room',
-      content: content
-    }
-    const replyText2 = await callChat(params2)
-    console.log('replyText2', replyText2)
-
-    const replyText = replyText2.data.content
-
-    // await fetchChatContentList();
+          prompt,
+          content,
+          shortCutId: curChat.value.short_cut_id,
+          chat_id: curChat.value._id,
+          chat_title: curChat.value.title,
+          selection_text: selectionText.value,
+          stream: true,
+        }
+    await queryChatCompletion(params)
+    
+    await fetchChatContentList();
 
     chatContentList.value.push({
       chat_id: curChat.value._id,
-      content: replyText,
+      content: "",
       gmt_create: Date.now(),
       gmt_update: Date.now(),
-      item_type: 'reply',
+      item_type: "reply",
       userid: curChat.value.userid,
-      _id: Date.now()
-    })
-    selectionText.value = ''
-    showLoading.value = false
-    generating.value = false
+      _id: Date.now(),
+    });
+    selectionText.value = "";
   } catch (e) {
-    message.error(e.message)
-    showLoading.value = false
+    message.error(e.message);
+    showLoading.value = false;
   }
-}
+};
 
 const handleNewChat = async () => {
-  await createChat()
-  await fetchChatList()
-  await fetchChatContentList()
-}
+  await createChat();
+  await fetchChatList();
+  await fetchChatContentList();
+};
 const initData = async () => {
-  await fetchChatList()
-  await fetchChatContentList()
-  await fetchOnlineChatList()
-  await fetchPluginList()
-}
+  await fetchChatList();
+  await fetchChatContentList();
+  await fetchOnlineChatList();
+  await fetchPluginList();
+};
 const handleClickSuggestion = (item) => {
-  textareaContent.value = item
-}
+  textareaContent.value = item;
+};
 const handleClearSection = () => {
-  selectionText.value = ''
-}
+  selectionText.value = "";
+};
 // const getPopupContainer = () => {
 //   return document
 //     .querySelector("#echo-content-root")
@@ -364,9 +255,9 @@ const handleClearSection = () => {
 // };
 
 onMounted(async () => {
-  await initData()
-  scrollToBottom()
-
+  await initData();
+  scrollToBottom();
+  
   // 监听实时消息
   // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   //   const { from, text, finish_reason } = request || {};
@@ -389,21 +280,19 @@ onMounted(async () => {
   //   sendResponse(true);
   //   return true;
   // });
-  document.addEventListener('selectionchange', (event) => {
+  document.addEventListener("selectionchange", (event) => {
     try {
-      const selection = document.getSelection()
-      const text = selection.toString()
+      const selection = document.getSelection();
+      const text = selection.toString();
       // const oRange = selection.getRangeAt(0); //get the text range
       // const oRect = oRange.getBoundingClientRect();
       if (text) {
-        selectionText.value = text
+        selectionText.value = text;
       }
       // console.log(oRect, text);
-    } catch (e) {
-      /* empty */
-    }
-  })
-})
+    } catch (e) { /* empty */ }
+  });
+});
 </script>
 <template>
   <div style="height: calc(100vh - 90px)">
@@ -420,7 +309,10 @@ onMounted(async () => {
             >
               <template v-slot:more>
                 <More
-                  v-if="chatContentTotal > (chatContentParam.page + 1) * chatContentParam.size"
+                  v-if="
+                    chatContentTotal >
+                    (chatContentParam.page + 1) * chatContentParam.size
+                  "
                   @click="handleMore"
                 ></More>
               </template>
@@ -456,7 +348,11 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="drawer" :class="{ show: historyVisible }" style="height: 80%; max-height: 680px">
+    <div
+      class="drawer"
+      :class="{ show: historyVisible }"
+      style="height: 80%; max-height: 680px"
+    >
       <div class="drawer-header">
         <div class="drawer-title">会话历史记录</div>
         <IClose
@@ -480,16 +376,20 @@ onMounted(async () => {
                   <div class="conv-item-header">
                     <span class="title">
                       <span class="title-text">
-                        <span class="">{{ item.title || '新会话' }}</span>
+                        <span class="">{{ item.title || "新会话" }}</span>
                       </span>
                       <span class="edit">
                         <IEdit width="16" height="16"></IEdit>
                       </span>
                     </span>
-                    <span class="date">{{ dayjs(item.gmt_update).toNow() }}</span>
+                    <span class="date">{{
+                      dayjs(item.gmt_update).toNow()
+                    }}</span>
                   </div>
                   <div class="conv-item-content">
-                    <span class="conv-item-content-text">{{ item.last_message }}</span>
+                    <span class="conv-item-content-text">{{
+                      item.last_message
+                    }}</span>
                   </div>
                 </div>
               </div>
@@ -622,10 +522,7 @@ onMounted(async () => {
   height: 100%;
   box-sizing: border-box;
   position: relative;
-  font-family:
-    Courier New,
-    Courier,
-    monospace;
+  font-family: Courier New, Courier, monospace;
 }
 .textarea .mirror-node {
   width: 100%;
@@ -647,15 +544,8 @@ onMounted(async () => {
   overflow: hidden auto;
   box-shadow: none;
   background-color: #fff;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    Segoe UI,
-    Helvetica,
-    Arial,
-    sans-serif,
-    'Apple Color Emoji',
-    'Segoe UI Emoji';
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   color: #212b36;
   outline: none;
 }

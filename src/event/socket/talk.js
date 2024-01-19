@@ -83,9 +83,9 @@ class Talk extends Base {
       } else {
         text = this.resource.extra.content.replace(/<img .*?>/g, '')
       }
-      console.debug('获取聊天列表左侧的对话信息成功', text)
+      // console.debug('获取聊天列表左侧的对话信息成功', text)
     } catch (e) {
-      console.debug('获取聊天列表左侧的对话信息失败', e)
+      // console.debug('获取聊天列表左侧的对话信息失败', e)
     }
 
     return text

@@ -1,10 +1,10 @@
-# ChatFlow Console 聊天工作台
+# Chat Studio 对话工作台
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-im2.vlist.cc-brightgreen.svg)](https://atorber.github.io/chatflow-console/) <img alt="GitHub stars badge" src="https://img.shields.io/github/stars/atorber/chatflow-console"> <img alt="GitHub forks badge" src="https://img.shields.io/github/forks/atorber/chatflow-console"> <img alt="GitHub license badge" src="https://img.shields.io/github/license/atorber/chatflow-console">
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-im2.vlist.cc-brightgreen.svg)](https://atorber.github.io/chat-studio/) <img alt="GitHub stars badge" src="https://img.shields.io/github/stars/atorber/chat-studio"> <img alt="GitHub forks badge" src="https://img.shields.io/github/forks/atorber/chat-studio"> <img alt="GitHub license badge" src="https://img.shields.io/github/license/atorber/chat-studio">
 
 ##  项目介绍
 
-ChatFlow Console是一个网页版即时聊天系统，界面简约美观。基于[Lumen IM](https://github/gzydong/LumenIM)二次开发，后端对接ChatFlow项目。
+Chat Studio是一个网页版即时聊天系统，界面简约美观。基于[Lumen IM](https://github.com/gzydong/LumenIM)二次开发，后端对接ChatFlow项目。
 
 配套后端项目 ChatFlowAdmin [https://github.com/atorber/chatflow-admin](https://github.com/atorber/chatflow-admin)
 
@@ -29,7 +29,7 @@ ChatFlow Console是一个网页版即时聊天系统，界面简约美观。基�
 
 ```bash
 ## 克隆项目源码包
-git clone https://github.com/atorber/chatflow-console.git
+git clone https://github.com/atorber/chat-studio.git
 
 ## 安装项目依赖扩展组件
 npm install
@@ -48,7 +48,7 @@ npm run electron:build
 
 ## 效果展示
 
-![image](https://github.com/atorber/chatflow-console/assets/19552906/9c7ec288-b364-491a-a9db-eebc04a578d6)
+![image](https://github.com/atorber/chat-studio/assets/19552906/9c7ec288-b364-491a-a9db-eebc04a578d6)
 
 ## 联系方式
 
@@ -58,4 +58,4 @@ QQ群 : 583830241
 
 ## 如果你觉得还不错，请 Star , Fork 给作者鼓励一下。
 
-[![Star History Chart](https://api.star-history.com/svg?repos=atorber/chatflow-console&type=Date)](https://star-history.com/#atorber/chatflow-console&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=atorber/chat-studio&type=Date)](https://star-history.com/#atorber/chat-studio&Date)

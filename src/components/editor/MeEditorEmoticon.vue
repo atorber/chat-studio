@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import { ref, computed } from 'vue'
 import { useEditorStore } from '@/store'
 import { UploadOne, Delete } from '@icon-park/vue-next'

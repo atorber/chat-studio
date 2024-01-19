@@ -4,10 +4,11 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 import { Modal } from 'ant-design-vue'
-import { IClose, ISet, IExit } from "../icons";
+import { IClose, ISet, IExit } from '../icons'
 import { queryAppVersion } from '@/api/user'
-import Chat from "./chat.vue";
-import Knowledge from "./Knowledge.vue";
+import Chat from './chat.vue'
+import Summary from './summary.vue'
+import Knowledge from './Knowledge.vue'
 
 // 定义组件可以发出的事件
 const emit = defineEmits(['close', 'logout', 'update-api-key'])
@@ -39,14 +40,16 @@ const handleLogout = () => {
 }
 
 const fetchVersion = async () => {
-  try {
-    const response = await queryAppVersion({
-      version: '1.0.3'
-    })
-    shouldUpdateVersion.value = response.data.shouldUpdate
-  } catch (e) {
-    shouldUpdateVersion.value = false
-  }
+  shouldUpdateVersion.value = false
+
+  // try {
+  //   const response = await queryAppVersion({
+  //     version: '1.0.3'
+  //   })
+  //   shouldUpdateVersion.value = response.data.shouldUpdate
+  // } catch (e) {
+  //   shouldUpdateVersion.value = false
+  // }
 }
 
 const handleChangeTab = (type) => {
@@ -111,16 +114,34 @@ onMounted(async () => {
           <div>知识库</div>
         </div>
         <div
+          class="tab-item"
+          :class="{ 'tab-item-active': curTab === 'summary' }"
+          @click="handleChangeTab('summary')"
+        >
+          <div>摘要</div>
+        </div>
+        <div
+          class="tab-item"
+          :class="{ 'tab-item-active': curTab === 'translate' }"
+          @click="handleChangeTab('translate')"
+        >
+          <div>翻译</div>
+        </div>
+        <div
           class="tab-active-bar"
           :class="{
             'tab-bar-knowledge': curTab === 'knowledge',
-            'tab-bar-chat': curTab === 'chat'
+            'tab-bar-summary': curTab === 'summary',
+            'tab-bar-chat': curTab === 'chat',
+            'tab-bar-translate': curTab === 'translate'
           }"
         ></div>
       </div>
     </div>
     <Chat v-if="curTab === 'chat'"></Chat>
     <Knowledge v-if="curTab === 'knowledge'"></Knowledge>
+    <Summary v-if="curTab === 'summary'"></Summary>
+    <Summary v-if="curTab === 'translate'"></Summary>
   </div>
 </template>
 <style scoped>
@@ -275,7 +296,15 @@ onMounted(async () => {
   width: 32px;
 }
 .tab-bar-knowledge {
-  left: 57px;
-  width: 45px;
+  left: 64px;
+  width: 32px;
+}
+.tab-bar-summary {
+  left: 130px;
+  width: 32px;
+}
+.tab-bar-translate {
+  left: 188px;
+  width: 32px;
 }
 </style>

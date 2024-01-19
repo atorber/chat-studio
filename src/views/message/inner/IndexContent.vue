@@ -74,7 +74,6 @@ const onPanelHeaderEvent = (eventType) => {
         :index_name="talkParams.index_name"
       />
     </main>
-
     <!-- 编辑器区域 -->
     <footer
       v-if="isShowEditor"

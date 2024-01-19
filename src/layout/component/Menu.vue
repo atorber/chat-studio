@@ -192,7 +192,7 @@ const isActive = (menu) => {
 
     <footer class="menu-footer">
       <div>
-        <a class="pointer" href="https://github.com/atorber/chatflow-console" target="_blank">
+        <a class="pointer" href="https://github.com/atorber/chat-studio" target="_blank">
           <github-one theme="outline" size="22" :fill="color" :strokeWidth="2" />
         </a>
       </div>

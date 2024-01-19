@@ -40,7 +40,10 @@ const scrollToBottom = () => {
   })
 }
 const fetchChatList = async () => {
-  if (!model.value) return
+  if (!model.value) {
+    console.log('model.value', model.value)
+    return
+  }
   try {
     const response = await queryChatList({
       model_id: model.value?._id
