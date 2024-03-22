@@ -1,0 +1,1 @@
+import{ba as e,bb as i}from"./index-da544b70.js";const r=t=>i("/api/v1/whitelist/list/white",t),a=t=>e("/api/v1/whitelist/list/white/create",t),h=t=>e("/api/v1/whitelist/list/white/delete",t);export{h as S,r as a,a as b};

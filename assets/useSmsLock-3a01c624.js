@@ -1,1 +1,0 @@
-import{S as a}from"./common-01d0690b.js";import{r as c,a4 as m}from"./index-3ccc3e49.js";function i(t,s=60){const o=c(0),r=new a(t,s,e=>{o.value=e}),n=()=>r.start();return m(()=>{r.clear()}),{lockTime:o,start:n}}export{i as u};

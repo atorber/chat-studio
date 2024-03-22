@@ -1,0 +1,1 @@
+import{_ as t,c as _,i as a,t as s}from"./index-da544b70.js";const c={class:"el-header bdr-b"},o={__name:"PageTitle",props:{title:{type:String,default:"未定义标题"}},setup(e){return(r,l)=>(_(),a("header",c,s(e.title),1))}},i=t(o,[["__scopeId","data-v-1587b622"]]);export{i as P};

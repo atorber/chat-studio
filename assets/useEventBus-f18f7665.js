@@ -1,1 +1,0 @@
-import{o as s,G as t,a4 as r}from"./index-3ccc3e49.js";const a=n=>n.length?(s(()=>{for(const e of n)t.subscribe(e.name,e.event)}),r(()=>{for(const e of n)t.unsubscribe(e.name,e.event)}),{emit:(e,o)=>{t.emit(e,o)}}):void 0;export{a as u};
