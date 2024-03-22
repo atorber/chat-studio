@@ -10,9 +10,9 @@ import { isElectronMode } from '@/utils/common'
   </section>
 
   <div class="copyright">
-    <span>©2020 - 2023 ChatFlow 在线聊天</span>
+    <span>©2022 - 2024 ChatFlow IM管控</span>
     <span><a href="http://beian.miit.gov.cn" target="_blank">粤ICP备16007353号</a></span>
-    <span>Github源码</span>
+    <span><a href="https://github.com/atorber/chatflow" target="_blank">GitHub源码</a></span>
   </div>
 
   <div class="fly-box">

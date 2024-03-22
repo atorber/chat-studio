@@ -6,7 +6,7 @@ export default {
         // 每页数量字段名
         sizeField: 'pageSize',
         // 接口返回的数据字段名
-        listField: 'list',
+        listField: 'items',
         // 接口返回总页数字段名
         totalField: 'pageCount',
         //总数字段名
