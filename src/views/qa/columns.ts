@@ -11,14 +11,14 @@ export interface ListData {
   syncStatus?: string;
   lastOperationTime: string;
   action?: string;
-  recordId?: string;
+  recordId: string;
 }
 export const columns: BasicColumn<ListData>[] = [
-  // {
-  //   title: '序号',
-  //   key: 'recordId',
-  //   width: 150,
-  // },
+  {
+    title: '序号',
+    key: 'recordId',
+    width: 150,
+  },
   {
     title: '分类',
     key: 'skillname',

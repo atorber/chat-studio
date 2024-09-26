@@ -10,7 +10,7 @@
     <BasicTable
       :columns="columns"
       :request="loadDataTable"
-      :row-key="(row: ListData) => row.id"
+      :row-key="(row: ListData) => row.recordId"
       ref="actionRef"
       :actionColumn="actionColumn"
       @update:checked-row-keys="onCheckedRow"
@@ -48,16 +48,32 @@
           <n-input type="textarea" placeholder="请输入标准问题" v-model:value="formParams.title" />
         </n-form-item>
         <n-form-item label="相似问题1" path="question1">
-          <n-input type="textarea" placeholder="请输入相似问题1" v-model:value="formParams.question1" />
+          <n-input
+            type="textarea"
+            placeholder="请输入相似问题1"
+            v-model:value="formParams.question1"
+          />
         </n-form-item>
         <n-form-item label="相似问题2" path="question2">
-          <n-input type="textarea" placeholder="请输入相似问题2" v-model:value="formParams.question2" />
+          <n-input
+            type="textarea"
+            placeholder="请输入相似问题2"
+            v-model:value="formParams.question2"
+          />
         </n-form-item>
         <n-form-item label="相似问题3" path="question3">
-          <n-input type="textarea" placeholder="请输入相似问题3" v-model:value="formParams.question3" />
+          <n-input
+            type="textarea"
+            placeholder="请输入相似问题3"
+            v-model:value="formParams.question3"
+          />
         </n-form-item>
         <n-form-item label="机器人回答" path="answer">
-          <n-input type="textarea" placeholder="请输入机器人回答" v-model:value="formParams.answer" />
+          <n-input
+            type="textarea"
+            placeholder="请输入机器人回答"
+            v-model:value="formParams.answer"
+          />
         </n-form-item>
       </n-form>
 
@@ -99,7 +115,7 @@ const rules: FormRules = {
     required: true,
     trigger: ['blur', 'input'],
     message: '请输入机器人回答'
-  },
+  }
 }
 
 const schemas: FormSchema[] = [
@@ -259,7 +275,7 @@ const actionColumn = reactive({
           },
           // 根据权限控制是否显示: 有权限，会显示，支持多个
           auth: ['basic_list']
-        },
+        }
         // {
         //   label: '编辑',
         //   onClick: handleEdit.bind(null, record),
@@ -304,7 +320,8 @@ function addTable() {
 }
 
 const loadDataTable = async (res) => {
-  const { data } = await ServeGetQas({ ...getFieldsValue(), ...res });
+  console.log('res', { ...getFieldsValue(), ...res })
+  const { data } = await ServeGetQas({ ...getFieldsValue(), ...res })
   console.log('data', JSON.stringify(data))
   return data
 }
@@ -343,12 +360,12 @@ function handleEdit(record: Recordable) {
 
 async function handleDelete(record: Recordable) {
   console.log('点击了删除', record)
-  const res = await ServeDeleteQas({recordId:record.recordId})
+  const res = await ServeDeleteQas({ recordId: record.recordId })
   console.log('删除res', res)
-  if(res.code === 200){
+  if (res.code === 200) {
     window['$message'].success('删除成功')
     reloadTable()
-  }else{
+  } else {
     window['$message'].error('删除失败')
   }
 }
@@ -371,11 +388,11 @@ function handleReset(values: Recordable) {
   font-size: 18px;
   -webkit-app-region: drag;
 }
-.background-color{
-  background: #f5f7f9
-};
+.background-color {
+  background: #f5f7f9;
+}
 .n-dialog.n-modal {
-    width: 50%;
-    max-width: calc(100vw - 32px);
+  width: 50%;
+  max-width: calc(100vw - 32px);
 }
 </style>
