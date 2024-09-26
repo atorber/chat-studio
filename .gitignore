@@ -24,3 +24,7 @@ makefile
 *.njsproj
 *.sln
 *.sw?
+yarn.lock
+package-lock.json
+package-lock.json
+.env
