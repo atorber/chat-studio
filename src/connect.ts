@@ -59,13 +59,14 @@ class Socket {
     const hostAndPort = VITE_SOCKET_API.split('://')[1]
     this.endpoint = hostAndPort.split(':')[0]
     this.port = hostAndPort.split(':')[1]
-    console.debug('mqtt endpoint:', this.endpoint)
+    console.log('mqtt endpoint:', this.endpoint)
+    console.log('mqtt port:', this.port)
     this.clientID = v4()
     console.log('client id：', this.clientID)
     this.client = new Client(this.endpoint, Number(this.port), this.clientID) // 创建新的mqtt-paho客户端实例
 
     this.options = {
-      useSSL: true, // 使用 SSL/TLS 进行安全连接
+      useSSL: false, // 使用 SSL/TLS 进行安全连接
       timeout: 40,
       userName: '',
       password: '',
